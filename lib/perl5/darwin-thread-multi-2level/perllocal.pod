@@ -1,0 +1,330 @@
+=head2 Fri Aug  5 15:16:10 2011: C<Module> L<Tree::DAG_Node|Tree::DAG_Node>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.06>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:16:22 2011: C<Module> L<Test::Warn|Test::Warn>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.23>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:16:24 2011: C<Module> L<Test::Pod|Test::Pod>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.45>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:16:49 2011: C<Module> L<DateTime::Locale|DateTime::Locale>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.45>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:17:20 2011: C<Module> L<Test::Fatal|Test::Fatal>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.006>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:17:22 2011: C<Module> L<Class::Load|Class::Load>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.06>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:17:32 2011: C<Module> L<Class::Singleton|Class::Singleton>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.4>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:17:36 2011: C<Module> L<DateTime::TimeZone|DateTime::TimeZone>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.35>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:17:42 2011: C<Module> L<Math::Round|Math::Round>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.06>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:17:58 2011: C<Module> L<DateTime::Format::RFC3339|DateTime::Format::RFC3339>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: v1.0.5>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:18:00 2011: C<Module> L<DateTime::Format::Atom|DateTime::Format::Atom>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: v1.0.2>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:18:02 2011: C<Module> L<Hash::Inflator|Hash::Inflator>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.100820>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:18:05 2011: C<Module> L<XML::NamespaceSupport|XML::NamespaceSupport>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.11>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:18:15 2011: C<Module> L<XML::SAX|XML::SAX>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.96>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Fri Aug  5 15:18:27 2011: C<Module> L<URI::Query|URI::Query>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/brpratt/projects/bt/braintree-perl/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.09>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
