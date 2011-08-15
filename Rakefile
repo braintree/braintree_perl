@@ -28,11 +28,11 @@ task :clean do
 end
 
 task :package do
-  filename = "Net-Braintree-0.1.1"
+  filename = "Net-Braintree-0.1.2"
 
   sh "git clean -dfx"
   FileUtils.mkdir_p("dist/#{filename}")
-  sh "rsync -avz --exclude dist --exclude '.git*' * dist/#{filename}"
+  sh "rsync -avz --exclude dist --exclude '.git*' --exclude lib/perl5 * dist/#{filename}"
   Dir.chdir("dist") do
     sh "tar cf #{filename}.tar --exclude='.git*' #{filename}"
     sh "gzip #{filename}.tar"

@@ -1,5 +1,7 @@
 Revision history for Net-Braintree
 
+0.1.2   8/15/2011
+        Point release to not ship 3rd party dependencies.
 0.1.1   8/15/2011
         Point release to fix packaging of CPAN module.
 0.1.0   8/15/2011
