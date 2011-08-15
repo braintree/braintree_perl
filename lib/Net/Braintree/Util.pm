@@ -1,4 +1,6 @@
 package Net::Braintree::Util;
+use strict;
+
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;
 our @ISA = qw(Exporter);
@@ -8,9 +10,9 @@ our @EXPORT_OK = qw();
 sub flatten {
   my($hash, $namespace) = @_;
   my %flat_hash = ();
-  while(($key, $value) = each(%$hash)) {
+  while(my ($key, $value) = each(%$hash)) {
     if(is_hash($value)) {
-      $sub_entries = flatten($value, add_namespace($key, $namespace));
+      my $sub_entries = flatten($value, add_namespace($key, $namespace));
       %flat_hash = (%flat_hash, %$sub_entries);
     } else {
       $flat_hash{add_namespace($key, $namespace)} = $value;

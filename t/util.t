@@ -19,8 +19,7 @@ subtest "equal arrays" => sub {
   not_ok(equal_arrays(['a', 'b'], ['b']));
 
   my $hash = { 'a' => 'b' };
-  ok(equal_arrays((keys %$hash), ('a')));
-
+  ok(equal_arrays([ keys %$hash ], ['a']));
 };
 
 done_testing();

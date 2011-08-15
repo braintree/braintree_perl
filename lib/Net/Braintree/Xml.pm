@@ -1,4 +1,6 @@
 package Net::Braintree::Xml;
+use strict;
+
 use XML::Simple;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;
@@ -81,13 +83,20 @@ sub collect_from_array {
   return \@new_array;
 }
 
-my @types = qw(array boolean integer datetime date);
-
 sub collect_from_hash {
   my ($tree) = @_;
   my $new_hash = {};
-  foreach my $type (@types) {
-    return &$type($tree) if is_of_type($type, $tree);
+
+  my %types = (
+    'array' => \&array,
+    'boolean' => \&boolean,
+    'integer' => \&integer,
+    'datetime' => \&datetime,
+    'date' => \&date
+  );
+
+  foreach my $type (keys %types) {
+    return $types{$type}->($tree) if is_of_type($type, $tree);
   }
   return $tree->{'content'} if exists($tree->{'content'});
   return undef if is_nil($tree);

@@ -1,4 +1,6 @@
 package Net::Braintree::Validations;
+use strict;
+
 use Net::Braintree::Util;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;

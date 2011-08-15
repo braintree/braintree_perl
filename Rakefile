@@ -2,7 +2,7 @@ task :default => :test
 
 desc "update makefile"
 task :makefile do
-  sh 'perl Makefile.PL'
+  sh 'perl Makefile.PL && make'
 end
 
 task :test => ["makefile", "test:unit", "test:integration"]
@@ -25,6 +25,14 @@ task :clean do
   rm_rf "blib"
   rm_rf "pm_to_blib"
   rm_f "MYMETA*"
+end
+
+task :strict_check do
+  Dir.glob(["lib/Net/**/*.pm"]) do |file|
+    unless File.read(file) =~ /Moose|strict/
+      puts "#{file} is not using Moose or strict"
+    end
+  end
 end
 
 task :package do
