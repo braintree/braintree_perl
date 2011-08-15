@@ -28,7 +28,7 @@ task :clean do
 end
 
 task :package do
-  filename = "Net-Braintree-0.1.0"
+  filename = "Net-Braintree-0.1.1"
 
   sh "git clean -dfx"
   FileUtils.mkdir_p("dist/#{filename}")

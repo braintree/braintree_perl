@@ -1,5 +1,7 @@
 Revision history for Net-Braintree
 
-0.01    8/15/2011
+0.1.1   8/15/2011
+        Point release to fix packaging of CPAN module.
+0.1.0   8/15/2011
         First version, allows for connectivity to the braintree payment processing API with all functionality except search
 
