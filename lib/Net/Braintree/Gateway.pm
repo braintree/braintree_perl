@@ -3,6 +3,7 @@ package Net::Braintree::Gateway;
 use Net::Braintree::AddressGateway;
 use Net::Braintree::CreditCardGateway;
 use Net::Braintree::CustomerGateway;
+use Net::Braintree::SettlementBatchSummaryGateway;
 use Net::Braintree::SubscriptionGateway;
 use Net::Braintree::TransactionGateway;
 use Net::Braintree::TransparentRedirectGateway;
@@ -24,6 +25,11 @@ has 'credit_card' => (is => 'ro', lazy => 1, default => sub {
 has 'customer' => (is => 'ro', lazy => 1, default => sub {
   my $self = shift;
   Net::Braintree::CustomerGateway->new(gateway => $self);
+});
+
+has 'settlement_batch_summary' => (is => 'ro', lazy => 1, default => sub {
+  my $self = shift;
+  Net::Braintree::SettlementBatchSummaryGateway->new(gateway => $self);
 });
 
 has 'subscription' => (is => 'ro', lazy => 1, default => sub {

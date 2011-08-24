@@ -14,7 +14,7 @@ Net::Braintree->configuration->environment("integration");
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT = qw(not_ok should_throw simulate_form_post_for_tr make_subscription_past_due);
+our @EXPORT = qw(create_settled_transaction not_ok should_throw simulate_form_post_for_tr make_subscription_past_due);
 our @EXPORT_OK = qw();
 
 sub not_ok {
@@ -30,6 +30,16 @@ sub should_throw {
   } catch {
     like($_ , qr/^$exception.*/, $message);
   }
+}
+
+sub create_settled_transaction {
+  my ($params) = shift;
+  my $sale       = Net::Braintree::Transaction->sale($params);
+  my $submit     = Net::Braintree::Transaction->submit_for_settlement($sale->transaction->id);
+  my $http       = Net::Braintree::HTTP->new(config => Net::Braintree->configuration);
+  my $settlement = $http->put("/transactions/" . $sale->transaction->id . "/settle");
+
+  return Net::Braintree::Result->new(response => $settlement);
 }
 
 sub simulate_form_post_for_tr {

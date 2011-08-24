@@ -6,6 +6,7 @@ use warnings;
 use Net::Braintree::Address;
 use Net::Braintree::CreditCard;
 use Net::Braintree::Customer;
+use Net::Braintree::SettlementBatchSummary;
 use Net::Braintree::Subscription;
 use Net::Braintree::Transaction;
 use Net::Braintree::TransparentRedirect;
@@ -16,11 +17,11 @@ use Net::Braintree::Configuration;
 Net::Braintree - A Client Library for wrapping the Braintree Payment Services Gateway API
 
 =head1 VERSION
-Version 0.1.3
+Version 0.2.0
 
 =cut
 
-our $VERSION = '0.1.3';
+our $VERSION = '0.2.0';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 

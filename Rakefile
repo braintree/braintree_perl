@@ -36,7 +36,8 @@ task :strict_check do
 end
 
 task :package do
-  filename = "Net-Braintree-0.1.2"
+  version = File.read('lib/Net/Braintree.pm')[/\$VERSION = '([^']+)'/, 1]
+  filename = "Net-Braintree-#{version}"
 
   sh "git clean -dfx"
   FileUtils.mkdir_p("dist/#{filename}")

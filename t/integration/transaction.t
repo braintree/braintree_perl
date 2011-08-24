@@ -69,16 +69,6 @@ subtest "Refund" => sub {
   };
 };
 
-sub create_settled_transaction {
-  my ($params) = shift;
-  my $sale       = Net::Braintree::Transaction->sale($params);
-  my $submit     = Net::Braintree::Transaction->submit_for_settlement($sale->transaction->id);
-  my $http       = Net::Braintree::HTTP->new(config => Net::Braintree->configuration);
-  my $settlement = $http->put("/transactions/" . $sale->transaction->id . "/settle");
-
-  return Net::Braintree::Result->new(response => $settlement);
-}
-
 subtest "Void" => sub {
   subtest "successful" => sub {
     my $sale = Net::Braintree::Transaction->sale($transaction_params);
