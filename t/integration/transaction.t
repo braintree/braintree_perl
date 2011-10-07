@@ -4,7 +4,7 @@ use Net::Braintree;
 use Net::Braintree::TestHelper;
 
 my $transaction_params = {
-  amount => 50.00,
+  amount => "50.00",
   credit_card => {
     number => "5431111111111111",
     expiration_date => "05/12"
@@ -18,7 +18,7 @@ subtest "Successful Transactions" => sub {
     my ($method) = $_;
     my $result = Net::Braintree::Transaction->$method($transaction_params);
 
-    is($result->is_success, 1, "result of $method is success");
+    ok $result->is_success;
     is($result->message, "", "$method result has errors: $result->message");
     is($result->transaction->credit_card->last_4, "1111");
   }
@@ -26,7 +26,7 @@ subtest "Successful Transactions" => sub {
 
 subtest "Custom Fields" => sub {
   my $result = Net::Braintree::Transaction->sale({
-    amount => 50.00,
+    amount => "50.00",
     credit_card => {
       number => "5431111111111111",
       expiration_date => "05/12"
@@ -35,7 +35,7 @@ subtest "Custom Fields" => sub {
       store_me => "please!"
     }
   });
-  is $result->is_success, 1, "result is success with custom field";
+  ok $result->is_success;
   is $result->transaction->custom_fields->store_me, "please!", "stores custom field value";
 };
 
@@ -44,7 +44,7 @@ subtest "Submit for Settlement" => sub {
   my $sale = Net::Braintree::Transaction->sale($transaction_params);
   my $result = Net::Braintree::Transaction->submit_for_settlement($sale->transaction->id);
 
-  is($result->is_success, 1, "result of settlement successful");
+  ok $result->is_success;
   is($result->transaction->amount, "50.00", "settlement amount");
   is($result->transaction->status, "submitted_for_settlement", "transaction submitted for settlement");
 
@@ -53,9 +53,9 @@ subtest "Submit for Settlement" => sub {
 subtest "Refund" => sub {
   subtest "successful w/ partial refund amount" => sub {
     my $settled = create_settled_transaction($transaction_params);
-    my $result  = Net::Braintree::Transaction->refund($settled->transaction->id, 20.00);
+    my $result  = Net::Braintree::Transaction->refund($settled->transaction->id, "20.00");
 
-    is($result->is_success, 1, "Result of refund successful.");
+    ok $result->is_success;
     is($result->transaction->type, 'credit', 'Refund result type is credit');
     is($result->transaction->amount, "20.00", "refund amount responds correctly");
   };
@@ -64,7 +64,7 @@ subtest "Refund" => sub {
     my $sale       = Net::Braintree::Transaction->sale($transaction_params);
     my $result     = Net::Braintree::Transaction->refund($sale->transaction->id);
 
-    is($result->is_success, 0, "Result of refund unsuccessful.");
+    not_ok $result->is_success;
     is($result->message, "Cannot refund a transaction unless it is settled.", "Errors on unsettled transaction");
   };
 };
@@ -74,7 +74,7 @@ subtest "Void" => sub {
     my $sale = Net::Braintree::Transaction->sale($transaction_params);
     my $void = Net::Braintree::Transaction->void($sale->transaction->id);
 
-    is($void->is_success, 1, "Result of void successful");
+    ok $void->is_success;
     is($void->transaction->id, $sale->transaction->id, "Void tied to sale");
   };
 
@@ -82,7 +82,7 @@ subtest "Void" => sub {
     my $settled = create_settled_transaction($transaction_params);
     my $void    = Net::Braintree::Transaction->void($settled->transaction->id);
 
-    is($void->is_success, 0, "void fails if transaction is settled");
+    not_ok $void->is_success;
     is($void->message, "Transaction can only be voided if status is authorized or submitted_for_settlement.");
   };
 };
@@ -103,7 +103,7 @@ subtest "Find" => sub {
 subtest "Options" => sub {
   subtest "submit for settlement" => sub {
     my $result = Net::Braintree::Transaction->sale({
-      amount => 50.00,
+      amount => "50.00",
       credit_card => {
         number => "5431111111111111",
         expiration_date  => "05/12",
@@ -115,7 +115,7 @@ subtest "Options" => sub {
 
   subtest "store_in_vault" => sub {
     my $result = Net::Braintree::Transaction->sale({
-      amount => 50.00,
+      amount => "50.00",
       credit_card => {
         number => "5431111111111111",
         expiration_date  => "05/12",
@@ -134,7 +134,7 @@ subtest "Options" => sub {
 
 subtest "Create from payment method token" => sub {
   my $sale_result = Net::Braintree::Transaction->sale({
-    amount => 50.00,
+    amount => "50.00",
     credit_card => {
       number => "5431111111111111",
       expiration_date  => "05/12",
@@ -145,10 +145,78 @@ subtest "Create from payment method token" => sub {
 
   my $create_from_token = Net::Braintree::Transaction->sale({customer_id => $sale_result->transaction->customer->id, payment_method_token => $sale_result->transaction->credit_card->token, amount => "10.00"});
 
-  is $create_from_token->is_success, 1, "create from token result successful.";
+  ok $create_from_token->is_success;
   is $create_from_token->transaction->customer->id, $sale_result->transaction->customer->id, "ties sale to existing customer";
   is $create_from_token->transaction->credit_card->token, $sale_result->transaction->credit_card->token, "ties sale to existing customer card";
 
+};
+
+subtest "Clone transaction" => sub {
+  my $sale_result = Net::Braintree::Transaction->sale({
+    amount => "50.00",
+    credit_card => {
+      number => "5431111111111111",
+      expiration_date  => "05/12",
+    },
+    customer => {first_name => "Dan"},
+    billing => {first_name => "Jim"},
+    shipping => {first_name => "John"}
+  });
+
+  my $clone_result = Net::Braintree::Transaction->clone_transaction($sale_result->transaction->id, {
+      amount => "123.45",
+      options => { submit_for_settlement => "false" }
+  });
+  ok $clone_result->is_success;
+  my $clone_transaction = $clone_result->transaction;
+
+  isnt $clone_transaction->id, $sale_result->transaction->id;
+  is $clone_transaction->amount, "123.45";
+  is $clone_transaction->credit_card->bin, "543111";
+  is $clone_transaction->credit_card->expiration_year, "2012";
+  is $clone_transaction->credit_card->expiration_month, "05";
+  is $clone_transaction->customer->first_name, "Dan";
+  is $clone_transaction->billing->first_name, "Jim";
+  is $clone_transaction->shipping->first_name, "John";
+  is $clone_transaction->status, "authorized";
+};
+
+
+subtest "Clone transaction and submit for settlement" => sub {
+  my $sale_result = Net::Braintree::Transaction->sale({
+    amount => "50.00",
+    credit_card => {
+      number => "5431111111111111",
+      expiration_date  => "05/12"
+    }
+  });
+
+  my $clone_result = Net::Braintree::Transaction->clone_transaction($sale_result->transaction->id, {
+      amount => "123.45",
+      options => { submit_for_settlement => "true" }
+  });
+  ok $clone_result->is_success;
+  my $clone_transaction = $clone_result->transaction;
+
+  is $clone_transaction->status, "submitted_for_settlement";
+};
+
+subtest "Clone transaction with validation error" => sub {
+  my $credit_result = Net::Braintree::Transaction->credit({
+    amount => "50.00",
+    credit_card => {
+      number => "5431111111111111",
+      expiration_date  => "05/12",
+    }
+  });
+
+  my $clone_result = Net::Braintree::Transaction->clone_transaction($credit_result->transaction->id, {amount => "123.45"});
+
+  not_ok $clone_result->is_success;
+  $errors = $clone_result->errors->{"transaction"}->{"errors"};
+  my @base_errors = grep { $_->{"attribute"} eq "base" } @{$errors};
+
+  is $base_errors[0]->{"code"}, "91543";
 };
 
 done_testing();

@@ -19,14 +19,12 @@ subtest "create without trial" => sub {
   is $result->subscription->next_bill_amount,  "12.34";
   is $result->subscription->next_billing_period_amount,  "12.34";
   is $result->subscription->payment_method_token,  $card->credit_card->token;
-  print "_-_-_-_-_-_-\n";
-  use Data::Dumper;
-  print Dumper($result->subscription->transactions);
   my $transaction = $result->subscription->transactions->[0];
-  print "_-_-_-_-_-_-\n";
 
   is_deeply $transaction->subscription->billing_period_start_date, $result->subscription->billing_period_start_date;
   is_deeply $transaction->subscription->billing_period_end_date, $result->subscription->billing_period_end_date;
+
+  is $result->subscription->current_billing_cycle, 1;
 
   is $result->subscription->trial_period, 0;
   is $result->subscription->trial_duration, undef;

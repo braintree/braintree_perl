@@ -2,7 +2,6 @@ use Test::More;
 use lib qw(lib t/lib);
 use Net::Braintree::Util;
 use Net::Braintree::TestHelper;
-use Data::Dumper;
 
 subtest "Flatten Hashes" => sub {
   is_deeply(flatten({}), {}, "empty hash");
@@ -20,6 +19,21 @@ subtest "equal arrays" => sub {
 
   my $hash = { 'a' => 'b' };
   ok(equal_arrays([ keys %$hash ], ['a']));
+};
+
+subtest "difference arrays" => sub {
+  ok(equal_arrays(difference_arrays(['a', 'b'], ['a', 'b']), []));
+  is_deeply(difference_arrays(['a', 'b'], ['a']), ['b']);
+  ok(equal_arrays(difference_arrays(['a', 'b'], ['b']), ['a']));
+  ok(equal_arrays(difference_arrays(['a'], ['a', 'b']), []));
+};
+
+subtest "is_hashref" => sub {
+  my $dt = DateTime->now();
+  my %true_hash = (key => "value");
+  not_ok is_hashref($dt);
+  ok is_hashref({key => "value"});
+  ok is_hashref(\%true_hash);
 };
 
 done_testing();

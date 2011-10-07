@@ -4,14 +4,14 @@ use strict;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT = qw(flatten is_hash is_array hash_to_query_string equal_arrays);
+our @EXPORT = qw(to_instance_array flatten is_hashref is_arrayref hash_to_query_string equal_arrays difference_arrays);
 our @EXPORT_OK = qw();
 
 sub flatten {
   my($hash, $namespace) = @_;
   my %flat_hash = ();
   while(my ($key, $value) = each(%$hash)) {
-    if(is_hash($value)) {
+    if(is_hashref($value)) {
       my $sub_entries = flatten($value, add_namespace($key, $namespace));
       %flat_hash = (%flat_hash, %$sub_entries);
     } else {
@@ -27,12 +27,12 @@ sub add_namespace {
   return "${namespace}[${key}]";
 }
 
-sub is_hash {
-  UNIVERSAL::isa(shift, 'HASH');
+sub is_hashref {
+  ref(shift) eq 'HASH';
 }
 
-sub is_array {
-  UNIVERSAL::isa(shift, 'ARRAY');
+sub is_arrayref {
+  ref(shift) eq 'ARRAY';
 }
 
 sub equal_arrays {
@@ -44,8 +44,30 @@ sub equal_arrays {
   return 1;
 }
 
+sub difference_arrays {
+  my ($array1, $array2) = @_;
+  my @diff;
+  foreach my $element (@$array1) {
+    push(@diff, $element) unless $element ~~ $array2;
+  }
+  return \@diff;
+}
+
 sub hash_to_query_string {
   my $query = URI::Query -> new(flatten(shift));
   return $query->stringify();
+}
+
+sub to_instance_array {
+  my ($attrs, $class) = @_;
+  my @result = ();
+  if(ref $attrs ne "ARRAY") {
+    push(@result, $class->new($attrs));
+  } else {
+    for(@$attrs) {
+      push(@result, $class->new($_));
+    }
+  }
+  return \@result;
 }
 1;

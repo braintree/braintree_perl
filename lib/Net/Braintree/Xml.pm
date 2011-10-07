@@ -26,9 +26,9 @@ sub hash_to_xml {
 
 sub add_node {
   my ($parent, $value) = @_;
-  if(is_hash($value)){
+  if(is_hashref($value)){
     build_from_hash($parent, $value);
-  } elsif(is_array($value)){
+  } elsif(is_arrayref($value)){
     build_from_array($parent, $value);
   } else {
     $parent->appendText($value) if $value;
@@ -65,10 +65,10 @@ sub xml_to_hash {
 
 sub scrubbed {
   my $tree = shift;
-  if (is_hash($tree)) {
+  if (is_hashref($tree)) {
     return collect_from_hash($tree);
   }
-  if (is_array($tree)) {
+  if (is_arrayref($tree)) {
     return collect_from_array($tree);
   }
   return $tree;
@@ -148,6 +148,8 @@ sub array {
     return [scrubbed($subtree)];
   } elsif (ref $subtree eq 'ARRAY') {
     return scrubbed(force_array($subtree));
+  } elsif (defined($subtree)) {
+    return [$subtree];
   } else {
     return [];
   }
@@ -163,7 +165,7 @@ sub sub_dashes {
 
 sub force_array {
   my $subtree = shift;
-  return $subtree if(is_array($subtree));
+  return $subtree if(is_arrayref($subtree));
   return [$subtree];
 }
 

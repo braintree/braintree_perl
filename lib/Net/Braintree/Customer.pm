@@ -35,6 +35,16 @@ sub update {
   $class->gateway->customer->update($id, $params);
 }
 
+sub search {
+  my ($class, $block) = @_;
+  $class->gateway->customer->search($block);
+}
+
+sub all {
+  my ($class) = @_;
+  $class->gateway->customer->all;
+}
+
 sub gateway {
   return Net::Braintree->configuration->gateway;
 }

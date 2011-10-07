@@ -4,7 +4,7 @@ use Net::Braintree::Xml;
 use Net::Braintree::TestHelper;
 use Test::More;
 
-subtest "should not suck" => sub {
+subtest "should survive some deep parsing" => sub {
   my $xml = q{
     <parent>
       <nulls type="array"/>
@@ -27,19 +27,15 @@ subtest "should not suck" => sub {
         </item>
       </deep>
     </parent>
-    
+
   };
 
   my $hash = xml_to_hash($xml);
-
-  #use Data::Dumper;
-  #print Dumper($hash);
-
   is $hash->{parent}->{nulls}->[0], undef;
   is $hash->{parent}->{singles}->[0]->{name}, "Foo";
   is $hash->{parent}->{doubles}->[1]->{name}, "Second";
-  
+
   is $hash->{parent}->{deep}->[0]->{doubles}->[1]->{name}, "Second";
 };
 
-done_testing(); # ... that's right!!!
+done_testing();

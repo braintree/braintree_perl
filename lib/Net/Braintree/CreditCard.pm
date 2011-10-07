@@ -1,4 +1,7 @@
 package Net::Braintree::CreditCard;
+use Net::Braintree::CreditCard::CardType;
+use Net::Braintree::CreditCard::Location;
+
 use Moose;
 extends 'Net::Braintree::ResultObject';
 my $meta = __PACKAGE__->meta;

@@ -1,5 +1,7 @@
 package Net::Braintree::Subscription;
 use Net::Braintree::SubscriptionGateway;
+use Net::Braintree::Subscription::Status;
+
 use Moose;
 extends 'Net::Braintree::ResultObject';
 
@@ -35,6 +37,16 @@ sub cancel {
 sub retry_charge {
   my ($class, $subscription_id, $amount) = @_;
   $class->gateway->transaction->retry_subscription_charge($subscription_id, $amount);
+}
+
+sub search {
+  my($class, $block) = @_;
+  $class->gateway->subscription->search($block);
+}
+
+sub all {
+  my $class = shift;
+  $class->gateway->subscription->all;
 }
 
 sub gateway {

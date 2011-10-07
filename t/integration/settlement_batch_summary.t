@@ -21,14 +21,14 @@ subtest "returns an error if the result cannot be parsed" => sub {
 
 subtest "returns transactions settled on a given day" => sub {
   my $transaction_params = {
-    amount => 50.00,
+    amount => "50.00",
     credit_card => {
       number => "5431111111111111",
       expiration_date => "05/12"
     }
   };
 
-  my $settlement_date = DateTime->now->strftime("%Y-%m-%d");
+  my $settlement_date = Net::Braintree::TestHelper::now_in_eastern;
   my $transaction = create_settled_transaction($transaction_params);
 
   my $result = Net::Braintree::SettlementBatchSummary->generate($settlement_date);
@@ -45,7 +45,7 @@ subtest "returns transactions settled on a given day" => sub {
 
 subtest "returns transactions grouped by custom field" => sub {
   my $transaction_params = {
-    amount => 50.00,
+    amount => "50.00",
     credit_card => {
       number => "5431111111111111",
       expiration_date => "05/12"
@@ -55,7 +55,7 @@ subtest "returns transactions grouped by custom field" => sub {
     }
   };
 
-  my $settlement_date = DateTime->now->strftime("%Y-%m-%d");
+  my $settlement_date = Net::Braintree::TestHelper::now_in_eastern;
   my $transaction = create_settled_transaction($transaction_params);
 
   my $result = Net::Braintree::SettlementBatchSummary->generate($settlement_date, "store_me");

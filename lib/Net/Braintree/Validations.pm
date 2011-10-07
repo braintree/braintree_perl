@@ -5,7 +5,7 @@ use Net::Braintree::Util;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(verify_params address_signature credit_card_signature customer_signature transaction_signature);
+our @EXPORT_OK = qw(verify_params address_signature credit_card_signature customer_signature transaction_signature clone_transaction_signature);
 
 sub verify_params {
   my ($params, $white_list) = @_;
@@ -13,9 +13,9 @@ sub verify_params {
     my $key = $_;
     my $sub_white_list = $white_list-> {$key};
     return 0 unless($sub_white_list);
-    if (is_hash($sub_white_list)) {
+    if (is_hashref($sub_white_list)) {
       return 0 unless verify_params($params->{$key}, $sub_white_list);
-    } elsif (is_hash($params->{$key})) {
+    } elsif (is_hashref($params->{$key})) {
       return 0 if $sub_white_list ne "_any_key_";
     }
   }
@@ -47,6 +47,10 @@ sub customer_signature {
     credit_card => credit_card_signature,
     custom_fields => "_any_key_"
   };
+}
+
+sub clone_transaction_signature {
+  return { amount => ".", options => { submit_for_settlement => "." } };
 }
 
 sub transaction_signature{

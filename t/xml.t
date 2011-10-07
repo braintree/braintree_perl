@@ -2,7 +2,6 @@ use lib qw(lib t/lib);
 use Test::More;
 use Net::Braintree::Xml;
 use Net::Braintree::TestHelper;
-use Data::Dumper;
 
 subtest "simple parsing" => sub {
   is_deeply xml_to_hash("<node>text</node>"), {node => "text"};
@@ -27,6 +26,16 @@ subtest "type = array with one sub-element" => sub {
   my $single_result = xml_to_hash($single_transaction_subscription);
   is $single_result->{subscription}->{transactions}->[0]->{id}, "5hpp5g";
   is_deeply $single_result, {subscription => {transactions => [{id => "5hpp5g"}]}};
+};
+
+subtest "type = array with one sub-element but no title element" => sub {
+  my $xml = '<search-results>
+    <ids type="array">
+      <item>4rsj5g</item>
+    </ids>
+  </search-results>';
+  my $result = xml_to_hash($xml);
+  is $result->{'search_results'}->{'ids'}->[0], '4rsj5g';
 };
 
 subtest "type = array with multiple sub-elements" => sub {

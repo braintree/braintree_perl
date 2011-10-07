@@ -40,7 +40,7 @@ sub make_request {
 
   $request->header("X-ApiVersion" => 2);
   $request->header("environment" => $self->config->environment);
-  $request->header("User-Agent" => "Braintree Perl Module 0.0");
+  $request->header("User-Agent" => "Braintree Perl Module " . Net::Braintree->VERSION);
 
   my $agent = LWP::UserAgent->new;
   my $response = $agent->request($request);

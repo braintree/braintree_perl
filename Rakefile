@@ -1,11 +1,18 @@
-task :default => :test
+task :default => :ci
 
 desc "update makefile"
 task :makefile do
   sh 'perl Makefile.PL && make'
 end
 
-task :test => ["makefile", "test:unit", "test:integration"]
+desc "Run all tests"
+task :test  => ["strict_check", "test:unit", "test:integration"]
+
+desc "Build dependencies"
+task :build_deps => ["strict_check", "makefile"]
+
+desc "Build dependencies, and run tests"
+task :ci => ["build_deps", "test"]
 
 namespace :test do
   desc "run unit tests"

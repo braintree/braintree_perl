@@ -5,7 +5,6 @@ use Test::More;
 use HTTP::Request;
 use LWP::UserAgent;
 use Net::Braintree::Util;
-use Data::Dumper;
 use CGI;
 
 use Net::Braintree;
@@ -64,6 +63,10 @@ sub make_subscription_past_due {
 
   my $request = Net::Braintree->configuration->gateway->http->put(
     "/subscriptions/$subscription_id/make_past_due?days_past_due=1");
+}
+
+sub now_in_eastern {
+  return DateTime->now(time_zone => "America/New_York")->strftime("%Y-%m-%d");
 }
 
 1;

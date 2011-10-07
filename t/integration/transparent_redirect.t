@@ -6,7 +6,7 @@ use Net::Braintree::TestHelper;
 subtest "gets the right transaction data" => sub {
   my $tr_params = {
     redirect_url => "http://example.com",
-    transaction => {type => "sale", amount => 50.00}
+    transaction => {type => "sale", amount => "50.00"}
   };
 
   my $transaction_params = {

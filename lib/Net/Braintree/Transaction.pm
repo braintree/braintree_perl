@@ -1,4 +1,9 @@
 package Net::Braintree::Transaction;
+use Net::Braintree::Transaction::CreatedUsing;
+use Net::Braintree::Transaction::Source;
+use Net::Braintree::Transaction::Status;
+use Net::Braintree::Transaction::Type;
+
 use Moose;
 extends "Net::Braintree::ResultObject";
 my $meta = __PACKAGE__->meta;
@@ -47,6 +52,21 @@ sub create {
 sub find {
   my ($class, $id) = @_;
   $class->gateway->transaction->find($id);
+}
+
+sub search {
+  my ($class, $block) = @_;
+  $class->gateway->transaction->search($block);
+}
+
+sub all {
+  my $class = shift;
+  $class->gateway->transaction->all;
+}
+
+sub clone_transaction {
+  my ($class, $id, $params) = @_;
+  $class->gateway->transaction->clone_transaction($id, $params);
 }
 
 sub gateway {

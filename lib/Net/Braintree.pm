@@ -4,11 +4,17 @@ use 5.006;
 use strict;
 use warnings;
 use Net::Braintree::Address;
+use Net::Braintree::AdvancedSearchFields;
+use Net::Braintree::AdvancedSearchNodes;
 use Net::Braintree::CreditCard;
 use Net::Braintree::Customer;
+use Net::Braintree::CustomerSearch;
+use Net::Braintree::ResourceCollection;
 use Net::Braintree::SettlementBatchSummary;
 use Net::Braintree::Subscription;
+use Net::Braintree::SubscriptionSearch;
 use Net::Braintree::Transaction;
+use Net::Braintree::TransactionSearch;
 use Net::Braintree::TransparentRedirect;
 
 use Net::Braintree::Configuration;
@@ -21,7 +27,7 @@ Version 0.2.0
 
 =cut
 
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 

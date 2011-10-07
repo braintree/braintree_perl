@@ -10,7 +10,7 @@ my $response_objects = {
   customer => "Net::Braintree::Customer",
   settlement_batch_summary => "Net::Braintree::SettlementBatchSummary",
   subscription => "Net::Braintree::Subscription",
-  transaction => "Net::Braintree::Transaction"
+  transaction => "Net::Braintree::Transaction",
 };
 
 has response => ( is => 'ro', trigger => sub {
