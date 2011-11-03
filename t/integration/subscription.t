@@ -23,6 +23,7 @@ subtest "create without trial" => sub {
 
   is_deeply $transaction->subscription->billing_period_start_date, $result->subscription->billing_period_start_date;
   is_deeply $transaction->subscription->billing_period_end_date, $result->subscription->billing_period_end_date;
+  is_deeply $transaction->subscription_details->billing_period_end_date, $result->subscription->billing_period_end_date;
 
   is $result->subscription->current_billing_cycle, 1;
 

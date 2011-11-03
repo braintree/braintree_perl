@@ -4,7 +4,7 @@ use strict;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT = qw(to_instance_array flatten is_hashref is_arrayref hash_to_query_string equal_arrays difference_arrays);
+our @EXPORT = qw(to_instance_array flatten is_hashref is_arrayref hash_to_query_string equal_arrays difference_arrays validate_id);
 our @EXPORT_OK = qw();
 
 sub flatten {
@@ -70,4 +70,17 @@ sub to_instance_array {
   }
   return \@result;
 }
+sub trim {
+  my $string = shift;
+  $string =~ s/^\s+//;
+  $string =~ s/\s+$//;
+  return $string;
+}
+
+sub validate_id {
+  my $id = shift;
+  return 0 if(!defined($id) || trim($id) eq "");
+  return 1;
+}
+
 1;

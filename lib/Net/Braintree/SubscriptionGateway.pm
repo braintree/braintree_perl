@@ -1,5 +1,5 @@
 package Net::Braintree::SubscriptionGateway;
-use Net::Braintree::Util;
+use Net::Braintree::Util qw(to_instance_array validate_id);
 
 use Moose;
 
@@ -13,6 +13,7 @@ sub create {
 
 sub find {
   my ($self, $id) = @_;
+  confess "NotFoundError" unless validate_id($id);
   my $result = $self->_make_request("/subscriptions/$id", "get", undef)->subscription;
 }
 

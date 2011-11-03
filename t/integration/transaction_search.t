@@ -99,6 +99,15 @@ subtest "status - multiple value field" => sub {
   ok $find->id ~~ @results;
 };
 
+subtest "type - multiple value field - passing invalid type" => sub {
+  should_throw "Invalid Argument\\(s\\) for type: invalid type", sub {
+    my $search_result = Net::Braintree::Transaction->search(sub {
+      my $search = shift;
+      $search->type->is("invalid type");
+    });
+  }
+};
+
 subtest "credit card number - partial match" => sub {
   my $unique = generate_unique_integer() . "ccnum";
   my $sale1 = create_sale($unique);

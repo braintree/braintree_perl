@@ -214,6 +214,7 @@ subtest "Clone transaction with validation error" => sub {
 
   not_ok $clone_result->is_success;
   $errors = $clone_result->errors->{"transaction"}->{"errors"};
+
   my @base_errors = grep { $_->{"attribute"} eq "base" } @{$errors};
 
   is $base_errors[0]->{"code"}, "91543";

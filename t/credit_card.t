@@ -23,4 +23,9 @@ subtest "instance methods" => sub {
   ok $default->is_default;
 };
 
+subtest "throws error if find is passed a blank/empty string" => sub {
+  should_throw("NotFoundError", sub { Net::Braintree::CreditCard->find("") });
+  should_throw("NotFoundError", sub { Net::Braintree::CreditCard->find("  ") });
+};
+
 done_testing();

@@ -45,4 +45,11 @@ sub setup_sub_objects {
   }
 }
 
+
+sub credit_card_details { shift->credit_card; }
+sub customer_details { shift->customer; }
+sub billing_details { shift->billing; }
+sub shipping_details { shift->shipping; }
+sub subscription_details { shift->subscription; }
+
 1;

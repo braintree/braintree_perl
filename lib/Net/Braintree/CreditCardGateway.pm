@@ -2,6 +2,7 @@ package Net::Braintree::CreditCardGateway;
 use Moose;
 use Carp qw(confess);
 use Net::Braintree::Validations qw(verify_params credit_card_signature);
+use Net::Braintree::Util qw(validate_id);
 use Net::Braintree::Result;
 
 has 'gateway' => (is => 'ro');
@@ -25,6 +26,7 @@ sub update {
 
 sub find {
   my ($self, $token) = @_;
+  confess "NotFoundError" unless validate_id($token);
   $self->_make_request("/payment_methods/$token", "get", undef)->credit_card;
 }
 

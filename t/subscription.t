@@ -12,4 +12,9 @@ subtest "does have correct attributes" => sub {
   has_attribute_ok $subscription, "balance";
 };
 
+subtest "throws NotFoundError if find is given empty string" => sub {
+  should_throw("NotFoundError", sub { Net::Braintree::Subscription->find("") });
+  should_throw("NotFoundError", sub { Net::Braintree::Subscription->find("  ") });
+};
+
 done_testing();

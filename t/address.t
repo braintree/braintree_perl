@@ -11,4 +11,11 @@ subtest "instance methods" => sub {
   is $address->full_name, "Walter Weatherman";
 };
 
+subtest "throws error on find if passed empty string for customer or address id" => sub {
+  should_throw("NotFoundError", sub { Net::Braintree::Address->find("", "adfs671") });
+  should_throw("NotFoundError", sub { Net::Braintree::Address->find("   ", "asdf") });
+  should_throw("NotFoundError", sub { Net::Braintree::Address->find("iaddf", "") });
+  should_throw("NotFoundError", sub { Net::Braintree::Address->find("iaddf", "  ") });
+};
+
 done_testing();

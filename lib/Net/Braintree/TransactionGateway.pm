@@ -1,6 +1,7 @@
 package Net::Braintree::TransactionGateway;
 use Moose;
 use Carp qw(confess);
+use Net::Braintree::Util qw(validate_id);
 use Net::Braintree::Validations qw(verify_params transaction_signature clone_transaction_signature);
 use Net::Braintree::Util;
 
@@ -14,6 +15,7 @@ sub create {
 
 sub find {
   my ($self, $id) = @_;
+  confess "NotFoundError" unless validate_id($id);
   $self->_make_request("/transactions/$id", "get", undef);
 }
 

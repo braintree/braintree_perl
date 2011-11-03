@@ -2,6 +2,7 @@ package Net::Braintree::AddressGateway;
 use Moose;
 use Carp qw(confess);
 use Net::Braintree::Validations qw(verify_params address_signature);
+use Net::Braintree::Util qw(validate_id);
 use Net::Braintree::Result;
 
 has 'gateway' => (is => 'ro');
@@ -15,6 +16,7 @@ sub create {
 
 sub find {
   my ($self, $customer_id, $address_id) = @_;
+  confess "NotFoundError" unless (validate_id($address_id) && validate_id($customer_id));
   $self->_make_request("/customers/$customer_id/addresses/$address_id", "get")->address;
 }
 
@@ -35,5 +37,6 @@ sub _make_request {
   my $result = Net::Braintree::Result->new(response => $response);
   return $result;
 }
+
 
 1;

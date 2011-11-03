@@ -50,7 +50,7 @@ $field->multiple_values("ids");
 $field->multiple_values("merchant_account_id");
 $field->multiple_values("status", Net::Braintree::Transaction::Status::All);
 $field->multiple_values("source", Net::Braintree::Transaction::Source::All);
-$field->multiple_values("type");
+$field->multiple_values("type", Net::Braintree::Transaction::Type::All);
 
 $field->key_value("refund");
 

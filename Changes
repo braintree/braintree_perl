@@ -1,5 +1,8 @@
 Revision history for Net-Braintree
 
+0.3.1   11/03/2011
+        Removed embedded perl5
+        Aliased $transaction->credit_card_details to $transaction->credit_card
 0.3.0   10/07/2011
         Added ability to retrieve all Plans, AddOns, and Discounts
         Added Transaction cloning
