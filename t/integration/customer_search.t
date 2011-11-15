@@ -3,6 +3,7 @@ use Test::More;
 use Time::HiRes qw(gettimeofday);
 use Net::Braintree;
 use Net::Braintree::TestHelper;
+use Net::Braintree::Util;
 use DateTime;
 use DateTime::Duration;
 
@@ -63,7 +64,7 @@ subtest "can search on created_at (range field)" => sub {
   });
 
   not_ok $search_result->is_empty;
-  ok $new_customer->id ~~ $search_result->ids;
+  ok contains($new_customer->id, $search_result->ids);
 };
 
 subtest "can search on address (text field)" => sub {
@@ -85,7 +86,7 @@ subtest "can search on address (text field)" => sub {
   });
 
   not_ok $search_result->is_empty;
-  ok $new_customer->id ~~ $search_result->ids;
+  ok contains($new_customer->id, $search_result->ids);
 };
 
 subtest "gets all customers" => sub {
@@ -104,7 +105,7 @@ sub create_customer {
     website => "http://example.com",
     credit_card => {
       cardholder_name => "Tim Tool",
-      number => 5431111111111111,
+      number => "5431111111111111",
       expiration_date => "05/2010",
       token => shift,
       billing_address => {
@@ -153,7 +154,7 @@ sub make_search_criteria {
     payment_method_token => shift,
     cardholder_name => "Tim Tool",
     credit_card_expiration_date => "05/2010",
-    credit_card_number => 5431111111111111,
+    credit_card_number => "5431111111111111",
   };
 }
 

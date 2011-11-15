@@ -23,11 +23,11 @@ use Net::Braintree::Configuration;
 Net::Braintree - A Client Library for wrapping the Braintree Payment Services Gateway API
 
 =head1 VERSION
-Version 0.2.0
+Version 0.3.2
 
 =cut
 
-our $VERSION = '0.3.1';
+our $VERSION = '0.3.2';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 

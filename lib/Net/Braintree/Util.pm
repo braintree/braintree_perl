@@ -4,7 +4,7 @@ use strict;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT = qw(to_instance_array flatten is_hashref is_arrayref hash_to_query_string equal_arrays difference_arrays validate_id);
+our @EXPORT = qw(to_instance_array flatten is_hashref is_arrayref hash_to_query_string equal_arrays difference_arrays validate_id contains);
 our @EXPORT_OK = qw();
 
 sub flatten {
@@ -48,7 +48,7 @@ sub difference_arrays {
   my ($array1, $array2) = @_;
   my @diff;
   foreach my $element (@$array1) {
-    push(@diff, $element) unless $element ~~ $array2;
+    push(@diff, $element) unless contains($element, $array2);
   }
   return \@diff;
 }
@@ -83,4 +83,13 @@ sub validate_id {
   return 1;
 }
 
+sub contains {
+  my ($element, $array) = @_;
+  if ($] < 5.010) {
+    return scalar grep {$_ eq $element} @$array;
+  }
+  else {
+    return $element ~~ $array;
+  }
+}
 1;

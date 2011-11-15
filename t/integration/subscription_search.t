@@ -2,6 +2,7 @@ use lib qw(lib t/lib);
 use Test::More;
 use Time::HiRes qw(gettimeofday);
 use Net::Braintree;
+use Net::Braintree::Util;
 use Net::Braintree::TestHelper;
 
 my $customer = Net::Braintree::Customer->create({first_name => "Fred", last_name => "Fredson"});
@@ -26,8 +27,8 @@ subtest "id (equality)" => sub {
     $search->id->is("subscription1_$id");
   });
 
-  ok $subscription1->id ~~ $search_result->ids;
-  not_ok $subscription2->id ~~ $search_result->ids;
+  ok contains($subscription1->id, $search_result->ids);
+  not_ok contains($subscription2->id, $search_result->ids);
 };
 
 subtest "price (range)" => sub {
@@ -52,8 +53,8 @@ subtest "price (range)" => sub {
     $search->price->max("5.50");
   });
 
-  ok $subscription1->id ~~ $search_result->ids;
-  not_ok $subscription2->id ~~ $search_result->ids;
+  ok contains($subscription1->id, $search_result->ids);
+  not_ok contains($subscription2->id, $search_result->ids);
 };
 
 subtest "price (is)"  => sub {
@@ -78,8 +79,8 @@ subtest "price (is)"  => sub {
     $search->price->is("5.00");
   });
 
-  ok $subscription1->id ~~ $search_result->ids;
-  not_ok $subscription2->id ~~ $search_result->ids;
+  ok contains($subscription1->id, $search_result->ids);
+  not_ok contains($subscription2->id, $search_result->ids);
 };
 
 subtest "status (multiple value)" => sub {
@@ -104,8 +105,8 @@ subtest "status (multiple value)" => sub {
     $search->status->is("Active");
   });
 
-  ok $subscription_active->id ~~ $search_result->ids;
-  not_ok $subscription_past_due->id ~~ $search_result->ids;
+  ok contains($subscription_active->id, $search_result->ids);
+  not_ok contains($subscription_past_due->id, $search_result->ids);
 };
 
 subtest "each (single value)" => sub {

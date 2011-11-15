@@ -2,6 +2,7 @@ use lib qw(lib t/lib);
 use Test::More;
 use Time::HiRes qw(gettimeofday);
 use Net::Braintree;
+use Net::Braintree::Util;
 use Net::Braintree::TestHelper;
 
 my $credit_card_number = "5431111111111111";
@@ -39,9 +40,9 @@ subtest "results 'first'" => sub {
     my $search_result = perform_search($criteria);
 
     is scalar @{$search_result->ids}, 2;
-    ok $sale1->transaction->id ~~ $search_result->ids;
-    ok $sale2->transaction->id ~~ $search_result->ids;
-    ok $search_result->first->id ~~ [$sale2->transaction->id, $sale1->transaction->id];
+    ok contains($sale1->transaction->id, $search_result->ids);
+    ok contains($sale2->transaction->id, $search_result->ids);
+    ok contains($search_result->first->id, [$sale2->transaction->id, $sale1->transaction->id]);
     is $search_result->first->amount, '5.00';
   };
 };
@@ -75,10 +76,11 @@ subtest "result 'each'" => sub {
     my $search_result = perform_search($criteria);
 
     is scalar @{$search_result->ids}, 2;
-    @results = ();
+    my @results = ();
     $search_result->each(sub { push(@results, shift->id); });
-    ok $sale1->transaction->id ~~ @results;
-    ok $sale2->transaction->id ~~ @results;
+
+    ok contains($sale1->transaction->id, \@results);
+    ok contains($sale2->transaction->id, \@results);
   };
 };
 
@@ -93,10 +95,10 @@ subtest "status - multiple value field" => sub {
     $search->status->is($find->status);
   });
 
-  ok $find->id ~~ $search_result->ids;
+  ok contains($find->id, $search_result->ids);
   my @results = ();
   $search_result->each(sub { push(@results, shift->id); });
-  ok $find->id ~~ @results;
+  ok contains($find->id, \@results);
 };
 
 subtest "type - multiple value field - passing invalid type" => sub {
@@ -119,7 +121,7 @@ subtest "credit card number - partial match" => sub {
     $search->credit_card_number->ends_with($find->credit_card->last_4);
   });
 
-  ok $find->id ~~ $search_result->ids;
+  ok contains($find->id, $search_result->ids);
 };
 
 subtest "amount - range" => sub {
@@ -142,8 +144,8 @@ subtest "amount - range" => sub {
     $search->amount->min("4.50");
   });
 
-  ok $find->id ~~ $search_result->ids;
-  not_ok $sale2->id ~~ $search_result->ids;
+  ok contains($find->id, $search_result->ids);
+  not_ok contains($sale2->id, $search_result->ids);
 };
 
 subtest "all" => sub {
