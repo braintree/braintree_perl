@@ -9,8 +9,11 @@ my $config = Net::Braintree::Configuration->new({environment => "integration"});
 
 my $tr = Net::Braintree::TransparentRedirect::QueryString->new(config => $config);
 my $query_string = "one=1&two=2&http_status=200";
+my $cgi_query_string = "one=1;two=2;http_status=200";
 my $hash = hexdigest($config->private_key, $query_string);
+my $cgi_hash = hexdigest($config->private_key, $cgi_query_string);
 my $complete_query_string = with_hash($query_string);
+my $cgi_complete_query_string = "$cgi_query_string;hash=$cgi_hash";
 my %query_as_hash = (one => 1, two => 2, http_status=>200, hash=>$hash);
 
 subtest "check query string for forgery" => sub {
@@ -20,6 +23,11 @@ subtest "check query string for forgery" => sub {
 
   should_throw("UnexpectedError: expected query string to have an http_status param",
     sub { $tr->validate(with_hash("one=1&two=2")) }, "Query String invalid without http_status");
+};
+
+subtest "check cgi query string for forgery" => sub {
+  ok($tr->validate($cgi_complete_query_string), "Query String is valid");
+  should_throw("ForgedQueryString", sub {$tr->validate($cgi_query_string)}, "Query String is invalid without hash");
 };
 
 subtest "parse to hash" => sub {

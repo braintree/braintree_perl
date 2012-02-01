@@ -1,5 +1,8 @@
 Revision history for Net-Braintree
 
+0.3.3   02/01/2012
+        Exposes plan_id on transactions
+        Correctly parses query strings that use semicolons instead of ampersands
 0.3.2   11/15/2011
         Increases compatibility with versions of Perl prior to 5.10
 0.3.1   11/03/2011

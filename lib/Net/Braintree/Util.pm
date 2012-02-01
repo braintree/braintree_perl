@@ -2,6 +2,7 @@ package Net::Braintree::Util;
 use strict;
 
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
+use URI::Query;
 use Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = qw(to_instance_array flatten is_hashref is_arrayref hash_to_query_string equal_arrays difference_arrays validate_id contains);

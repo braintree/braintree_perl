@@ -4,6 +4,7 @@ use Time::HiRes qw(gettimeofday);
 use Net::Braintree;
 use Net::Braintree::Util;
 use Net::Braintree::TestHelper;
+use Data::Dumper;
 
 my $credit_card_number = "5431111111111111";
 

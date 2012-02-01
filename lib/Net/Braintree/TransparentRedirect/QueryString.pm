@@ -1,5 +1,5 @@
 package Net::Braintree::TransparentRedirect::QueryString;
-use URI::Query;
+use CGI;
 use Net::Braintree::Digest qw(hexdigest);
 use Moose;
 use Carp qw(confess);
@@ -15,15 +15,15 @@ sub validate {
 
 sub parse {
   my ($self, $query_string) = @_;
-  my $params = URI::Query->new($query_string);
-  return $params->hash;
+  my $query = CGI->new($query_string);
+  return $query->Vars;
 }
 
 sub hash_is_forged {
   my ($self, $query_string) = @_;
-  if ($query_string =~ /(.*)&hash=(.*)/) {
+  if ($query_string =~ /(.*)(&|;)hash=(.*)/) {
     my $query_string_without_hash = $1;
-    my $hash = $2;
+    my $hash = $3;
     return $hash ne hexdigest($self->config->private_key, $query_string_without_hash);
   }
   return 1;
