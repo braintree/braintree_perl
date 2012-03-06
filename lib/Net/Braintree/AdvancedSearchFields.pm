@@ -10,6 +10,13 @@
     $self->metaclass->add_attribute($name, is => 'rw', default => $node);
   }
 
+  sub is {
+    my ($self, $name) = @_;
+    $self->field($name, sub {
+      return Net::Braintree::IsNode->new(searcher => shift, name => $name);
+    });
+  }
+
   sub equality {
     my ($self, $name) = @_;
     $self->field($name, sub {

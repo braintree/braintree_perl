@@ -21,6 +21,25 @@ subtest "find customer with all matching fields" => sub {
   is substr($search_result->first->credit_cards->[0]->last_4, 0, 4), 1111;
 };
 
+subtest "can find duplicate credit cards given payment method token" => sub {
+  my $unique_company1 = "company" . generate_unique_integer();
+  my $unique_token1 = "token" . generate_unique_integer();
+  my $customer1 = create_customer($unique_company1, $unique_token1)->customer;
+
+  my $unique_company2 = "company" . generate_unique_integer();
+  my $unique_token2 = "token" . generate_unique_integer();
+  my $customer2 = create_customer($unique_company2, $unique_token2)->customer;
+
+  my $search_result = Net::Braintree::Customer->search(sub {
+    my $search = shift;
+    $search->payment_method_token_with_duplicates->is($customer1->credit_cards->[0]->token);
+  });
+
+  not_ok $search_result->is_empty;
+  ok contains($customer1->id, $search_result->ids);
+  ok contains($customer2->id, $search_result->ids);
+};
+
 subtest "can search on text fields" => sub {
   my $search_result = Net::Braintree::Customer->search(sub {
     my $search = shift;
@@ -38,7 +57,8 @@ subtest "can search on credit card number (partial match)" => sub {
   });
 
   not_ok $search_result->is_empty;
-  is substr($search_result->first->credit_cards->[0]->last_4, 0, 4), 1111;
+
+  ok contains("1111", map { $_->last_4 } @{$search_result->first->credit_cards});
 };
 
 subtest "can search on ids (multiple values)" => sub {

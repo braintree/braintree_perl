@@ -31,7 +31,7 @@
 }
 
 {
-  package Net::Braintree::EqualityNode;
+  package Net::Braintree::IsNode;
   use Moose;
   extends ("Net::Braintree::SearchNode");
 
@@ -39,6 +39,13 @@
     my ($self, $operand) = @_;
     return $self->add_node("is", $operand);
   }
+  1;
+}
+
+{
+  package Net::Braintree::EqualityNode;
+  use Moose;
+  extends ("Net::Braintree::IsNode");
 
   sub is_not {
     my ($self, $operand) = @_;

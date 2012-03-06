@@ -1,5 +1,8 @@
 Revision history for Net-Braintree
 
+0.4.0   03/06/2012
+        Adds search for duplicate credit cards given a payment method token
+        Adds flag to fail saving credit card to vault if card is duplicate
 0.3.3   02/01/2012
         Exposes plan_id on transactions
         Correctly parses query strings that use semicolons instead of ampersands

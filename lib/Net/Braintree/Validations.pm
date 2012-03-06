@@ -36,7 +36,13 @@ sub credit_card_signature {
     customer_id => ".",
     billing_address_id => ".", cardholder_name => ".", cvv => ".", expiration_date => ".",
     expiration_month => ".", expiration_year => ".", number => ".", token => ".",
-    options => {make_default => ".", verification_merchant_account_id => ".", verify_card => ".", update_existing_token => "."},
+    options => {
+      make_default => ".",
+      verification_merchant_account_id => ".",
+      verify_card => ".",
+      update_existing_token => ".",
+      fail_on_duplicate_payment_method => "."
+    },
     billing_address => address_signature
   };
 }

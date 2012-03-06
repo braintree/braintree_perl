@@ -26,6 +26,24 @@ subtest "Failure Cases" => sub {
   is $result->message, "Customer ID is invalid.", "Customer not found";
 };
 
+subtest "Create with Fail on Duplicate Payment Method" => sub {
+  my $customer_id = $customer_create->customer->id;
+
+  my $credit_card_params =  {
+    customer_id => $customer_id,
+    number => "5431111111111111",
+    expiration_date => "12/15",
+    options => {
+      fail_on_duplicate_payment_method => 1
+    }
+  };
+
+  Net::Braintree::CreditCard->create($credit_card_params);
+  my $result = Net::Braintree::CreditCard->create($credit_card_params);
+  not_ok $result->is_success;
+  is $result->message, "Duplicate card exists in the vault.";
+};
+
 subtest "Create with Billing Address" => sub {
   my $credit_card_params =  {
     customer_id => $customer_create->customer->id,

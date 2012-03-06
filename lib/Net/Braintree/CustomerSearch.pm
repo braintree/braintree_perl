@@ -23,6 +23,7 @@ $field->text("payment_method_token");
 $field->text("phone");
 $field->text("website");
 
+$field->is("payment_method_token_with_duplicates");
 $field->equality("credit_card_expiration_date");
 $field->partial_match("credit_card_number");
 $field->multiple_values("ids");
