@@ -24,4 +24,25 @@ sub key_digest {
   return $sha1->digest;
 }
 
+sub secure_compare {
+  my ($left, $right) = @_;
+
+  if ((not defined($left)) || (not defined($right))) {
+    return 0;
+  }
+
+  my @left_bytes = unpack("C*", $left);
+  my @right_bytes = unpack("C*", $right);
+
+  if (length(@left_bytes) != length(@right_bytes)) {
+    return 0;
+  }
+
+  my $result = 0;
+  for (my $i = 0; $i < length(@left_bytes); $i++) {
+    $result |= $left_bytes[$i] ^ $right_bytes[$i];
+  }
+  return $result == 0;
+}
+
 1;

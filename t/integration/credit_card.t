@@ -15,6 +15,7 @@ subtest "Create with S2S" => sub {
   my $result = Net::Braintree::CreditCard->create($credit_card_params);
   ok $result->is_success, "result returns no errors";
   is $result->credit_card->last_4, "1111", "sets credit card number";
+  ok $result->credit_card->unique_number_identifier =~ /\A\w{32}\z/;
 };
 
 subtest "Failure Cases" => sub {

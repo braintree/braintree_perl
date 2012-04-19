@@ -7,6 +7,8 @@ use Net::Braintree::SettlementBatchSummaryGateway;
 use Net::Braintree::SubscriptionGateway;
 use Net::Braintree::TransactionGateway;
 use Net::Braintree::TransparentRedirectGateway;
+use Net::Braintree::WebhookNotificationGateway;
+use Net::Braintree::WebhookTestingGateway;
 
 use Moose;
 
@@ -45,6 +47,16 @@ has 'transaction' => (is => 'ro', lazy => 1, default => sub {
 has 'transparent_redirect' => (is => 'ro', lazy => 1, default => sub {
   my $self = shift;
   Net::Braintree::TransparentRedirectGateway->new(gateway => $self);
+});
+
+has 'webhook_notification' => (is => 'ro', lazy => 1, default => sub {
+  my $self = shift;
+  Net::Braintree::WebhookNotificationGateway->new(gateway => $self);
+});
+
+has 'webhook_testing' => (is => 'ro', lazy => 1, default => sub {
+  my $self = shift;
+  Net::Braintree::WebhookTestingGateway->new(gateway => $self);
 });
 
 sub http {

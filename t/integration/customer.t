@@ -44,6 +44,7 @@ subtest "Create:S2S" => sub {
     is($result->customer->first_name, "Johnny", "sets customer attributes (first name)");
     is($result->customer->addresses->[0]->street_address, "2 E Main St", "sets deeply nested attributes");
     is($result->customer->credit_cards->[0]->last_4, "1111");
+    ok $result->customer->credit_cards->[0]->unique_number_identifier =~ /\A\w{32}\z/;
   };
 
   subtest "with invalid attributes" => sub {

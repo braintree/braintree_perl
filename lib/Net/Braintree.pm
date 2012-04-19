@@ -16,7 +16,8 @@ use Net::Braintree::SubscriptionSearch;
 use Net::Braintree::Transaction;
 use Net::Braintree::TransactionSearch;
 use Net::Braintree::TransparentRedirect;
-
+use Net::Braintree::WebhookNotification;
+use Net::Braintree::WebhookTesting;
 use Net::Braintree::Configuration;
 
 =head1 NAME
@@ -27,7 +28,7 @@ Version 0.3.3
 
 =cut
 
-our $VERSION = '0.4.0';
+our $VERSION = '0.5.0';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 
