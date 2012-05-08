@@ -1,5 +1,7 @@
 Revision history for Net-Braintree
 
+0.6.1   05/08/2012
+        Adds ValidationError and ValidationErrorCollection and updates $result->errors to return a ValidationErrorCollection
 0.5.0   04/19/2012
         Adds webhooks gateways for parsing, verifying, and testing notifications
 0.4.0   03/06/2012

@@ -28,7 +28,7 @@ Version 0.3.3
 
 =cut
 
-our $VERSION = '0.5.0';
+our $VERSION = '0.6.1';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 
