@@ -1,18 +1,18 @@
 package Net::Braintree::Util;
-use strict;
 
-use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
+use strict;
+use warnings;
+
 use URI::Query;
-use Exporter;
-our @ISA = qw(Exporter);
+use Exporter qw(import);
+
 our @EXPORT = qw(to_instance_array flatten is_hashref is_arrayref hash_to_query_string equal_arrays difference_arrays validate_id contains);
-our @EXPORT_OK = qw();
 
 sub flatten {
   my($hash, $namespace) = @_;
   my %flat_hash = ();
   while(my ($key, $value) = each(%$hash)) {
-    if(is_hashref($value)) {
+    if (is_hashref($value)) {
       my $sub_entries = flatten($value, add_namespace($key, $namespace));
       %flat_hash = (%flat_hash, %$sub_entries);
     } else {
@@ -37,6 +37,8 @@ sub is_arrayref {
 }
 
 sub equal_arrays {
+  # XXX - String equality only (as with other Util functions).
+  #       Caveat:  undef eq ""
   my ($first, $second) = @_;
   return 0 unless @$first == @$second;
   for (my $i = 0; $i < @$first; $i++) {
@@ -45,13 +47,15 @@ sub equal_arrays {
   return 1;
 }
 
+# difference_arrays AREF1 AREF2
+#
+# Return elements in AREF1 not in AREF2 (the relative complement of
+# AREF2 in AREF1)
 sub difference_arrays {
   my ($array1, $array2) = @_;
-  my @diff;
-  foreach my $element (@$array1) {
-    push(@diff, $element) unless contains($element, $array2);
-  }
-  return \@diff;
+  my %possibly_overlapping;
+  @possibly_overlapping{ @$array2 } = ();
+  return [ grep { not exists $possibly_overlapping{$_} } @$array1 ];
 }
 
 sub hash_to_query_string {
@@ -61,36 +65,35 @@ sub hash_to_query_string {
 
 sub to_instance_array {
   my ($attrs, $class) = @_;
-  my @result = ();
-  if(ref $attrs ne "ARRAY") {
-    push(@result, $class->new($attrs));
-  } else {
-    for(@$attrs) {
-      push(@result, $class->new($_));
-    }
-  }
-  return \@result;
+  $attrs = [$attrs] unless is_arrayref($attrs);
+  return [ map { $class->new($_) } @$attrs ];
 }
+
 sub trim {
   my $string = shift;
-  $string =~ s/^\s+//;
-  $string =~ s/\s+$//;
+  for ($string) {
+    s/^\s+//;
+    s/\s+$//;
+  }
   return $string;
 }
 
+# validate_id ID
+#
+# False if ID is all blanks, empty, or undef.
 sub validate_id {
   my $id = shift;
-  return 0 if(!defined($id) || trim($id) eq "");
+  return 0 if trim($id) eq "";
   return 1;
 }
 
 sub contains {
+  # See also List::MoreUtils::any { $_ eq $element } @$array
   my ($element, $array) = @_;
-  if ($] < 5.010) {
-    return scalar grep {$_ eq $element} @$array;
+  for (@$array) {
+    return 1 if $_ eq $element;
   }
-  else {
-    return $element ~~ $array;
-  }
+  return 0;
 }
+
 1;
