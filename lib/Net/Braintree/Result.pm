@@ -2,6 +2,8 @@ package Net::Braintree::Result;
 use Moose;
 use Hash::Inflator;
 use Net::Braintree::Util;
+use Net::Braintree::ValidationErrorCollection;
+
 my $meta = __PACKAGE__->meta();
 
 my $response_objects = {
@@ -42,7 +44,7 @@ sub message {
 
 sub errors {
   my $self = shift;
-  return $self->api_error_response->{errors};
+  return Net::Braintree::ValidationErrorCollection->new($self->api_error_response->{errors});
 }
 
 1;

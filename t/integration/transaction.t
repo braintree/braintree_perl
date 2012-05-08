@@ -19,7 +19,7 @@ subtest "Successful Transactions" => sub {
     my $result = Net::Braintree::Transaction->$method($transaction_params);
 
     ok $result->is_success;
-    is($result->message, "", "$method result has errors: $result->message");
+    is($result->message, "", "$method result has errors: " . $result->message);
     is($result->transaction->credit_card->last_4, "1111");
   }
 };
@@ -211,13 +211,10 @@ subtest "Clone transaction with validation error" => sub {
   });
 
   my $clone_result = Net::Braintree::Transaction->clone_transaction($credit_result->transaction->id, {amount => "123.45"});
+  my $expected_error_code = 91543;
 
   not_ok $clone_result->is_success;
-  $errors = $clone_result->errors->{"transaction"}->{"errors"};
-
-  my @base_errors = grep { $_->{"attribute"} eq "base" } @{$errors};
-
-  is $base_errors[0]->{"code"}, "91543";
+  is($clone_result->errors->for("transaction")->on("base")->[0]->code, $expected_error_code);
 };
 
 done_testing();

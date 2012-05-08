@@ -34,7 +34,7 @@ subtest "Create without any fields"  => sub {
       customer_id => $customer->customer->id,
     });
   not_ok $result->is_success;
-  ok(exists($result->errors->{address}), "has at least one error on address");
+  ok(scalar @{$result->errors->for('address')->deep_errors} > 0, "has at least one error on address");
   is($result->message, "Addresses must have at least one field filled in.", "Address error");
 };
 
