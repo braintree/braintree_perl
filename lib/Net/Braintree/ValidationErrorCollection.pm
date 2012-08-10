@@ -20,8 +20,8 @@ sub BUILD {
 
 sub _deep_errors {
   my $self = shift;
-  my $nested = map { $_->deep_errors } values %{$self->{_nested}};
-  return [ @{$self->{_errors}}, $nested ];
+  my @nested = map { @{$_->deep_errors} } values %{$self->{_nested}};
+  return [ @{$self->{_errors}}, @nested ];
 }
 
 sub for {

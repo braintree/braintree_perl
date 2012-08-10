@@ -1,5 +1,7 @@
 Revision history for Net-Braintree
 
+0.6.2   08/10/2012
+        Fixes ValidationErrorCollection deep_errors
 0.6.1   05/08/2012
         Adds ValidationError and ValidationErrorCollection and updates $result->errors to return a ValidationErrorCollection
 0.5.0   04/19/2012
