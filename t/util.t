@@ -19,6 +19,9 @@ subtest "equal arrays" => sub {
 
   my $hash = { 'a' => 'b' };
   ok(equal_arrays([ keys %$hash ], ['a']));
+
+  # undef eq ''
+  ok(equal_arrays([undef, ''], ['', '']));
 };
 
 subtest "difference arrays" => sub {
@@ -26,6 +29,8 @@ subtest "difference arrays" => sub {
   is_deeply(difference_arrays(['a', 'b'], ['a']), ['b']);
   ok(equal_arrays(difference_arrays(['a', 'b'], ['b']), ['a']));
   ok(equal_arrays(difference_arrays(['a'], ['a', 'b']), []));
+  ok(equal_arrays(difference_arrays([], []), []));
+  ok(equal_arrays(difference_arrays(['', 'a', 'b'], ['b', 'a', '']), []));
 };
 
 subtest "is_hashref" => sub {
