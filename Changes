@@ -1,5 +1,7 @@
 Revision history for Net-Braintree
 
+0.7.0   09/13/2012
+        Adds Prepaid field to credit card (possible values include Yes, No, Unknown)
 0.6.2   08/10/2012
         Fixes ValidationErrorCollection deep_errors
 0.6.1   05/08/2012

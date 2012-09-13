@@ -1,6 +1,7 @@
 package Net::Braintree::CreditCard;
 use Net::Braintree::CreditCard::CardType;
 use Net::Braintree::CreditCard::Location;
+use Net::Braintree::CreditCard::Prepaid;
 
 use Moose;
 extends 'Net::Braintree::ResultObject';

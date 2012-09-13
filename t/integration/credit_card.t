@@ -112,5 +112,48 @@ subtest "update" => sub {
 
 };
 
+subtest "prepaid" => sub {
+  my $credit_card_params = {
+    customer_id => $customer_create->customer->id,
+    number => "4500600000000061",
+    expiration_date => "12/15",
+    options => {
+      verify_card => 1
+    }
+  };
+
+  my $result = Net::Braintree::CreditCard->create($credit_card_params);
+  is $result->credit_card->prepaid, Net::Braintree::CreditCard::Prepaid::Yes
+};
+
+
+subtest "card with negative card type indentifiers" => sub {
+  my $credit_card_params = {
+    customer_id => $customer_create->customer->id,
+    number => "4111111111111111",
+    expiration_date => "12/15",
+    options => {
+      verify_card => 1
+    }
+  };
+
+  my $result = Net::Braintree::CreditCard->create($credit_card_params);
+  is $result->credit_card->prepaid, Net::Braintree::CreditCard::Prepaid::No
+};
+
+
+subtest "card without card type identifiers" => sub {
+  my $credit_card_params = {
+    customer_id => $customer_create->customer->id,
+    number => "5555555555554444",
+    expiration_date => "12/15",
+    options => {
+      verify_card => 1
+    }
+  };
+
+  my $result = Net::Braintree::CreditCard->create($credit_card_params);
+  is $result->credit_card->prepaid, Net::Braintree::CreditCard::Prepaid::Unknown
+};
 
 done_testing();
