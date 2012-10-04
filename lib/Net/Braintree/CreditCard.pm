@@ -2,6 +2,11 @@ package Net::Braintree::CreditCard;
 use Net::Braintree::CreditCard::CardType;
 use Net::Braintree::CreditCard::Location;
 use Net::Braintree::CreditCard::Prepaid;
+use Net::Braintree::CreditCard::Debit;
+use Net::Braintree::CreditCard::Payroll;
+use Net::Braintree::CreditCard::Healthcare;
+use Net::Braintree::CreditCard::DurbinRegulated;
+use Net::Braintree::CreditCard::Commercial;
 
 use Moose;
 extends 'Net::Braintree::ResultObject';

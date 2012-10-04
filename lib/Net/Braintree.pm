@@ -21,14 +21,16 @@ use Net::Braintree::WebhookTesting;
 use Net::Braintree::Configuration;
 
 =head1 NAME
+
 Net::Braintree - A Client Library for wrapping the Braintree Payment Services Gateway API
 
 =head1 VERSION
+
 Version 0.3.3
 
 =cut
 
-our $VERSION = '0.7.0';
+our $VERSION = '0.8.0';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 

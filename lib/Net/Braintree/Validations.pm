@@ -62,7 +62,7 @@ sub clone_transaction_signature {
 sub transaction_signature{
   return {
     amount => ".", customer_id => ".", merchant_account_id => ".", order_id => ".", payment_method_token => ".",
-    purchase_order_number => ".", shipping_address_id => ".", type => ".", tax_amount => ".", tax_exempt => ".",
+    purchase_order_number => ".", recurring => ".", shipping_address_id => ".", type => ".", tax_amount => ".", tax_exempt => ".",
     credit_card => {token => ".", cardholder_name => ".", cvv => ".", expiration_date => ".", expiration_month => ".", expiration_year => ".", number => "."},
     customer => {id => ".", company => ".", email => ".", fax => ".", first_name => ".", last_name => ".", phone => ".", website => "."} ,
     billing => address_signature,

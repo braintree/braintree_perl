@@ -2,6 +2,7 @@ use lib qw(lib t/lib);
 use Test::More;
 use Net::Braintree;
 use Net::Braintree::TestHelper;
+use Net::Braintree::CreditCardNumbers::CardTypeIndicators;
 
 my $customer_create = Net::Braintree::Customer->create({first_name => "Walter", last_name => "Weatherman"});
 
@@ -112,10 +113,10 @@ subtest "update" => sub {
 
 };
 
-subtest "prepaid" => sub {
+subtest "debit" => sub {
   my $credit_card_params = {
     customer_id => $customer_create->customer->id,
-    number => "4500600000000061",
+    number => Net::Braintree::CreditCardNumbers::CardTypeIndicators::Debit,
     expiration_date => "12/15",
     options => {
       verify_card => 1
@@ -123,14 +124,84 @@ subtest "prepaid" => sub {
   };
 
   my $result = Net::Braintree::CreditCard->create($credit_card_params);
-  is $result->credit_card->prepaid, Net::Braintree::CreditCard::Prepaid::Yes
+  is $result->credit_card->debit, Net::Braintree::CreditCard::Debit::Yes;
+};
+
+subtest "payroll" => sub {
+  my $credit_card_params = {
+    customer_id => $customer_create->customer->id,
+    number => Net::Braintree::CreditCardNumbers::CardTypeIndicators::Payroll,
+    expiration_date => "12/15",
+    options => {
+      verify_card => 1
+    }
+  };
+
+  my $result = Net::Braintree::CreditCard->create($credit_card_params);
+  is $result->credit_card->payroll, Net::Braintree::CreditCard::Payroll::Yes;
+};
+
+subtest "healthcare" => sub {
+  my $credit_card_params = {
+    customer_id => $customer_create->customer->id,
+    number => Net::Braintree::CreditCardNumbers::CardTypeIndicators::Healthcare,
+    expiration_date => "12/15",
+    options => {
+      verify_card => 1
+    }
+  };
+
+  my $result = Net::Braintree::CreditCard->create($credit_card_params);
+  is $result->credit_card->healthcare, Net::Braintree::CreditCard::Healthcare::Yes;
+};
+
+subtest "commercial" => sub {
+  my $credit_card_params = {
+    customer_id => $customer_create->customer->id,
+    number => Net::Braintree::CreditCardNumbers::CardTypeIndicators::Commercial,
+    expiration_date => "12/15",
+    options => {
+      verify_card => 1
+    }
+  };
+
+  my $result = Net::Braintree::CreditCard->create($credit_card_params);
+  is $result->credit_card->commercial, Net::Braintree::CreditCard::Commercial::Yes;
+};
+
+subtest "durbin_regulated" => sub {
+  my $credit_card_params = {
+    customer_id => $customer_create->customer->id,
+    number => Net::Braintree::CreditCardNumbers::CardTypeIndicators::DurbinRegulated,
+    expiration_date => "12/15",
+    options => {
+      verify_card => 1
+    }
+  };
+
+  my $result = Net::Braintree::CreditCard->create($credit_card_params);
+  is $result->credit_card->durbin_regulated, Net::Braintree::CreditCard::DurbinRegulated::Yes;
+};
+
+subtest "prepaid" => sub {
+  my $credit_card_params = {
+    customer_id => $customer_create->customer->id,
+    number => Net::Braintree::CreditCardNumbers::CardTypeIndicators::Prepaid,
+    expiration_date => "12/15",
+    options => {
+      verify_card => 1
+    }
+  };
+
+  my $result = Net::Braintree::CreditCard->create($credit_card_params);
+  is $result->credit_card->prepaid, Net::Braintree::CreditCard::Prepaid::Yes;
 };
 
 
 subtest "card with negative card type indentifiers" => sub {
   my $credit_card_params = {
     customer_id => $customer_create->customer->id,
-    number => "4111111111111111",
+    number => Net::Braintree::CreditCardNumbers::CardTypeIndicators::No,
     expiration_date => "12/15",
     options => {
       verify_card => 1
@@ -138,14 +209,19 @@ subtest "card with negative card type indentifiers" => sub {
   };
 
   my $result = Net::Braintree::CreditCard->create($credit_card_params);
-  is $result->credit_card->prepaid, Net::Braintree::CreditCard::Prepaid::No
+  is $result->credit_card->prepaid, Net::Braintree::CreditCard::Prepaid::No;
+  is $result->credit_card->debit, Net::Braintree::CreditCard::Debit::No;
+  is $result->credit_card->payroll, Net::Braintree::CreditCard::Payroll::No;
+  is $result->credit_card->healthcare, Net::Braintree::CreditCard::Healthcare::No;
+  is $result->credit_card->commercial, Net::Braintree::CreditCard::Commercial::No;
+  is $result->credit_card->durbin_regulated, Net::Braintree::CreditCard::DurbinRegulated::No;
 };
 
 
 subtest "card without card type identifiers" => sub {
   my $credit_card_params = {
     customer_id => $customer_create->customer->id,
-    number => "5555555555554444",
+    number => Net::Braintree::CreditCardNumbers::CardTypeIndicators::Unknown,
     expiration_date => "12/15",
     options => {
       verify_card => 1
@@ -153,7 +229,12 @@ subtest "card without card type identifiers" => sub {
   };
 
   my $result = Net::Braintree::CreditCard->create($credit_card_params);
-  is $result->credit_card->prepaid, Net::Braintree::CreditCard::Prepaid::Unknown
+  is $result->credit_card->prepaid, Net::Braintree::CreditCard::Prepaid::Unknown;
+  is $result->credit_card->debit, Net::Braintree::CreditCard::Debit::Unknown;
+  is $result->credit_card->payroll, Net::Braintree::CreditCard::Payroll::Unknown;
+  is $result->credit_card->healthcare, Net::Braintree::CreditCard::Healthcare::Unknown;
+  is $result->credit_card->commercial, Net::Braintree::CreditCard::Commercial::Unknown;
+  is $result->credit_card->durbin_regulated, Net::Braintree::CreditCard::DurbinRegulated::Unknown;
 };
 
 done_testing();

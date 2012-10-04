@@ -217,4 +217,19 @@ subtest "Clone transaction with validation error" => sub {
   is($clone_result->errors->for("transaction")->on("base")->[0]->code, $expected_error_code);
 };
 
+subtest "Recurring" => sub {
+  my $result = Net::Braintree::Transaction->sale({
+      amount => "50.00",
+      recurring => "true",
+      credit_card => {
+        number => "5431111111111111",
+        expiration_date => "05/12"
+      }
+  });
+
+  ok $result->is_success;
+  is($result->transaction->recurring, 1);
+};
+
+
 done_testing();

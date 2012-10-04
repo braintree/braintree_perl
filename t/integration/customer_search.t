@@ -58,7 +58,7 @@ subtest "can search on credit card number (partial match)" => sub {
 
   not_ok $search_result->is_empty;
 
-  ok contains("1111", map { $_->last_4 } @{$search_result->first->credit_cards});
+  ok contains("1111", [map { $_->last_4 } @{$search_result->first->credit_cards}]);
 };
 
 subtest "can search on ids (multiple values)" => sub {

@@ -3,16 +3,15 @@ use strict;
 
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use URI::Query;
-use Exporter;
+use Exporter qw(import);
 our @ISA = qw(Exporter);
 our @EXPORT = qw(to_instance_array flatten is_hashref is_arrayref hash_to_query_string equal_arrays difference_arrays validate_id contains);
-our @EXPORT_OK = qw();
 
 sub flatten {
   my($hash, $namespace) = @_;
   my %flat_hash = ();
-  while(my ($key, $value) = each(%$hash)) {
-    if(is_hashref($value)) {
+  while (my ($key, $value) = each(%$hash)) {
+    if (is_hashref($value)) {
       my $sub_entries = flatten($value, add_namespace($key, $namespace));
       %flat_hash = (%flat_hash, %$sub_entries);
     } else {
@@ -86,11 +85,9 @@ sub validate_id {
 
 sub contains {
   my ($element, $array) = @_;
-  if ($] < 5.010) {
-    return scalar grep {$_ eq $element} @$array;
+  for (@$array) {
+    return 1 if $_ eq $element;
   }
-  else {
-    return $element ~~ $array;
-  }
+  return 0;
 }
 1;

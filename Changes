@@ -1,5 +1,9 @@
 Revision history for Net-Braintree
 
+0.8.0   10/04/2012
+        Additional card information, such as prepaid, debit, commercial, Durbin regulated, healthcare, and payroll, are returned on credit card responses
+        Allows transactions to be specified as recurring
+        Compatibility fix (thanks @pilcrow)
 0.7.0   09/13/2012
         Adds Prepaid field to credit card (possible values include Yes, No, Unknown)
 0.6.2   08/10/2012
