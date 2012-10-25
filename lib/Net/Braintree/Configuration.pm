@@ -61,4 +61,8 @@ sub protocol {
   return $self->ssl_enabled ? 'https' : 'http';
 }
 
+sub api_version {
+  return "3";
+}
+
 1;

@@ -83,7 +83,7 @@ sub time_string {
 
 sub data_string {
   my ($self, $params) = @_;
-  $params->{'api_version'} = '2';
+  $params->{'api_version'} = $self->gateway->config->api_version;
   $params->{'time'}        = time_string;
   $params->{'public_key'}  = $self->gateway->config->public_key;
   return $self->build_tr_data($params);

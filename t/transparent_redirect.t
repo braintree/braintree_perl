@@ -27,14 +27,14 @@ subtest "create customer data" => sub {
   should_throw("ArgumentError", sub { Net::Braintree::TransparentRedirect->create_customer_data({})}, "raise ArgumentError if no redirect_url");
   my $tr_hash = {redirect_url => "http://example.com"};
   my $tr_data = Net::Braintree::TransparentRedirect->create_customer_data($tr_hash);
-  tr_data_ok($tr_data, qr/api_version=2&kind=create_customer&public_key=integration_public_key&redirect_url=http%3A%2F%2Fexample\.com&time=\d{14,}/);
+  tr_data_ok($tr_data, qr/api_version=3&kind=create_customer&public_key=integration_public_key&redirect_url=http%3A%2F%2Fexample\.com&time=\d{14,}/);
 };
 
 subtest "update customer data" => sub {
   subtest "succesful creation of TR data" => sub {
     my $tr_hash = {redirect_url => "http://example.com", customer_id => 132};
     my $tr_data = Net::Braintree::TransparentRedirect->update_customer_data($tr_hash);
-    tr_data_ok($tr_data, qr/api_version=2&customer_id=132&kind=update_customer&public_key=integration_public_key&redirect_url=http%3A%2F%2Fexample\.com&time=\d{14,}/);
+    tr_data_ok($tr_data, qr/api_version=3&customer_id=132&kind=update_customer&public_key=integration_public_key&redirect_url=http%3A%2F%2Fexample\.com&time=\d{14,}/);
   };
 
   subtest "validate arguments" => sub {
@@ -47,7 +47,7 @@ subtest "create credit card data" => sub {
   subtest "successful creation of data" => sub {
     my $tr_hash = {redirect_url => "http://example.com", credit_card => {customer_id => "543"}};
     my $tr_data = Net::Braintree::TransparentRedirect->create_credit_card_data($tr_hash);
-    tr_data_ok($tr_data, qr/api_version=2&credit_card%5Bcustomer_id%5D=543&kind=create_payment_method&public_key=integration_public_key&redirect_url=http%3A%2F%2Fexample\.com&time=\d{14,}/);
+    tr_data_ok($tr_data, qr/api_version=3&credit_card%5Bcustomer_id%5D=543&kind=create_payment_method&public_key=integration_public_key&redirect_url=http%3A%2F%2Fexample\.com&time=\d{14,}/);
   };
 
   subtest "validate arguments" => sub {
@@ -61,7 +61,7 @@ subtest "update credit card data" => sub {
   subtest "successful creation of data" => sub {
     my $tr_hash = {redirect_url => "http://example.com", payment_method_token => "llll", credit_card => {customer_id => "543"}};
     my $tr_data = Net::Braintree::TransparentRedirect->update_credit_card_data($tr_hash);
-    tr_data_ok($tr_data, qr/api_version=2&credit_card%5Bcustomer_id%5D=543&kind=update_payment_method&payment_method_token=llll&public_key=integration_public_key&redirect_url=http%3A%2F%2Fexample\.com&time=\d{14,}/);
+    tr_data_ok($tr_data, qr/api_version=3&credit_card%5Bcustomer_id%5D=543&kind=update_payment_method&payment_method_token=llll&public_key=integration_public_key&redirect_url=http%3A%2F%2Fexample\.com&time=\d{14,}/);
   };
 
   subtest "validate arguments" => sub {

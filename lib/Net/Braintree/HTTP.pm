@@ -38,7 +38,7 @@ sub make_request {
     $request->content_type("text/xml; charset=utf-8");
   }
 
-  $request->header("X-ApiVersion" => 2);
+  $request->header("X-ApiVersion" => $self->config->api_version);
   $request->header("environment" => $self->config->environment);
   $request->header("User-Agent" => "Braintree Perl Module " . Net::Braintree->VERSION);
 

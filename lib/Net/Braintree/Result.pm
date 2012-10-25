@@ -3,6 +3,7 @@ use Moose;
 use Hash::Inflator;
 use Net::Braintree::Util;
 use Net::Braintree::ValidationErrorCollection;
+use Net::Braintree::CreditCardVerification;
 
 my $meta = __PACKAGE__->meta();
 
@@ -45,6 +46,11 @@ sub message {
 sub errors {
   my $self = shift;
   return Net::Braintree::ValidationErrorCollection->new($self->api_error_response->{errors});
+}
+
+sub credit_card_verification {
+  my $self = shift;
+  return Net::Braintree::CreditCardVerification->new($self->api_error_response->{verification});
 }
 
 1;
