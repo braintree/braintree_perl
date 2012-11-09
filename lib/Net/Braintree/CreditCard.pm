@@ -7,6 +7,8 @@ use Net::Braintree::CreditCard::Payroll;
 use Net::Braintree::CreditCard::Healthcare;
 use Net::Braintree::CreditCard::DurbinRegulated;
 use Net::Braintree::CreditCard::Commercial;
+use Net::Braintree::CreditCard::CountryOfIssuance;
+use Net::Braintree::CreditCard::IssuingBank;
 
 use Moose;
 extends 'Net::Braintree::ResultObject';

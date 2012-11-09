@@ -43,7 +43,7 @@ subtest "can find duplicate credit cards given payment method token" => sub {
 subtest "can search on text fields" => sub {
   my $search_result = Net::Braintree::Customer->search(sub {
     my $search = shift;
-    $search->first_name->contains("Tim")
+    $search->first_name->contains("NotIn")
   });
 
   not_ok $search_result->is_empty;
@@ -116,7 +116,7 @@ subtest "gets all customers" => sub {
 
 sub create_customer {
   my $customer_attributes = {
-    first_name => "Timmy",
+    first_name => "NotInFaker",
     last_name => "O'Toole",
     company => shift,
     email => "timmy\@example.com",
@@ -124,7 +124,7 @@ sub create_customer {
     phone => "5551231234",
     website => "http://example.com",
     credit_card => {
-      cardholder_name => "Tim Tool",
+      cardholder_name => "NotIn Tool",
       number => "5431111111111111",
       expiration_date => "05/2010",
       token => shift,
@@ -156,7 +156,7 @@ sub perform_search {
 
 sub make_search_criteria {
   return {
-    first_name => "Timmy",
+    first_name => "NotInFaker",
     last_name => "O'Toole",
     company => shift,
     email => "timmy\@example.com",
@@ -172,7 +172,7 @@ sub make_search_criteria {
     address_region => "Illinois",
     address_country_name => "United States of America",
     payment_method_token => shift,
-    cardholder_name => "Tim Tool",
+    cardholder_name => "NotIn Tool",
     credit_card_expiration_date => "05/2010",
     credit_card_number => "5431111111111111",
   };

@@ -3,6 +3,7 @@ use Test::More;
 use Net::Braintree;
 use Net::Braintree::TestHelper;
 use Net::Braintree::CreditCardNumbers::CardTypeIndicators;
+use Net::Braintree::CreditCardDefaults;
 
 my $customer_create = Net::Braintree::Customer->create({first_name => "Walter", last_name => "Weatherman"});
 
@@ -197,6 +198,33 @@ subtest "prepaid" => sub {
   is $result->credit_card->prepaid, Net::Braintree::CreditCard::Prepaid::Yes;
 };
 
+subtest "issuing_bank" => sub {
+  my $credit_card_params = {
+    customer_id => $customer_create->customer->id,
+    number => Net::Braintree::CreditCardNumbers::CardTypeIndicators::IssuingBank,
+    expiration_date => "12/15",
+    options => {
+      verify_card => 1
+    }
+  };
+
+  my $result = Net::Braintree::CreditCard->create($credit_card_params);
+  is $result->credit_card->issuing_bank, Net::Braintree::CreditCardDefaults::IssuingBank;
+};
+
+subtest "country_of_issuance" => sub {
+  my $credit_card_params = {
+    customer_id => $customer_create->customer->id,
+    number => Net::Braintree::CreditCardNumbers::CardTypeIndicators::CountryOfIssuance,
+    expiration_date => "12/15",
+    options => {
+      verify_card => 1
+    }
+  };
+
+  my $result = Net::Braintree::CreditCard->create($credit_card_params);
+  is $result->credit_card->country_of_issuance, Net::Braintree::CreditCardDefaults::CountryOfIssuance;
+};
 
 subtest "card with negative card type indentifiers" => sub {
   my $credit_card_params = {
@@ -235,6 +263,8 @@ subtest "card without card type identifiers" => sub {
   is $result->credit_card->healthcare, Net::Braintree::CreditCard::Healthcare::Unknown;
   is $result->credit_card->commercial, Net::Braintree::CreditCard::Commercial::Unknown;
   is $result->credit_card->durbin_regulated, Net::Braintree::CreditCard::DurbinRegulated::Unknown;
+  is $result->credit_card->issuing_bank, Net::Braintree::CreditCard::IssuingBank::Unknown;
+  is $result->credit_card->country_of_issuance, Net::Braintree::CreditCard::CountryOfIssuance::Unknown;
 };
 
 done_testing();
