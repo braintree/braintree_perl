@@ -1,5 +1,7 @@
 Revision history for Net-Braintree
 
+0.11.0  12/20/2012
+        Adds channel field to transactions
 0.10.0  11/09/2012
         Adds country of issuance and issuing bank bin database fields
 0.9.0   10/25/2012

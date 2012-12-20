@@ -2,6 +2,8 @@ use lib qw(lib t/lib);
 use Test::More;
 use Net::Braintree;
 use Net::Braintree::TestHelper;
+use Net::Braintree::CreditCardNumbers::CardTypeIndicators;
+use Net::Braintree::CreditCardDefaults;
 
 my $transaction_params = {
   amount => "50.00",
@@ -165,6 +167,7 @@ subtest "Clone transaction" => sub {
 
   my $clone_result = Net::Braintree::Transaction->clone_transaction($sale_result->transaction->id, {
       amount => "123.45",
+      channel => "MyShoppingCartProvider",
       options => { submit_for_settlement => "false" }
   });
   ok $clone_result->is_success;
@@ -172,6 +175,7 @@ subtest "Clone transaction" => sub {
 
   isnt $clone_transaction->id, $sale_result->transaction->id;
   is $clone_transaction->amount, "123.45";
+  is $clone_transaction->channel, "MyShoppingCartProvider";
   is $clone_transaction->credit_card->bin, "543111";
   is $clone_transaction->credit_card->expiration_year, "2012";
   is $clone_transaction->credit_card->expiration_month, "05";
@@ -229,6 +233,26 @@ subtest "Recurring" => sub {
 
   ok $result->is_success;
   is($result->transaction->recurring, 1);
+};
+
+subtest "Card Type Indicators" => sub {
+  my $result = Net::Braintree::Transaction->sale({
+      amount => "50.00",
+      credit_card => {
+        number => Net::Braintree::CreditCardNumbers::CardTypeIndicators::Unknown,
+        expiration_date => "05/12",
+      }
+  });
+
+  ok $result->is_success;
+  is($result->transaction->credit_card->prepaid, Net::Braintree::CreditCard::Prepaid::Unknown);
+  is($result->transaction->credit_card->commercial, Net::Braintree::CreditCard::Commercial::Unknown);
+  is($result->transaction->credit_card->debit, Net::Braintree::CreditCard::Debit::Unknown);
+  is($result->transaction->credit_card->payroll, Net::Braintree::CreditCard::Payroll::Unknown);
+  is($result->transaction->credit_card->healthcare, Net::Braintree::CreditCard::Healthcare::Unknown);
+  is($result->transaction->credit_card->durbin_regulated, Net::Braintree::CreditCard::DurbinRegulated::Unknown);
+  is($result->transaction->credit_card->issuing_bank, Net::Braintree::CreditCard::IssuingBank::Unknown);
+  is($result->transaction->credit_card->country_of_issuance, Net::Braintree::CreditCard::CountryOfIssuance::Unknown);
 };
 
 
