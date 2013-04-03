@@ -17,8 +17,6 @@ task :ci => ["build_deps", "test"]
 namespace :test do
   desc "run unit tests"
   task :unit do
-    sh "perl -Mlocal::lib=./"
-    sh "eval $(perl -Mlocal::lib=./)"
     sh "make test"
   end
 

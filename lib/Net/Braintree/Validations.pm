@@ -36,12 +36,14 @@ sub credit_card_signature {
     customer_id => ".",
     billing_address_id => ".", cardholder_name => ".", cvv => ".", expiration_date => ".",
     expiration_month => ".", expiration_year => ".", number => ".", token => ".",
+    venmo_sdk_payment_method_code => ".",
     options => {
       make_default => ".",
       verification_merchant_account_id => ".",
       verify_card => ".",
       update_existing_token => ".",
-      fail_on_duplicate_payment_method => "."
+      fail_on_duplicate_payment_method => ".",
+      venmo_sdk_session => "."
     },
     billing_address => address_signature
   };
@@ -67,10 +69,11 @@ sub transaction_signature{
     customer => {id => ".", company => ".", email => ".", fax => ".", first_name => ".", last_name => ".", phone => ".", website => "."} ,
     billing => address_signature,
     shipping => address_signature,
-    options => {store_in_vault => ".", store_in_vault_on_success => ".", submit_for_settlement => ".", add_billing_address_to_payment_method => ".", store_shipping_address_in_vault => "."},
+    options => {store_in_vault => ".", store_in_vault_on_success => ".", submit_for_settlement => ".", add_billing_address_to_payment_method => ".", store_shipping_address_in_vault => ".", venmo_sdk_session => "."},
     custom_fields => "_any_key_",
     descriptor => {name => ".", phone => "."},
-    subscription_id => "."
+    subscription_id => ".",
+    venmo_sdk_payment_method_code => "."
   };
 }
 
