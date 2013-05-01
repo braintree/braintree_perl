@@ -55,4 +55,9 @@ sub is_default {
   return shift->default;
 }
 
+sub is_venmo_sdk {
+  my $self = shift;
+  return $self->venmo_sdk;
+}
+
 1;

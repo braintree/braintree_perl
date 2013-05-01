@@ -5,6 +5,7 @@ use Test::More;
 use HTTP::Request;
 use LWP::UserAgent;
 use Net::Braintree::Util;
+use DateTime::Format::Strptime;
 use CGI;
 
 use Net::Braintree;
@@ -67,6 +68,14 @@ sub make_subscription_past_due {
 
 sub now_in_eastern {
   return DateTime->now(time_zone => "America/New_York")->strftime("%Y-%m-%d");
+}
+
+sub parse_datetime {
+  my $date_string = shift;
+  my $parser = DateTime::Format::Strptime->new(
+      pattern => "%F %T %z"
+  );
+  my $dt = $parser->parse_datetime($date_string);
 }
 
 1;

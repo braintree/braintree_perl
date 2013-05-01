@@ -16,6 +16,7 @@ has 'gateway_rejection_reason' => (is => 'ro');
 has 'credit_card' => (is => 'ro');
 has 'billing' => (is => 'ro');
 has 'created_at' => (is => 'ro');
+has 'status' => (is => 'ro');
 
 sub search {
   my ($class, $block) = @_;

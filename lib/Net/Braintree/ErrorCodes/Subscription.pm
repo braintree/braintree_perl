@@ -1,4 +1,4 @@
-package Net::Braintree::ErrorCodes::;
+package Net::Braintree::ErrorCodes::Subscription;
 use strict;
 
 use constant BillingDayOfMonthCannotBeUpdated                   => "91918";

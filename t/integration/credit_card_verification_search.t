@@ -96,6 +96,15 @@ subtest "Searches multiple value fields" => sub {
   is $search_results->first->credit_card->{'card_type'}, Net::Braintree::CreditCard::CardType::MasterCard;
 };
 
+subtest "Searches fail on invalid credit card types" => sub {
+  should_throw "Invalid Argument\\(s\\) for credit_card_card_type: invalid credit_card_card_type", sub {
+    my $search_result = Net::Braintree::CreditCardVerification->search(sub {
+      my $search = shift;
+      $search->credit_card_card_type->is("invalid credit_card_card_type");
+    });
+  }
+};
+
 subtest "Searches range fields" => sub {
   my $cardholder_name = "Tom Smith" . gettimeofday;
   my $credit_card_params = {

@@ -13,6 +13,9 @@ sub BUILD {
   $meta->add_attribute('subscription', is => 'rw');
   $self->subscription(Net::Braintree::Subscription->new($attributes->{subscription})) if ref($attributes->{subscription}) eq 'HASH';
   delete($attributes->{subscription});
+  $meta->add_attribute('disbursement_details', is => 'rw');
+  $self->disbursement_details(Net::Braintree::DisbursementDetails->new($attributes->{disbursement_details})) if ref($attributes->{disbursement_details}) eq 'HASH';
+  delete($attributes->{disbursement_details});
   $self->set_attributes_from_hash($self, $attributes);
 }
 
@@ -72,5 +75,10 @@ sub clone_transaction {
 sub gateway {
   Net::Braintree->configuration->gateway;
 }
+
+sub is_disbursed {
+  my $self = shift;
+  $self->disbursement_details->is_valid();
+};
 
 1;

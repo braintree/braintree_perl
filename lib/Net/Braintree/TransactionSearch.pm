@@ -44,18 +44,19 @@ $field->equality("credit_card_expiration_date");
 $field->partial_match("credit_card_number");
 
 $field->multiple_values("created_using", Net::Braintree::Transaction::CreatedUsing::FullInformation, Net::Braintree::Transaction::CreatedUsing::Token);
-$field->multiple_values("credit_card_type", Net::Braintree::CreditCard::CardType::All);
+$field->multiple_values("credit_card_card_type", @{Net::Braintree::CreditCard::CardType::All()});
 $field->multiple_values("credit_card_customer_location", Net::Braintree::CreditCard::Location::International, Net::Braintree::CreditCard::Location::US);
 $field->multiple_values("ids");
 $field->multiple_values("merchant_account_id");
 $field->multiple_values("status", Net::Braintree::Transaction::Status::All);
-$field->multiple_values("source", Net::Braintree::Transaction::Source::All);
-$field->multiple_values("type", Net::Braintree::Transaction::Type::All);
+$field->multiple_values("source", @{Net::Braintree::Transaction::Source::All()});
+$field->multiple_values("type", @{Net::Braintree::Transaction::Type::All()});
 
 $field->key_value("refund");
 
 $field->range("amount");
 $field->range("created_at");
+$field->range("disbursement_date");
 $field->range("authorization_expired_at");
 $field->range("authorized_at");
 $field->range("failed_at");

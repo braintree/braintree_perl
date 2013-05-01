@@ -7,6 +7,27 @@ use Net::Braintree::TestHelper;
 
 my $credit_card_number = "5431111111111111";
 
+subtest "doesn't return duplicate ids in paginated searches" => sub {
+  my $name = "Fairley" . generate_unique_integer();
+  for (my $count = 0; $count < 51; $count++) {
+    Net::Braintree::Transaction->sale({
+      amount => '50',
+      credit_card => {
+        number => $credit_card_number,
+        expiration_date => "01/2000",
+      },
+      customer => {
+        first_name => "FirstName_" . $name,
+      }
+    });
+  };
+  my $criteria = make_search_criteria($name);
+  my $results = perform_search($criteria);
+  my $result_count = $results->maximum_size;
+  my $counter = 0;
+  $results->each(sub { $counter += 1; });
+  is $counter, $result_count;
+};
 
 subtest "find transaction with all matching equality fields" => sub {
   my $unique = generate_unique_integer() . "find_all_ids";
@@ -84,6 +105,41 @@ subtest "result 'each'" => sub {
   };
 };
 
+subtest "credit_card_card_type - multiple value field" => sub {
+  my $unique = generate_unique_integer() . "status";
+  my $sale1 = create_sale($unique);
+
+  my $find = Net::Braintree::Transaction->find($sale1->transaction->id)->transaction;
+
+  my $search_result = Net::Braintree::Transaction->search(sub {
+    my $search = shift;
+    $search->credit_card_card_type->is(Net::Braintree::CreditCard::CardType::MasterCard);
+  });
+
+  ok contains($find->id, $search_result->ids);
+  my @results = ();
+  $search_result->each(sub { push(@results, shift->id); });
+  ok contains($find->id, \@results);
+};
+
+subtest "credit_card_card_type - multiple value field - passing invalid credit_card_card_type" => sub {
+  should_throw "Invalid Argument\\(s\\) for credit_card_card_type: invalid credit_card_card_type", sub {
+    my $search_result = Net::Braintree::Transaction->search(sub {
+      my $search = shift;
+      $search->credit_card_card_type->is("invalid credit_card_card_type");
+    });
+  }
+};
+
+subtest "status - multiple value field - passing invalid status" => sub {
+  should_throw "Invalid Argument\\(s\\) for status: invalid status", sub {
+    my $search_result = Net::Braintree::Transaction->search(sub {
+      my $search = shift;
+      $search->status->is("invalid status");
+    });
+  }
+};
+
 subtest "status - multiple value field" => sub {
   my $unique = generate_unique_integer() . "status";
   my $sale1 = create_sale($unique);
@@ -101,6 +157,31 @@ subtest "status - multiple value field" => sub {
   ok contains($find->id, \@results);
 };
 
+subtest "source - multiple value field - passing invalid source" => sub {
+  should_throw "Invalid Argument\\(s\\) for source: invalid source", sub {
+    my $search_result = Net::Braintree::Transaction->search(sub {
+      my $search = shift;
+      $search->source->is("invalid source");
+    });
+  }
+};
+
+subtest "source - multiple value field" => sub {
+  my $unique = generate_unique_integer() . "status";
+  my $sale1 = create_sale($unique);
+
+  my $find = Net::Braintree::Transaction->find($sale1->transaction->id)->transaction;
+  my $search_result = Net::Braintree::Transaction->search(sub {
+    my $search = shift;
+    $search->source->is(Net::Braintree::Transaction::Source::Api);
+  });
+
+  ok contains($find->id, $search_result->ids);
+  my @results = ();
+  $search_result->each(sub { push(@results, shift->id); });
+  ok contains($find->id, \@results);
+};
+
 subtest "type - multiple value field - passing invalid type" => sub {
   should_throw "Invalid Argument\\(s\\) for type: invalid type", sub {
     my $search_result = Net::Braintree::Transaction->search(sub {
@@ -108,6 +189,22 @@ subtest "type - multiple value field - passing invalid type" => sub {
       $search->type->is("invalid type");
     });
   }
+};
+
+subtest "type - multiple value field" => sub {
+  my $unique = generate_unique_integer() . "status";
+  my $sale1 = create_sale($unique);
+
+  my $find = Net::Braintree::Transaction->find($sale1->transaction->id)->transaction;
+  my $search_result = Net::Braintree::Transaction->search(sub {
+    my $search = shift;
+    $search->type->is(Net::Braintree::Transaction::Type::Sale);
+  });
+
+  ok contains($find->id, $search_result->ids);
+  my @results = ();
+  $search_result->each(sub { push(@results, shift->id); });
+  ok contains($find->id, \@results);
 };
 
 subtest "credit card number - partial match" => sub {
@@ -146,6 +243,70 @@ subtest "amount - range" => sub {
 
   ok contains($find->id, $search_result->ids);
   not_ok contains($sale2->id, $search_result->ids);
+};
+
+subtest "disbursement_date - range - max and min" => sub {
+  my $search_result = Net::Braintree::Transaction->search(sub {
+    my $search = shift;
+    $search->id->is("deposittransaction");
+    $search->disbursement_date->max(Net::Braintree::TestHelper::parse_datetime("2014-01-01 00:00:00"));
+    $search->disbursement_date->min(Net::Braintree::TestHelper::parse_datetime("2012-01-01 00:00:00"));
+  });
+
+  ok contains("deposittransaction", $search_result->ids);
+  is scalar @{$search_result->ids}, 1;
+};
+
+subtest "disbursement_date - range - is" => sub {
+  my $search_result = Net::Braintree::Transaction->search(sub {
+    my $search = shift;
+    $search->id->is("deposittransaction");
+    $search->disbursement_date->is(Net::Braintree::TestHelper::parse_datetime("2013-04-09 00:00:00"));
+  });
+
+  ok contains("deposittransaction", $search_result->ids);
+  is scalar @{$search_result->ids}, 1;
+};
+
+subtest "merchant_account_id" => sub {
+  subtest "bogus id" => sub {
+    my $unique = generate_unique_integer() . "range";
+    my $transaction = create_sale($unique)->transaction;
+
+    my $search_result = Net::Braintree::Transaction->search(sub {
+      my $search = shift;
+      $search->merchant_account_id->is("obvious_junk");
+      $search->id->is($transaction->id);
+    });
+
+    is scalar @{$search_result->ids}, 0;
+  };
+
+  subtest "valid id" => sub {
+    my $unique = generate_unique_integer() . "range";
+    my $transaction = create_sale($unique)->transaction;
+
+    my $search_result = Net::Braintree::Transaction->search(sub {
+      my $search = shift;
+      $search->merchant_account_id->is($transaction->merchant_account_id);
+      $search->id->is($transaction->id);
+    });
+
+    is scalar @{$search_result->ids}, 1;
+  };
+
+  subtest "mix of valid and invalid ids" => sub {
+    my $unique = generate_unique_integer() . "range";
+    my $transaction = create_sale($unique)->transaction;
+
+    my $search_result = Net::Braintree::Transaction->search(sub {
+      my $search = shift;
+      $search->merchant_account_id->in("bogus_merchant_account_id", $transaction->merchant_account_id);
+      $search->id->is($transaction->id);
+    });
+
+    is scalar @{$search_result->ids}, 1;
+  };
 };
 
 subtest "all" => sub {

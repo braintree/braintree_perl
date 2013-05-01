@@ -8,6 +8,7 @@ abstract       'This library provides an API for integration with the Braintree 
 
 requires       'DateTime';
 requires       'DateTime::Format::Atom';
+requires       'DateTime::Format::Strptime';
 requires       'Digest';
 requires       'Digest::HMAC_SHA1';
 requires       'Digest::SHA1';

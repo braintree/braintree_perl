@@ -1,9 +1,11 @@
 use lib qw(lib t/lib);
 use Test::More;
 use Net::Braintree;
-use Net::Braintree::TestHelper;
 use Net::Braintree::CreditCardNumbers::CardTypeIndicators;
 use Net::Braintree::CreditCardDefaults;
+use Net::Braintree::ErrorCodes::CreditCard;
+use Net::Braintree::Test;
+use Net::Braintree::TestHelper;
 
 my $customer_create = Net::Braintree::Customer->create({first_name => "Walter", last_name => "Weatherman"});
 
@@ -18,6 +20,8 @@ subtest "Create with S2S" => sub {
   ok $result->is_success, "result returns no errors";
   is $result->credit_card->last_4, "1111", "sets credit card number";
   ok $result->credit_card->unique_number_identifier =~ /\A\w{32}\z/;
+  not_ok $result->credit_card->is_venmo_sdk;
+  ok $result->credit_card->image_url
 };
 
 subtest "Failure Cases" => sub {
@@ -265,6 +269,57 @@ subtest "card without card type identifiers" => sub {
   is $result->credit_card->durbin_regulated, Net::Braintree::CreditCard::DurbinRegulated::Unknown;
   is $result->credit_card->issuing_bank, Net::Braintree::CreditCard::IssuingBank::Unknown;
   is $result->credit_card->country_of_issuance, Net::Braintree::CreditCard::CountryOfIssuance::Unknown;
+};
+
+subtest "Venmo Sdk Payment Method Code" => sub {
+  my $result = Net::Braintree::CreditCard->create({
+    customer_id => $customer_create->customer->id,
+    venmo_sdk_payment_method_code => Net::Braintree::Test::VenmoSdk::generate_test_payment_method_code("4111111111111111")
+  });
+
+  ok $result->is_success;
+  is($result->credit_card->bin, "411111");
+  is($result->credit_card->last_4, "1111");
+  ok $result->credit_card->is_venmo_sdk;
+};
+
+subtest "Invalid Venmo Sdk Payment Method Code" => sub {
+  my $result = Net::Braintree::CreditCard->create({
+    customer_id => $customer_create->customer->id,
+    venmo_sdk_payment_method_code => Net::Braintree::Test::VenmoSdk::InvalidPaymentMethodCode
+  });
+
+  not_ok $result->is_success;
+  is($result->message, "Invalid VenmoSDK payment method code");
+  is($result->errors->for('credit_card')->on('venmo_sdk_payment_method_code')->[0]->code, Net::Braintree::ErrorCodes::CreditCard::InvalidVenmoSDKPaymentMethodCode);
+};
+
+subtest "Valid Venmo Sdk Session" => sub {
+  my $result = Net::Braintree::CreditCard->create({
+    customer_id => $customer_create->customer->id,
+    number => "5431111111111111",
+    expiration_date => "12/15",
+    options =>  {
+      venmo_sdk_session => Net::Braintree::Test::VenmoSdk::Session
+    }
+  });
+
+  ok $result->is_success;
+  ok $result->credit_card->is_venmo_sdk;
+};
+
+subtest "Invalid Venmo Sdk Session" => sub {
+  my $result = Net::Braintree::CreditCard->create({
+    customer_id => $customer_create->customer->id,
+    number => "5431111111111111",
+    expiration_date => "12/15",
+    options =>  {
+      venmo_sdk_session => Net::Braintree::Test::VenmoSdk::InvalidSession
+    }
+  });
+
+  ok $result->is_success;
+  not_ok $result->credit_card->is_venmo_sdk;
 };
 
 done_testing();

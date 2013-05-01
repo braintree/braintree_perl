@@ -174,7 +174,7 @@
       croak "Invalid Argument(s) for " . $self->name . ": " . join(", ", @$bad_values);
     }
 
-    push(@{$self->criteria}, @values);
+    @{$self->criteria} = @values;
     return $self->searcher;
   }
 

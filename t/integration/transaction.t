@@ -4,6 +4,7 @@ use Net::Braintree;
 use Net::Braintree::TestHelper;
 use Net::Braintree::CreditCardNumbers::CardTypeIndicators;
 use Net::Braintree::CreditCardDefaults;
+use Net::Braintree::Test;
 
 my $transaction_params = {
   amount => "50.00",
@@ -39,6 +40,33 @@ subtest "Custom Fields" => sub {
   });
   ok $result->is_success;
   is $result->transaction->custom_fields->store_me, "please!", "stores custom field value";
+};
+
+subtest "Disbursement Details" => sub {
+  subtest "disbursement_details for disbursed transactions" => sub {
+    my $result = Net::Braintree::Transaction->find("deposittransaction");
+
+    is $result->transaction->is_disbursed, 1;
+
+    my $disbursement_details = $result->transaction->disbursement_details;
+    is $disbursement_details->funds_held, 0;
+    is $disbursement_details->disbursement_date, "2013-04-10T00:00:00Z";
+    is $disbursement_details->settlement_amount, "100.00";
+    is $disbursement_details->settlement_currency_iso_code, "USD";
+    is $disbursement_details->settlement_currency_exchange_rate, "1";
+  };
+
+  subtest "is_disbursed false for non-disbursed transactions" => sub {
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "50.00",
+      credit_card => {
+        number => "5431111111111111",
+        expiration_date  => "05/12",
+      }
+    });
+
+    is $result->transaction->is_disbursed, 0;
+  };
 };
 
 subtest "Submit for Settlement" => sub {
@@ -253,6 +281,17 @@ subtest "Card Type Indicators" => sub {
   is($result->transaction->credit_card->durbin_regulated, Net::Braintree::CreditCard::DurbinRegulated::Unknown);
   is($result->transaction->credit_card->issuing_bank, Net::Braintree::CreditCard::IssuingBank::Unknown);
   is($result->transaction->credit_card->country_of_issuance, Net::Braintree::CreditCard::CountryOfIssuance::Unknown);
+};
+
+subtest "Venmo Sdk Payment Method Code" => sub {
+  my $result = Net::Braintree::Transaction->sale({
+      amount => "50.00",
+      venmo_sdk_payment_method_code => Net::Braintree::Test::VenmoSdk::VisaPaymentMethodCode
+  });
+
+  ok $result->is_success;
+  is($result->transaction->credit_card->bin, "411111");
+  is($result->transaction->credit_card->last_4, "1111");
 };
 
 

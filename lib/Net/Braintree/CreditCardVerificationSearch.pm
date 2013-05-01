@@ -11,7 +11,7 @@ $field->equality("credit_card_expiration_date");
 $field->partial_match("credit_card_number");
 $field->multiple_values("ids");
 
-$field->multiple_values("credit_card_card_type", @Net::Braintree::CreditCard::CardType::All);
+$field->multiple_values("credit_card_card_type", @{Net::Braintree::CreditCard::CardType::All()});
 
 $field->range("created_at");
 

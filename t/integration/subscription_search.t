@@ -131,6 +131,59 @@ subtest "each (single value)" => sub {
 
 };
 
+subtest "merchant_account_id" => sub {
+  subtest "bogus id" => sub {
+    my $id = generate_unique_integer() . "single_value";
+    my $subscription_active = Net::Braintree::Subscription->create({
+      payment_method_token => $card->credit_card->token,
+      plan_id => "integration_trialless_plan",
+      id => "subscription1_$id"
+    })->subscription;
+
+    my $search_result = Net::Braintree::Subscription->search(sub{
+      my $search = shift;
+      $search->id->is("subscription1_$id");
+      $search->merchant_account_id->is("obvious_junk");
+    });
+
+    is scalar @{$search_result->ids}, 0;
+  };
+
+  subtest "mixed bogus and valid id" => sub {
+    my $id = generate_unique_integer() . "single_value";
+    my $subscription_active = Net::Braintree::Subscription->create({
+      payment_method_token => $card->credit_card->token,
+      plan_id => "integration_trialless_plan",
+      id => "subscription1_$id"
+    })->subscription;
+
+    my $search_result = Net::Braintree::Subscription->search(sub{
+      my $search = shift;
+      $search->id->is("subscription1_$id");
+      $search->merchant_account_id->in("obvious_junk", $subscription_active->merchant_account_id);
+    });
+
+    is scalar @{$search_result->ids}, 1;
+  };
+
+  subtest "valid id" => sub {
+    my $id = generate_unique_integer() . "single_value";
+    my $subscription_active = Net::Braintree::Subscription->create({
+      payment_method_token => $card->credit_card->token,
+      plan_id => "integration_trialless_plan",
+      id => "subscription1_$id"
+    })->subscription;
+
+    my $search_result = Net::Braintree::Subscription->search(sub{
+      my $search = shift;
+      $search->id->is("subscription1_$id");
+      $search->merchant_account_id->is($subscription_active->merchant_account_id);
+    });
+
+    is scalar @{$search_result->ids}, 1;
+  };
+};
+
 subtest "all" => sub {
   my $subscriptions = Net::Braintree::Subscription->all;
   ok scalar @{$subscriptions->ids} > 1;

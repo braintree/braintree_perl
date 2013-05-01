@@ -2,6 +2,7 @@ use lib qw(lib t/lib);
 use Test::More;
 use Net::Braintree;
 use Net::Braintree::TestHelper;
+use Net::Braintree::Test;
 
 my $customer_attributes = {
   first_name => "Johnny",
@@ -45,6 +46,19 @@ subtest "Create:S2S" => sub {
     is($result->customer->addresses->[0]->street_address, "2 E Main St", "sets deeply nested attributes");
     is($result->customer->credit_cards->[0]->last_4, "1111");
     ok $result->customer->credit_cards->[0]->unique_number_identifier =~ /\A\w{32}\z/;
+  };
+
+  subtest "with venmo sdk payment method code" => sub {
+    my $result = Net::Braintree::Customer->create({
+      first_name => "Johnny",
+      last_name => "Doe",
+      credit_card => {
+        venmo_sdk_payment_method_code => Net::Braintree::Test::VenmoSdk::VisaPaymentMethodCode
+      }
+    });
+
+    ok $result->is_success;
+    is($result->customer->credit_cards->[0]->last_4, "1111");
   };
 
   subtest "with invalid attributes" => sub {

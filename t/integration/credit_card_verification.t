@@ -21,6 +21,7 @@ subtest "card verification is returned by result objects" => sub {
   my $verification = $result->credit_card_verification;
 
   is $verification->credit_card->{'last_4'}, "1115";
+  is $verification->status, "processor_declined";
 };
 
 subtest "finds credit card verification" => sub {

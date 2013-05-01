@@ -1,5 +1,7 @@
 Revision history for Net-Braintree
-
+0.13.0  05/01/2013
+        Adds disbursement details to transactions.
+        Adds image url to transactions.
 0.12.0  04/03/2013
         Adds Venmo Touch support.
 0.11.0  12/20/2012
