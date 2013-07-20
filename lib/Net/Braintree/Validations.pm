@@ -37,6 +37,8 @@ sub credit_card_signature {
     billing_address_id => ".", cardholder_name => ".", cvv => ".", expiration_date => ".",
     expiration_month => ".", expiration_year => ".", number => ".", token => ".",
     venmo_sdk_payment_method_code => ".",
+    device_session_id => ".",
+    device_data => ".",
     options => {
       make_default => ".",
       verification_merchant_account_id => ".",
@@ -51,7 +53,7 @@ sub credit_card_signature {
 
 sub customer_signature {
   return {
-    company => ".", email => ".", fax => ".", first_name => ".", id => ".", last_name => ".", phone => ".", website => ".",
+    company => ".", email => ".", fax => ".", first_name => ".", id => ".", last_name => ".", phone => ".", website => ".", device_data => ".",
     credit_card => credit_card_signature,
     custom_fields => "_any_key_"
   };
@@ -63,7 +65,7 @@ sub clone_transaction_signature {
 
 sub transaction_signature{
   return {
-    amount => ".", customer_id => ".", merchant_account_id => ".", order_id => ".", channel => ".", payment_method_token => ".",
+    amount => ".", customer_id => ".", merchant_account_id => ".", order_id => ".", channel => ".", payment_method_token => ".", "device_session_id" => ".", "device_data" => ".",
     purchase_order_number => ".", recurring => ".", shipping_address_id => ".", type => ".", tax_amount => ".", tax_exempt => ".",
     credit_card => {token => ".", cardholder_name => ".", cvv => ".", expiration_date => ".", expiration_month => ".", expiration_year => ".", number => "."},
     customer => {id => ".", company => ".", email => ".", fax => ".", first_name => ".", last_name => ".", phone => ".", website => "."} ,

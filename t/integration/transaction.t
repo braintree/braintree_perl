@@ -42,6 +42,18 @@ subtest "Custom Fields" => sub {
   is $result->transaction->custom_fields->store_me, "please!", "stores custom field value";
 };
 
+subtest "Security parameters" => sub {
+  my $result = Net::Braintree::Transaction->sale({
+    amount => "50.00",
+    device_session_id => "abc123",
+    credit_card => {
+      number => "5431111111111111",
+      expiration_date => "05/12"
+    },
+  });
+  ok $result->is_success;
+};
+
 subtest "Disbursement Details" => sub {
   subtest "disbursement_details for disbursed transactions" => sub {
     my $result = Net::Braintree::Transaction->find("deposittransaction");

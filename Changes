@@ -1,4 +1,6 @@
 Revision history for Net-Braintree
+0.14.0  07/19/2013
+        Adds device data to transactions, customers, and credit cards.
 0.13.0  05/01/2013
         Adds disbursement details to transactions.
         Adds image url to transactions.

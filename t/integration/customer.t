@@ -61,6 +61,28 @@ subtest "Create:S2S" => sub {
     is($result->customer->credit_cards->[0]->last_4, "1111");
   };
 
+  subtest "with security params" => sub {
+    my $result = Net::Braintree::Customer->create({
+      first_name => "Johnny",
+      last_name => "Doe",
+      credit_card => {
+        number => "5431111111111111",
+        device_session_id => "abc123",
+        expiration_date => "08/2012",
+        billing_address => {
+          street_address => "2 E Main St",
+          extended_address => "Apt 4",
+          locality => "Chicago",
+          region => "Illinois",
+          postal_code => "60647",
+          country_code_alpha2 => "US"
+        }
+      }
+    });
+
+    ok $result->is_success;
+  };
+
   subtest "with invalid attributes" => sub {
     plan skip_all => 'pending';
   };

@@ -24,6 +24,18 @@ subtest "Create with S2S" => sub {
   ok $result->credit_card->image_url
 };
 
+subtest "Create with security params" => sub {
+  my $credit_card_params = {
+    customer_id => $customer_create->customer->id,
+    number => "5431111111111111",
+    expiration_date => "12/15",
+    device_session_id => "abc123"
+  };
+
+  my $result = Net::Braintree::CreditCard->create($credit_card_params);
+  ok $result->is_success, "result returns no errors";
+};
+
 subtest "Failure Cases" => sub {
   my $result = Net::Braintree::CreditCard->create({customer_id => "dne",
     number => '5431111111111111',
