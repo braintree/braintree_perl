@@ -1,8 +1,10 @@
 use lib qw(lib t/lib);
-use Net::Braintree;
 use Test::More;
 use Test::Moose;
+use Net::Braintree;
 use Net::Braintree::TestHelper;
+use Net::Braintree::MerchantAccount;
+use Net::Braintree::ErrorCodes::MerchantAccount::ApplicantDetails;
 
 subtest 'verify' => sub {
   my $verification_string = Net::Braintree::WebhookNotification->verify("verification_token");
@@ -51,4 +53,48 @@ subtest 'sample_notification throws InvalidSignature error if the signature is i
   }, "signature is invalid");
 };
 
+subtest 'sample_notification creates a sample notification for an approved merchant account via webhook', sub {
+  my ($signature, $payload) = Net::Braintree::WebhookTesting->sample_notification(
+    Net::Braintree::WebhookNotification::Kind::SubMerchantAccountApproved,
+    "my_id"
+  );
+  my $webhook_notification = Net::Braintree::WebhookNotification->parse($signature, $payload);
+
+  is $webhook_notification->kind, Net::Braintree::WebhookNotification::Kind::SubMerchantAccountApproved;
+  is $webhook_notification->merchant_account->id, "my_id";
+  is $webhook_notification->merchant_account->status, Net::Braintree::MerchantAccount::Status::Active;
+  is $webhook_notification->merchant_account->master_merchant_account->id, "master_ma_for_my_id";
+  is $webhook_notification->merchant_account->master_merchant_account->status, Net::Braintree::MerchantAccount::Status::Active;
+};
+
+subtest 'sample_notification builds a sample notification for a merchant account declined webhook', sub {
+  my ($signature, $payload) = Net::Braintree::WebhookTesting->sample_notification(
+    Net::Braintree::WebhookNotification::Kind::SubMerchantAccountDeclined,
+    "my_id"
+  );
+
+  my $webhook_notification = Net::Braintree::WebhookNotification->parse($signature, $payload);
+
+  is $webhook_notification->kind, Net::Braintree::WebhookNotification::Kind::SubMerchantAccountDeclined;
+  is $webhook_notification->merchant_account->id, "my_id";
+  is $webhook_notification->merchant_account->status, Net::Braintree::MerchantAccount::Status::Suspended;
+  is $webhook_notification->merchant_account->master_merchant_account->id, "master_ma_for_my_id";
+  is $webhook_notification->merchant_account->master_merchant_account->status, Net::Braintree::MerchantAccount::Status::Suspended;
+  is $webhook_notification->message, "Credit score is too low";
+  is $webhook_notification->errors->for('merchant_account')->on('base')->[0]->code, Net::Braintree::ErrorCodes::MerchantAccount::ApplicantDetails::DeclinedOFAC;
+};
+
+subtest 'sample_notification builds a sample notification for disbursed transaction', sub {
+  my ($signature, $payload) = Net::Braintree::WebhookTesting->sample_notification(
+    Net::Braintree::WebhookNotification::Kind::TransactionDisbursed,
+    "my_id"
+  );
+
+  my $webhook_notification = Net::Braintree::WebhookNotification->parse($signature, $payload);
+
+  is $webhook_notification->kind, Net::Braintree::WebhookNotification::Kind::TransactionDisbursed;
+  is $webhook_notification->transaction->id, "my_id";
+  is $webhook_notification->transaction->amount, 100;
+  isnt $webhook_notification->transaction->disbursement_details->disbursement_date, undef;
+};
 done_testing();

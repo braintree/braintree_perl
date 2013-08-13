@@ -61,6 +61,21 @@ sub search {
   });
 }
 
+sub hold_in_escrow {
+  my ($self, $id) = @_;
+  $self->_make_request("/transactions/$id/hold_in_escrow", "put", undef);
+}
+
+sub release_from_escrow {
+  my ($self, $id) = @_;
+  $self->_make_request("/transactions/$id/release_from_escrow", "put", undef);
+}
+
+sub cancel_release {
+  my ($self, $id) = @_;
+  $self->_make_request("/transactions/$id/cancel_release", "put", undef);
+}
+
 sub all {
   my $self = shift;
   my $response = $self->gateway->http->post("/transactions/advanced_search_ids");

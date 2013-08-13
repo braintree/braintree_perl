@@ -11,6 +11,7 @@ my $response_objects = {
   address => "Net::Braintree::Address",
   credit_card => "Net::Braintree::CreditCard",
   customer => "Net::Braintree::Customer",
+  merchant_account => "Net::Braintree::MerchantAccount",
   settlement_batch_summary => "Net::Braintree::SettlementBatchSummary",
   subscription => "Net::Braintree::Subscription",
   transaction => "Net::Braintree::Transaction",

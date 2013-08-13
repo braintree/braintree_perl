@@ -1,5 +1,6 @@
 package Net::Braintree::Transaction;
 use Net::Braintree::Transaction::CreatedUsing;
+use Net::Braintree::Transaction::EscrowStatus;
 use Net::Braintree::Transaction::Source;
 use Net::Braintree::Transaction::Status;
 use Net::Braintree::Transaction::Type;
@@ -60,6 +61,21 @@ sub find {
 sub search {
   my ($class, $block) = @_;
   $class->gateway->transaction->search($block);
+}
+
+sub hold_in_escrow {
+  my ($class, $id) = @_;
+  $class->gateway->transaction->hold_in_escrow($id);
+}
+
+sub release_from_escrow {
+  my ($class, $id) = @_;
+  $class->gateway->transaction->release_from_escrow($id);
+}
+
+sub cancel_release {
+  my ($class, $id) = @_;
+  $class->gateway->transaction->cancel_release($id);
 }
 
 sub all {

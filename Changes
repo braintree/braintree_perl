@@ -1,4 +1,12 @@
 Revision history for Net-Braintree
+0.15.0  08/13/2013
+        Adds hold_in_escrow method
+        Add error codes for verification not supported error
+        Add company_name and tax_id to merchant account create
+        Adds cancel_release method
+        Adds release_from_escrow functionality
+        Adds owner_phone to merchant account signature.
+        Adds merchant account phone error code.
 0.14.0  07/19/2013
         Adds device data to transactions, customers, and credit cards.
 0.13.0  05/01/2013

@@ -19,17 +19,19 @@ use constant ExpirationMonthIsInvalid                                 => "81712"
 use constant ExpirationYearIsInvalid                                  => "81713";
 use constant InvalidVenmoSDKPaymentMethodCode                         => "91727";
 use constant NumberHasInvalidLength                                   => "81716";
-use constant NumberLengthIsInvalid                                    => "81716";
 use constant NumberIsInvalid                                          => "81715";
 use constant NumberIsRequired                                         => "81714";
+use constant NumberLengthIsInvalid                                    => "81716";
 use constant NumberMustBeTestNumber                                   => "81717";
 use constant PaymentMethodConflict                                    => "81725";
-use constant TokenInvalid                                             => "91718";
 use constant TokenFormatIsInvalid                                     => "91718";
+use constant TokenInvalid                                             => "91718";
 use constant TokenIsInUse                                             => "91719";
 use constant TokenIsNotAllowed                                        => "91721";
 use constant TokenIsRequired                                          => "91722";
 use constant TokenIsTooLong                                           => "91720";
+use constant UpdateExistingTokenNotAllowed                            => "91729";
+use constant VerificationNotSupportedOnThisMerchantAccount            => "91730";
 use constant VenmoSDKPaymentMethodCodeCardTypeIsNotAccepted           => "91726";
 
 1;

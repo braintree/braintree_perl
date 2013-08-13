@@ -3,6 +3,7 @@ use Test::More;
 use Net::Braintree;
 use Net::Braintree::TestHelper;
 use Net::Braintree::CreditCardNumbers::CardTypeIndicators;
+use Net::Braintree::ErrorCodes::Transaction;
 use Net::Braintree::CreditCardDefaults;
 use Net::Braintree::Test;
 
@@ -40,6 +41,182 @@ subtest "Custom Fields" => sub {
   });
   ok $result->is_success;
   is $result->transaction->custom_fields->store_me, "please!", "stores custom field value";
+};
+
+subtest "Service Fee" => sub {
+  subtest "can create a transaction" => sub {
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "50.00",
+      merchant_account_id => "sandbox_sub_merchant_account",
+      credit_card => {
+        number => "5431111111111111",
+        expiration_date => "05/12"
+      },
+      service_fee_amount => "10.00"
+    });
+    ok $result->is_success;
+    is($result->transaction->service_fee_amount, "10.00");
+  };
+
+  subtest "master merchant account does not support service fee" => sub {
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "50.00",
+      merchant_account_id => "sandbox_credit_card",
+      credit_card => {
+        number => "5431111111111111",
+        expiration_date => "05/12"
+      },
+      service_fee_amount => "10.00"
+    });
+    not_ok $result->is_success;
+    my $expected_error_code = Net::Braintree::ErrorCodes::Transaction::ServiceFeeAmountNotAllowedOnMasterMerchantAccount;
+    is($result->errors->for("transaction")->on("service_fee_amount")->[0]->code, $expected_error_code);
+  };
+
+  subtest "sub merchant account requires service fee" => sub {
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "50.00",
+      merchant_account_id => "sandbox_sub_merchant_account",
+      credit_card => {
+        number => "5431111111111111",
+        expiration_date => "05/12"
+      }
+    });
+    not_ok $result->is_success;
+    my $expected_error_code = Net::Braintree::ErrorCodes::Transaction::SubMerchantAccountRequiresServiceFeeAmount;
+    is($result->errors->for("transaction")->on("merchant_account_id")->[0]->code, $expected_error_code);
+  };
+
+  subtest "not allowed on credits" => sub {
+    my $result = Net::Braintree::Transaction->credit({
+      amount => "50.00",
+      merchant_account_id => "sandbox_sub_merchant_account",
+      credit_card => {
+        number => "5431111111111111",
+        expiration_date => "05/12"
+      },
+      service_fee_amount => "10.00"
+    });
+    not_ok $result->is_success;
+    my $expected_error_code = Net::Braintree::ErrorCodes::Transaction::ServiceFeeIsNotAllowedOnCredits;
+    is($result->errors->for("transaction")->on("base")->[0]->code, $expected_error_code);
+  };
+};
+
+subtest "create with hold in escrow" => sub {
+  subtest "can successfully create new transcation with hold in escrow option" => sub {
+    my $result = Net::Braintree::Transaction->sale({
+        amount => "50.00",
+        merchant_account_id => "sandbox_sub_merchant_account",
+        credit_card => {
+          number => "5431111111111111",
+          expiration_date => "05/12"
+        },
+        service_fee_amount => "10.00",
+        options => {
+          hold_in_escrow => 'true'
+        }
+    });
+    ok $result->is_success;
+    is($result->transaction->escrow_status, Net::Braintree::Transaction::EscrowStatus::HoldPending);
+  };
+
+  subtest "fails to create new transaction with hold in escrow if merchant account is not submerchant"  => sub {
+    my $result = Net::Braintree::Transaction->sale({
+        amount => "50.00",
+        merchant_account_id => "sandbox_credit_card",
+        credit_card => {
+          number => "5431111111111111",
+          expiration_date => "05/12"
+        },
+        service_fee_amount => "10.00",
+        options => {
+          hold_in_escrow => 'true'
+        }
+    });
+    not_ok $result->is_success;
+    is($result->errors->for("transaction")->on("base")->[0]->code,
+      Net::Braintree::ErrorCodes::Transaction::CannotHoldInEscrow
+    );
+  }
+};
+
+subtest "Hold for escrow"  => sub {
+  subtest "can hold a submerchant's authorized transaction for escrow" => sub {
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "50.00",
+      merchant_account_id => "sandbox_sub_merchant_account",
+      credit_card => {
+        number => "5431111111111111",
+        expiration_date => "05/12"
+      },
+      service_fee_amount => "10.00"
+    });
+    my $hold_result = Net::Braintree::Transaction->hold_in_escrow($result->transaction->id);
+    ok $hold_result->is_success;
+    is($hold_result->transaction->escrow_status, Net::Braintree::Transaction::EscrowStatus::HoldPending);
+  };
+  subtest "fails with an error when holding non submerchant account transactions for error" => sub {
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "50.00",
+      merchant_account_id => "sandbox_credit_card",
+      credit_card => {
+        number => "5431111111111111",
+        expiration_date => "05/12"
+      }
+    });
+    my $hold_result = Net::Braintree::Transaction->hold_in_escrow($result->transaction->id);
+    not_ok $hold_result->is_success;
+    is($hold_result->errors->for("transaction")->on("base")->[0]->code,
+      Net::Braintree::ErrorCodes::Transaction::CannotHoldInEscrow
+    );
+  };
+};
+
+subtest "Submit For Release" => sub {
+  subtest "can submit a escrowed transaction for release" => sub {
+    my $response = create_escrowed_transaction();
+    my $result = Net::Braintree::Transaction->release_from_escrow($response->transaction->id);
+    ok $result->is_success;
+    is($result->transaction->escrow_status,
+      Net::Braintree::Transaction::EscrowStatus::ReleasePending
+    );
+  };
+
+  subtest "cannot submit non-escrowed transaction for release" => sub {
+    my $sale = Net::Braintree::Transaction->sale({
+      amount => "50.00",
+      merchant_account_id => "sandbox_credit_card",
+      credit_card => {
+        number => "5431111111111111",
+        expiration_date => "05/12"
+      }
+    });
+    my $result = Net::Braintree::Transaction->release_from_escrow($sale->transaction->id);
+    not_ok $result->is_success;
+    is($result->errors->for("transaction")->on("base")->[0]->code,
+      Net::Braintree::ErrorCodes::Transaction::CannotReleaseFromEscrow
+    );
+  };
+};
+
+subtest "Cancel Release" => sub {
+  subtest "can cancel release for a transaction which has been submitted" => sub {
+    my $escrow = create_escrowed_transaction();
+    my $submit = Net::Braintree::Transaction->release_from_escrow($escrow->transaction->id);
+    my $result = Net::Braintree::Transaction->cancel_release($submit->transaction->id);
+    ok $result->is_success;
+    is($result->transaction->escrow_status, Net::Braintree::Transaction::EscrowStatus::Held);
+  };
+
+  subtest "cannot cancel release of already released transactions" => sub {
+    my $escrowed = create_escrowed_transaction();
+    my $result = Net::Braintree::Transaction->cancel_release($escrowed->transaction->id);
+    not_ok $result->is_success;
+    is($result->errors->for("transaction")->on("base")->[0]->code,
+      Net::Braintree::ErrorCodes::Transaction::CannotCancelRelease
+    );
+  };
 };
 
 subtest "Security parameters" => sub {
@@ -244,7 +421,6 @@ subtest "Clone transaction and submit for settlement" => sub {
 
   is $clone_transaction->status, "submitted_for_settlement";
 };
-
 subtest "Clone transaction with validation error" => sub {
   my $credit_result = Net::Braintree::Transaction->credit({
     amount => "50.00",
@@ -304,6 +480,22 @@ subtest "Venmo Sdk Payment Method Code" => sub {
   ok $result->is_success;
   is($result->transaction->credit_card->bin, "411111");
   is($result->transaction->credit_card->last_4, "1111");
+};
+
+subtest "Venmo Sdk Session" => sub {
+  my $result = Net::Braintree::Transaction->sale({
+    amount => "50.00",
+    credit_card => {
+      number => "5431111111111111",
+      expiration_date => "08/2012"
+    },
+    options => {
+      venmo_sdk_session => Net::Braintree::Test::VenmoSdk::Session
+    }
+  });
+
+  ok $result->is_success;
+  ok $result->transaction->credit_card->venmo_sdk;
 };
 
 

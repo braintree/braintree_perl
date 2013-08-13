@@ -61,6 +61,23 @@ subtest "Create:S2S" => sub {
     is($result->customer->credit_cards->[0]->last_4, "1111");
   };
 
+  subtest "with venmo sdk session" => sub {
+    my $result = Net::Braintree::Customer->create({
+      first_name => "Johnny",
+      last_name => "Doe",
+      credit_card => {
+        number => "5431111111111111",
+        expiration_date => "08/2012",
+        options => {
+          venmo_sdk_session => Net::Braintree::Test::VenmoSdk::Session
+        }
+      }
+    });
+
+    ok $result->is_success;
+    ok $result->customer->credit_cards->[0]->venmo_sdk
+  };
+
   subtest "with security params" => sub {
     my $result = Net::Braintree::Customer->create({
       first_name => "Johnny",

@@ -4,6 +4,7 @@ use Net::Braintree::AddressGateway;
 use Net::Braintree::CreditCardGateway;
 use Net::Braintree::CreditCardVerificationGateway;
 use Net::Braintree::CustomerGateway;
+use Net::Braintree::MerchantAccountGateway;
 use Net::Braintree::SettlementBatchSummaryGateway;
 use Net::Braintree::SubscriptionGateway;
 use Net::Braintree::TransactionGateway;
@@ -33,6 +34,11 @@ has 'credit_card_verification' => (is => 'ro', lazy => 1, default => sub {
 has 'customer' => (is => 'ro', lazy => 1, default => sub {
   my $self = shift;
   Net::Braintree::CustomerGateway->new(gateway => $self);
+});
+
+has 'merchant_account' => (is => 'ro', lazy => 1, default => sub {
+  my $self = shift;
+  Net::Braintree::MerchantAccountGateway->new(gateway => $self);
 });
 
 has 'settlement_batch_summary' => (is => 'ro', lazy => 1, default => sub {

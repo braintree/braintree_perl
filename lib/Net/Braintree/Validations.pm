@@ -5,7 +5,7 @@ use Net::Braintree::Util;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(verify_params address_signature credit_card_signature customer_signature transaction_signature clone_transaction_signature);
+our @EXPORT_OK = qw(verify_params address_signature credit_card_signature customer_signature transaction_signature clone_transaction_signature merchant_account_signature);
 
 sub verify_params {
   my ($params, $white_list) = @_;
@@ -71,13 +71,47 @@ sub transaction_signature{
     customer => {id => ".", company => ".", email => ".", fax => ".", first_name => ".", last_name => ".", phone => ".", website => "."} ,
     billing => address_signature,
     shipping => address_signature,
-    options => {store_in_vault => ".", store_in_vault_on_success => ".", submit_for_settlement => ".", add_billing_address_to_payment_method => ".", store_shipping_address_in_vault => ".", venmo_sdk_session => "."},
+    options => {
+      store_in_vault => ".",
+      store_in_vault_on_success => ".",
+      submit_for_settlement => ".",
+      add_billing_address_to_payment_method => ".",
+      store_shipping_address_in_vault => ".",
+      venmo_sdk_session => ".",
+      hold_in_escrow => "."
+    },
     custom_fields => "_any_key_",
     descriptor => {name => ".", phone => "."},
     subscription_id => ".",
-    venmo_sdk_payment_method_code => "."
+    venmo_sdk_payment_method_code => ".",
+    service_fee_amount => "."
   };
 }
 
+sub merchant_account_signature{
+  return {
+    applicant_details => {
+      company_name => ".",
+      first_name => ".",
+      last_name => ".",
+      email => ".",
+      phone => ".",
+      date_of_birth => ".",
+      ssn => ".",
+      tax_id => ".",
+      routing_number => ".",
+      account_number => ".",
+      address => {
+        street_address => ".",
+        postal_code => ".",
+        locality => ".",
+        region => ".",
+      }
+    },
+    tos_accepted => ".",
+    master_merchant_account_id => ".",
+    id => "."
+  };
+}
 
 1;
