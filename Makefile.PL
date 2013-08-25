@@ -20,6 +20,7 @@ requires       'LWP'         => '6.02';
 requires       'LWP::Protocol::https';
 requires       'Module::Install::TestTarget';
 requires       'Moose';
+requires       'Switch';
 requires       'URI::Query';
 requires       'XML::Simple';
 test_requires  'Test::More'  => '0.98';
