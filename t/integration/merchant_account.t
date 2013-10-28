@@ -19,7 +19,7 @@ my $valid_params = {
       region => "IL",
     },
     date_of_birth => "10/9/1980",
-    ssn => "123-000-1234",
+    ssn => "123-00-1234",
     tax_id => "123456789",
     routing_number => "122100024",
     account_number => "43759348798"

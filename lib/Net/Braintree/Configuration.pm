@@ -4,6 +4,7 @@ use Net::Braintree::Gateway;
 use Moose;
 
 has merchant_id => (is => 'rw');
+has partner_id => (is => 'rw');
 has public_key  => (is => 'rw');
 has private_key => (is => 'rw');
 has gateway => (is  => 'ro', lazy => 1, default => sub { Net::Braintree::Gateway->new({config => shift})});

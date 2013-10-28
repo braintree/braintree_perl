@@ -25,7 +25,20 @@ subtest "Successful Transactions" => sub {
     ok $result->is_success;
     is($result->message, "", "$method result has errors: " . $result->message);
     is($result->transaction->credit_card->last_4, "1111");
+    is($result->transaction->voice_referral_number, undef);
   }
+};
+
+subtest "Fraud rejections" => sub {
+  my $result = Net::Braintree::Transaction->sale({
+      amount => "5.00",
+      credit_card => {
+        number => "4000111111111511",
+        expiration_date => "05/16"
+      }
+  });
+  not_ok $result->is_success;
+  is($result->message, "Gateway Rejected: fraud");
 };
 
 subtest "Custom Fields" => sub {
@@ -223,6 +236,7 @@ subtest "Security parameters" => sub {
   my $result = Net::Braintree::Transaction->sale({
     amount => "50.00",
     device_session_id => "abc123",
+    fraud_merchant_id => "456",
     credit_card => {
       number => "5431111111111111",
       expiration_date => "05/12"

@@ -5,7 +5,7 @@ use Net::Braintree::Util;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(verify_params address_signature credit_card_signature customer_signature transaction_signature clone_transaction_signature merchant_account_signature);
+our @EXPORT_OK = qw(verify_params address_signature credit_card_signature customer_signature transaction_signature clone_transaction_signature merchant_account_signature transaction_search_results_signature);
 
 sub verify_params {
   my ($params, $white_list) = @_;
@@ -20,6 +20,19 @@ sub verify_params {
     }
   }
   return 1;
+}
+
+sub search_results_signature {
+  return {
+    page_size => ".",
+    ids => "."
+  };
+}
+
+sub transaction_search_results_signature {
+  return {
+    search_results => search_results_signature
+  };
 }
 
 sub address_signature {
@@ -39,6 +52,7 @@ sub credit_card_signature {
     venmo_sdk_payment_method_code => ".",
     device_session_id => ".",
     device_data => ".",
+    fraud_merchant_id => ".",
     options => {
       make_default => ".",
       verification_merchant_account_id => ".",
@@ -54,6 +68,7 @@ sub credit_card_signature {
 sub customer_signature {
   return {
     company => ".", email => ".", fax => ".", first_name => ".", id => ".", last_name => ".", phone => ".", website => ".", device_data => ".",
+    device_session_id => ".", fraud_merchant_id => ".",
     credit_card => credit_card_signature,
     custom_fields => "_any_key_"
   };
@@ -65,7 +80,7 @@ sub clone_transaction_signature {
 
 sub transaction_signature{
   return {
-    amount => ".", customer_id => ".", merchant_account_id => ".", order_id => ".", channel => ".", payment_method_token => ".", "device_session_id" => ".", "device_data" => ".",
+    amount => ".", customer_id => ".", merchant_account_id => ".", order_id => ".", channel => ".", payment_method_token => ".", "device_session_id" => ".", "device_data" => ".", fraud_merchant_id => ".",
     purchase_order_number => ".", recurring => ".", shipping_address_id => ".", type => ".", tax_amount => ".", tax_exempt => ".",
     credit_card => {token => ".", cardholder_name => ".", cvv => ".", expiration_date => ".", expiration_month => ".", expiration_year => ".", number => "."},
     customer => {id => ".", company => ".", email => ".", fax => ".", first_name => ".", last_name => ".", phone => ".", website => "."} ,

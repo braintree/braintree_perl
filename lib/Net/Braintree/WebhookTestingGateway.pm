@@ -40,6 +40,9 @@ sub _subject_sample_xml {
    case Net::Braintree::WebhookNotification::Kind::TransactionDisbursed { return $self->_transaction_disbursed_sample_xml($id) }
    case Net::Braintree::WebhookNotification::Kind::SubMerchantAccountApproved { return $self->_merchant_account_approved_sample_xml($id) }
    case Net::Braintree::WebhookNotification::Kind::SubMerchantAccountDeclined { return $self->_merchant_account_declined_sample_xml($id) }
+   case Net::Braintree::WebhookNotification::Kind::PartnerMerchantConnected { return $self->_partner_merchant_connected_sample_xml($id) }
+   case Net::Braintree::WebhookNotification::Kind::PartnerMerchantDisconnected { return $self->_partner_merchant_disconnected_sample_xml($id) }
+   case Net::Braintree::WebhookNotification::Kind::PartnerMerchantDeclined { return $self->_partner_merchant_declined_sample_xml($id) }
    else { return $self->_subscription_sample_xml($id) }
   }
 }
@@ -116,6 +119,40 @@ sub _subscription_sample_xml {
       <discounts type="array">
       </discounts>
     </subscription>
+XML
+}
+
+sub _partner_merchant_connected_sample_xml {
+  my ($self) = @_;
+
+  return <<XML
+        <partner_merchant>
+          <merchant_public_id>public_id</merchant_public_id>
+          <public_key>public_key</public_key>
+          <private_key>private_key</private_key>
+          <partner_merchant_id>abc123</partner_merchant_id>
+          <client_side_encryption_key>cse_key</client_side_encryption_key>
+        </partner_merchant>
+XML
+}
+
+sub _partner_merchant_disconnected_sample_xml {
+  my ($self) = @_;
+
+  return <<XML
+        <partner_merchant>
+          <partner_merchant_id>abc123</partner_merchant_id>
+        </partner_merchant>
+XML
+}
+
+sub _partner_merchant_declined_sample_xml {
+  my ($self) = @_;
+
+  return <<XML
+        <partner_merchant>
+          <partner_merchant_id>abc123</partner_merchant_id>
+        </partner_merchant>
 XML
 }
 

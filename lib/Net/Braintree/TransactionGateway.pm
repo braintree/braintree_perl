@@ -2,7 +2,7 @@ package Net::Braintree::TransactionGateway;
 use Moose;
 use Carp qw(confess);
 use Net::Braintree::Util qw(validate_id);
-use Net::Braintree::Validations qw(verify_params transaction_signature clone_transaction_signature);
+use Net::Braintree::Validations qw(verify_params transaction_signature clone_transaction_signature transaction_search_results_signature);
 use Net::Braintree::Util;
 
 has 'gateway' => (is => 'ro');
@@ -56,6 +56,7 @@ sub search {
   my $search = Net::Braintree::TransactionSearch->new;
   my $params = $block->($search)->to_hash;
   my $response = $self->gateway->http->post("/transactions/advanced_search_ids", {search => $params});
+  confess "DownForMaintenanceError" unless (verify_params($response, transaction_search_results_signature));
   return Net::Braintree::ResourceCollection->new()->init($response, sub {
     $self->fetch_transactions($search, shift);
   });

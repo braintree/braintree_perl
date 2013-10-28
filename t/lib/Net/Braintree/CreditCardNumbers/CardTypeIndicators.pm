@@ -11,5 +11,6 @@ use constant Unknown           => "4111111111112101";
 use constant No                => "4111111111310101";
 use constant IssuingBank       => "4111111141010101";
 use constant CountryOfIssuance => "4111111111121102";
+use constant Fraud             => "4000111111111511";
 
 1;

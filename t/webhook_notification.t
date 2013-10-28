@@ -97,4 +97,45 @@ subtest 'sample_notification builds a sample notification for disbursed transact
   is $webhook_notification->transaction->amount, 100;
   isnt $webhook_notification->transaction->disbursement_details->disbursement_date, undef;
 };
+
+subtest 'sample_notification builds a sample notification for partner merchant connected', sub {
+  my ($signature, $payload) = Net::Braintree::WebhookTesting->sample_notification(
+    Net::Braintree::WebhookNotification::Kind::PartnerMerchantConnected,
+    "my_id"
+  );
+
+  my $webhook_notification = Net::Braintree::WebhookNotification->parse($signature, $payload);
+
+  is $webhook_notification->kind, Net::Braintree::WebhookNotification::Kind::PartnerMerchantConnected;
+  is $webhook_notification->partner_merchant->partner_merchant_id, "abc123";
+  is $webhook_notification->partner_merchant->merchant_public_id, "public_id";
+  is $webhook_notification->partner_merchant->public_key, "public_key";
+  is $webhook_notification->partner_merchant->private_key, "private_key";
+  is $webhook_notification->partner_merchant->client_side_encryption_key, "cse_key";
+};
+
+subtest 'sample_notification builds a sample notification for partner merchant disconnected', sub {
+  my ($signature, $payload) = Net::Braintree::WebhookTesting->sample_notification(
+    Net::Braintree::WebhookNotification::Kind::PartnerMerchantDisconnected,
+    "my_id"
+  );
+
+  my $webhook_notification = Net::Braintree::WebhookNotification->parse($signature, $payload);
+
+  is $webhook_notification->kind, Net::Braintree::WebhookNotification::Kind::PartnerMerchantDisconnected;
+  is $webhook_notification->partner_merchant->partner_merchant_id, "abc123";
+};
+
+subtest 'sample_notification builds a sample notification for partner merchant declined', sub {
+  my ($signature, $payload) = Net::Braintree::WebhookTesting->sample_notification(
+    Net::Braintree::WebhookNotification::Kind::PartnerMerchantDeclined,
+    "my_id"
+  );
+
+  my $webhook_notification = Net::Braintree::WebhookNotification->parse($signature, $payload);
+
+  is $webhook_notification->kind, Net::Braintree::WebhookNotification::Kind::PartnerMerchantDeclined;
+  is $webhook_notification->partner_merchant->partner_merchant_id, "abc123";
+};
+
 done_testing();

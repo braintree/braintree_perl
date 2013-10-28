@@ -7,6 +7,15 @@ use Net::Braintree::TestHelper;
 
 my $credit_card_number = "5431111111111111";
 
+subtest "throws exception" => sub {
+  should_throw "DownForMaintenanceError", sub {
+    my $search_result = Net::Braintree::Transaction->search(sub {
+      my $search = shift;
+      $search->amount->is("-5.50");
+    });
+  }
+};
+
 subtest "doesn't return duplicate ids in paginated searches" => sub {
   my $name = "Fairley" . generate_unique_integer();
   for (my $count = 0; $count < 51; $count++) {
@@ -313,7 +322,6 @@ subtest "all" => sub {
   my $transactions = Net::Braintree::Transaction->all;
   ok scalar @{$transactions->ids} > 1;
 };
-
 
 sub find_one_result {
   my $unique = shift;

@@ -85,6 +85,7 @@ subtest "Create:S2S" => sub {
       credit_card => {
         number => "5431111111111111",
         device_session_id => "abc123",
+        fraud_merchant_id => "456",
         expiration_date => "08/2012",
         billing_address => {
           street_address => "2 E Main St",

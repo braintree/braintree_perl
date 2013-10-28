@@ -29,7 +29,8 @@ subtest "Create with security params" => sub {
     customer_id => $customer_create->customer->id,
     number => "5431111111111111",
     expiration_date => "12/15",
-    device_session_id => "abc123"
+    device_session_id => "abc123",
+    fraud_merchant_id => "456"
   };
 
   my $result = Net::Braintree::CreditCard->create($credit_card_params);

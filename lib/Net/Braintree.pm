@@ -11,6 +11,7 @@ use Net::Braintree::Customer;
 use Net::Braintree::CustomerSearch;
 use Net::Braintree::DisbursementDetails;
 use Net::Braintree::MerchantAccount;
+use Net::Braintree::PartnerMerchant;
 use Net::Braintree::ResourceCollection;
 use Net::Braintree::SettlementBatchSummary;
 use Net::Braintree::Subscription;
@@ -32,7 +33,7 @@ Version 0.15.0
 
 =cut
 
-our $VERSION = '0.15.0';
+our $VERSION = '0.16.0';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 
