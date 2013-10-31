@@ -1,4 +1,6 @@
 Revision history for Net-Braintree
+0.16.1  10/31/2013
+        Updates configuration URLs
 0.16.0  10/27/2013
         Adds support for Partnerships
 0.15.0  08/13/2013

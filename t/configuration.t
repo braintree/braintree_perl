@@ -21,8 +21,8 @@ subtest "Configuration instance" => sub {
 };
 
 my @examples = (
-  ['sandbox', "https://sandbox.braintreegateway.com:443/merchants/integration_merchant_id"],
-  ['production', "https://www.braintreegateway.com:443/merchants/integration_merchant_id"],
+  ['sandbox', "https://api.sandbox.braintreegateway.com:443/merchants/integration_merchant_id"],
+  ['production', "https://api.braintreegateway.com:443/merchants/integration_merchant_id"],
   ['qa', "https://qa-master.braintreegateway.com:443/merchants/integration_merchant_id"]
 );
 

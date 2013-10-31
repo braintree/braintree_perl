@@ -5,7 +5,6 @@ use POSIX qw(strftime);
 use Net::Braintree::Digest qw(hexdigest);
 use Net::Braintree::WebhookNotification::Kind;
 use Moose;
-use Switch;
 
 has 'gateway' => (is => 'ro');
 
@@ -36,19 +35,22 @@ XML
 sub _subject_sample_xml {
   my ($self, $kind, $id) = @_;
 
-  switch ($kind) {
-   case Net::Braintree::WebhookNotification::Kind::TransactionDisbursed { return $self->_transaction_disbursed_sample_xml($id) }
-   case Net::Braintree::WebhookNotification::Kind::SubMerchantAccountApproved { return $self->_merchant_account_approved_sample_xml($id) }
-   case Net::Braintree::WebhookNotification::Kind::SubMerchantAccountDeclined { return $self->_merchant_account_declined_sample_xml($id) }
-   case Net::Braintree::WebhookNotification::Kind::PartnerMerchantConnected { return $self->_partner_merchant_connected_sample_xml($id) }
-   case Net::Braintree::WebhookNotification::Kind::PartnerMerchantDisconnected { return $self->_partner_merchant_disconnected_sample_xml($id) }
-   case Net::Braintree::WebhookNotification::Kind::PartnerMerchantDeclined { return $self->_partner_merchant_declined_sample_xml($id) }
-   else { return $self->_subscription_sample_xml($id) }
-  }
+  my $dispatch = {
+    Net::Braintree::WebhookNotification::Kind::TransactionDisbursed => sub { _transaction_disbursed_sample_xml(@_) }, 
+    Net::Braintree::WebhookNotification::Kind::SubMerchantAccountApproved => sub { _merchant_account_approved_sample_xml(@_) },
+    Net::Braintree::WebhookNotification::Kind::SubMerchantAccountDeclined => sub { _merchant_account_declined_sample_xml(@_) },
+    Net::Braintree::WebhookNotification::Kind::PartnerMerchantConnected => sub { _partner_merchant_connected_sample_xml(@_) },
+    Net::Braintree::WebhookNotification::Kind::PartnerMerchantDisconnected => sub { _partner_merchant_disconnected_sample_xml(@_) },
+    Net::Braintree::WebhookNotification::Kind::PartnerMerchantDeclined => sub { _partner_merchant_declined_sample_xml(@_) }
+  };
+
+  my $templater = $dispatch->{$kind} || sub { _subscription_sample_xml(@_) };
+
+  return $templater->($id);
 }
 
 sub _transaction_disbursed_sample_xml {
-  my ($self, $id) = @_;
+  my $id = shift;
 
   return <<XML
     <transaction>
@@ -62,7 +64,7 @@ XML
 };
 
 sub _merchant_account_approved_sample_xml {
-  my ($self, $id) = @_;
+  my $id = shift;
 
   return <<XML
     <merchant_account>
@@ -77,7 +79,7 @@ XML
 };
 
 sub _merchant_account_declined_sample_xml {
-  my ($self, $id) = @_;
+  my $id = shift;
 
   return <<XML
         <api-error-response>
@@ -107,7 +109,7 @@ XML
 };
 
 sub _subscription_sample_xml {
-  my ($self, $id) = @_;
+  my $id = shift;
 
   return <<XML
     <subscription>
@@ -123,8 +125,6 @@ XML
 }
 
 sub _partner_merchant_connected_sample_xml {
-  my ($self) = @_;
-
   return <<XML
         <partner_merchant>
           <merchant_public_id>public_id</merchant_public_id>
@@ -137,8 +137,6 @@ XML
 }
 
 sub _partner_merchant_disconnected_sample_xml {
-  my ($self) = @_;
-
   return <<XML
         <partner_merchant>
           <partner_merchant_id>abc123</partner_merchant_id>
@@ -147,8 +145,6 @@ XML
 }
 
 sub _partner_merchant_declined_sample_xml {
-  my ($self) = @_;
-
   return <<XML
         <partner_merchant>
           <partner_merchant_id>abc123</partner_merchant_id>

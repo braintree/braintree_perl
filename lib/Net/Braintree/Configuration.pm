@@ -47,8 +47,8 @@ sub server {
   my $self = shift;
   return "localhost" if $self->environment eq 'integration';
   return "localhost" if $self->environment eq 'development';
-  return "sandbox.braintreegateway.com" if $self->environment eq 'sandbox';
-  return "www.braintreegateway.com" if $self->environment eq 'production';
+  return "api.sandbox.braintreegateway.com" if $self->environment eq 'sandbox';
+  return "api.braintreegateway.com" if $self->environment eq 'production';
   return "qa-master.braintreegateway.com" if $self->environment eq 'qa';
 }
 
