@@ -103,30 +103,4 @@ sub transaction_signature{
   };
 }
 
-sub merchant_account_signature{
-  return {
-    applicant_details => {
-      company_name => ".",
-      first_name => ".",
-      last_name => ".",
-      email => ".",
-      phone => ".",
-      date_of_birth => ".",
-      ssn => ".",
-      tax_id => ".",
-      routing_number => ".",
-      account_number => ".",
-      address => {
-        street_address => ".",
-        postal_code => ".",
-        locality => ".",
-        region => ".",
-      }
-    },
-    tos_accepted => ".",
-    master_merchant_account_id => ".",
-    id => "."
-  };
-}
-
 1;

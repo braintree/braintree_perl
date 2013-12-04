@@ -4,7 +4,7 @@ use Test::Moose;
 use Net::Braintree;
 use Net::Braintree::TestHelper;
 use Net::Braintree::MerchantAccount;
-use Net::Braintree::ErrorCodes::MerchantAccount::ApplicantDetails;
+use Net::Braintree::ErrorCodes::MerchantAccount;
 
 subtest 'verify' => sub {
   my $verification_string = Net::Braintree::WebhookNotification->verify("verification_token");
@@ -81,7 +81,7 @@ subtest 'sample_notification builds a sample notification for a merchant account
   is $webhook_notification->merchant_account->master_merchant_account->id, "master_ma_for_my_id";
   is $webhook_notification->merchant_account->master_merchant_account->status, Net::Braintree::MerchantAccount::Status::Suspended;
   is $webhook_notification->message, "Credit score is too low";
-  is $webhook_notification->errors->for('merchant_account')->on('base')->[0]->code, Net::Braintree::ErrorCodes::MerchantAccount::ApplicantDetails::DeclinedOFAC;
+  is $webhook_notification->errors->for('merchant_account')->on('base')->[0]->code, Net::Braintree::ErrorCodes::MerchantAccount::DeclinedOFAC;
 };
 
 subtest 'sample_notification builds a sample notification for disbursed transaction', sub {
