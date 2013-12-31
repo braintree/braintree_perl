@@ -55,6 +55,11 @@ sub update {
   $class->gateway->merchant_account->update($merchant_account_id, $params);
 }
 
+sub find {
+  my ($class, $merchant_account_id) = @_;
+  $class->gateway->merchant_account->find($merchant_account_id);
+}
+
 sub gateway {
   return Net::Braintree->configuration->gateway;
 }

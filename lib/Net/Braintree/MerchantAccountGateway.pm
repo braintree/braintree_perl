@@ -19,6 +19,12 @@ sub update {
 	$self->_make_request("/merchant_accounts/${merchant_account_id}/update_via_api", "put", {merchant_account => $params});
 }
 
+sub find {
+  my ($self, $id) = @_;
+  confess "NotFoundError" unless validate_id($id);
+  my $result = $self->_make_request("/merchant_accounts/$id", "get", undef)->merchant_account;
+}
+
 sub _make_request {
   my($self, $path, $verb, $params) = @_;
   my $response = $self->gateway->http->$verb($path, $params);

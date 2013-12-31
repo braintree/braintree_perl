@@ -321,4 +321,17 @@ subtest "Handles funding destination requirement errors" => sub {
   is($result->errors->for("merchant_account")->for("funding")->on("email")->[0]->code, Net::Braintree::ErrorCodes::MerchantAccount::Funding::EmailIsRequired);
 };
 
+subtest "Can find a merchant account by ID" => sub {
+  my $params_with_id = $valid_application_params;
+  my $rand = int(rand(1000));
+  $params_with_id->{"id"} = "sub_merchant_account_id" . $rand;
+  my $result = Net::Braintree::MerchantAccount->create($params_with_id);
+  ok $result->is_success;
+  my $merchant_account = Net::Braintree::MerchantAccount->find("sub_merchant_account_id" . $rand);
+};
+
+subtest "Calling find with a nonexistant ID returns a NotFoundError" => sub {
+  should_throw("NotFoundError", sub { Net::Braintree::MerchantAccount->find("asdlkfj") });
+};
+
 done_testing();
