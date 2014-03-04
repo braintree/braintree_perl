@@ -14,6 +14,8 @@ use constant SubscriptionWentPastDue => "subscription_went_past_due";
 use constant SubMerchantAccountApproved => "sub_merchant_account_approved";
 use constant SubMerchantAccountDeclined => "sub_merchant_account_declined";
 use constant TransactionDisbursed => "transaction_disbursed";
+use constant DisbursementException => "disbursement_exception";
+use constant Disbursement => "disbursement";
 
 use constant All => (
   PartnerMerchantConnected,
@@ -29,6 +31,8 @@ use constant All => (
   SubMerchantAccountApproved,
   SubMerchantAccountDeclined,
   TransactionDisbursed,
+  DisbursementException,
+  Disbursement,
 );
 
 1;

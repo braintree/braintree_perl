@@ -98,6 +98,38 @@ subtest 'sample_notification builds a sample notification for disbursed transact
   isnt $webhook_notification->transaction->disbursement_details->disbursement_date, undef;
 };
 
+subtest 'sample_notification builds a sample notification for disbursement', sub {
+  my ($signature, $payload) = Net::Braintree::WebhookTesting->sample_notification(
+    Net::Braintree::WebhookNotification::Kind::DisbursementException,
+    "my_id"
+  );
+
+  my $webhook_notification = Net::Braintree::WebhookNotification->parse($signature, $payload);
+
+  is $webhook_notification->kind, Net::Braintree::WebhookNotification::Kind::DisbursementException;
+  is $webhook_notification->disbursement->id, "my_id";
+  is $webhook_notification->disbursement->exception_message, "bank_rejected";
+  is $webhook_notification->disbursement->disbursement_date, "2014-02-10T00:00:00Z";
+  is $webhook_notification->disbursement->follow_up_action, "update_funding_information";
+  is $webhook_notification->disbursement->merchant_account->id, "merchant_account_token";
+};
+
+subtest 'sample_notification builds a sample notification for disbursement exception', sub {
+  my ($signature, $payload) = Net::Braintree::WebhookTesting->sample_notification(
+    Net::Braintree::WebhookNotification::Kind::Disbursement,
+    "my_id"
+  );
+
+  my $webhook_notification = Net::Braintree::WebhookNotification->parse($signature, $payload);
+
+  is $webhook_notification->kind, Net::Braintree::WebhookNotification::Kind::Disbursement;
+  is $webhook_notification->disbursement->id, "my_id";
+  is $webhook_notification->disbursement->exception_message, undef;
+  is $webhook_notification->disbursement->disbursement_date, "2014-02-10T00:00:00Z";
+  is $webhook_notification->disbursement->follow_up_action, undef;
+  is $webhook_notification->disbursement->merchant_account->id, "merchant_account_token";
+};
+
 subtest 'sample_notification builds a sample notification for partner merchant connected', sub {
   my ($signature, $payload) = Net::Braintree::WebhookTesting->sample_notification(
     Net::Braintree::WebhookNotification::Kind::PartnerMerchantConnected,

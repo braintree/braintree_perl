@@ -42,12 +42,27 @@ subtest "create with trial, add-ons, discounts" => sub {
       },
       add_ons => {
           add => [{ inherited_from_id => "increase_30" }],
+      },
+      options => {
+          do_not_inherit_add_ons_or_discounts => 'true'
       }
     });
 
   ok $result->is_success;
-  is $result->subscription->discounts->[0]->amount, '7.00';
-  is $result->subscription->add_ons->[0]->amount, '10.00';
+
+  is $result->subscription->add_ons->[0]->id, "increase_30";
+  is $result->subscription->add_ons->[0]->amount, '30.00';
+  is $result->subscription->add_ons->[0]->quantity, 1;
+  is $result->subscription->add_ons->[0]->number_of_billing_cycles, undef;
+  ok $result->subscription->add_ons->[0]->never_expires;
+  is $result->subscription->add_ons->[0]->current_billing_cycle, 0;
+
+  is $result->subscription->discounts->[0]->id, "discount_15";
+  is $result->subscription->discounts->[0]->amount, '15.00';
+  is $result->subscription->discounts->[0]->quantity, 1;
+  is $result->subscription->discounts->[0]->number_of_billing_cycles, undef;
+  ok $result->subscription->discounts->[0]->never_expires;
+  is $result->subscription->discounts->[0]->current_billing_cycle, 0;
 };
 
 subtest "retry charge" => sub {

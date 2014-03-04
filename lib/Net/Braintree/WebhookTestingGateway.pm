@@ -36,7 +36,9 @@ sub _subject_sample_xml {
   my ($self, $kind, $id) = @_;
 
   my $dispatch = {
-    Net::Braintree::WebhookNotification::Kind::TransactionDisbursed => sub { _transaction_disbursed_sample_xml(@_) }, 
+    Net::Braintree::WebhookNotification::Kind::TransactionDisbursed => sub { _transaction_disbursed_sample_xml(@_) },
+    Net::Braintree::WebhookNotification::Kind::DisbursementException => sub { _disbursement_exception_sample_xml(@_) },
+    Net::Braintree::WebhookNotification::Kind::Disbursement => sub { _disbursement_sample_xml(@_) },
     Net::Braintree::WebhookNotification::Kind::SubMerchantAccountApproved => sub { _merchant_account_approved_sample_xml(@_) },
     Net::Braintree::WebhookNotification::Kind::SubMerchantAccountDeclined => sub { _merchant_account_declined_sample_xml(@_) },
     Net::Braintree::WebhookNotification::Kind::PartnerMerchantConnected => sub { _partner_merchant_connected_sample_xml(@_) },
@@ -57,9 +59,61 @@ sub _transaction_disbursed_sample_xml {
       <id>$id</id>
       <amount>100</amount>
       <disbursement-details>
-        <disbursement-date type="datetime">2013-07-09T18:23:29Z</disbursement-date>
+        <disbursement-date type="date">2013-07-09</disbursement-date>
       </disbursement-details>
     </transaction>
+XML
+};
+
+sub _disbursement_exception_sample_xml {
+  my $id = shift;
+
+  return <<XML
+    <disbursement>
+      <id>$id</id>
+      <transaction-ids type="array">
+        <item>afv56j</item>
+        <item>kj8hjk</item>
+      </transaction-ids>
+      <success type="boolean">false</success>
+      <retry type="boolean">false</retry>
+      <merchant-account>
+        <id>merchant_account_token</id>
+        <currency-iso-code>USD</currency-iso-code>
+        <sub-merchant-account type="boolean">false</sub-merchant-account>
+        <status>active</status>
+      </merchant-account>
+      <amount>100.00</amount>
+      <disbursement-date type="date">2014-02-10</disbursement-date>
+      <exception-message>bank_rejected</exception-message>
+      <follow-up-action>update_funding_information</follow-up-action>
+    </disbursement>
+XML
+};
+
+sub _disbursement_sample_xml {
+  my $id = shift;
+
+  return <<XML
+    <disbursement>
+      <id>$id</id>
+      <transaction-ids type="array">
+        <item>afv56j</item>
+        <item>kj8hjk</item>
+      </transaction-ids>
+      <success type="boolean">true</success>
+      <retry type="boolean">false</retry>
+      <merchant-account>
+        <id>merchant_account_token</id>
+        <currency-iso-code>USD</currency-iso-code>
+        <sub-merchant-account type="boolean">false</sub-merchant-account>
+        <status>active</status>
+      </merchant-account>
+      <amount>100.00</amount>
+      <disbursement-date type="date">2014-02-10</disbursement-date>
+      <exception-message nil="true"/>
+      <follow-up-action nil="true"/>
+    </disbursement>
 XML
 };
 

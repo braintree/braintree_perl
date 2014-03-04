@@ -39,6 +39,7 @@ subtest "Fraud rejections" => sub {
   });
   not_ok $result->is_success;
   is($result->message, "Gateway Rejected: fraud");
+  is($result->transaction->gateway_rejection_reason, "fraud");
 };
 
 subtest "Custom Fields" => sub {
@@ -54,6 +55,25 @@ subtest "Custom Fields" => sub {
   });
   ok $result->is_success;
   is $result->transaction->custom_fields->store_me, "please!", "stores custom field value";
+};
+
+subtest "billing_address_id" => sub {
+  my $customer_result = Net::Braintree::Customer->create();
+  my $address_result = Net::Braintree::Address->create({
+      customer_id => $customer_result->customer->id,
+      first_name => 'Jenna',
+    });
+  my $result = Net::Braintree::Transaction->sale({
+    amount => "50.00",
+    customer_id => $customer_result->customer->id,
+    billing_address_id => $address_result->address->id,
+    credit_card => {
+      number => "5431111111111111",
+      expiration_date => "05/12"
+    },
+  });
+  ok $result->is_success;
+  is $result->transaction->billing_details->first_name, "Jenna";
 };
 
 subtest "Service Fee" => sub {
@@ -254,6 +274,7 @@ subtest "Disbursement Details" => sub {
     my $disbursement_details = $result->transaction->disbursement_details;
     is $disbursement_details->funds_held, 0;
     is $disbursement_details->disbursement_date, "2013-04-10T00:00:00Z";
+    is $disbursement_details->success, 1;
     is $disbursement_details->settlement_amount, "100.00";
     is $disbursement_details->settlement_currency_iso_code, "USD";
     is $disbursement_details->settlement_currency_exchange_rate, "1";

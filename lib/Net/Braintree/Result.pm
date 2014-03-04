@@ -22,7 +22,8 @@ has response => ( is => 'ro', trigger => sub {
   while(my($type, $class) = each(%$response_objects)) {
     $meta->add_method($type, sub {
       my $self = shift;
-      return $class->new($self->response->{$type});
+      my $response = $self->response->{'api_error_response'} || $self->response;
+      return $class->new($response->{$type});
     }) if $self->response->{$type};
   }
 });

@@ -26,6 +26,11 @@ sub BUILD {
     $self->merchant_account(Net::Braintree::MerchantAccount->new($wrapper_node->{merchant_account}));
   }
 
+  if (ref($wrapper_node->{disbursement}) eq 'HASH') {
+    $meta->add_attribute('disbursement', is => 'rw');
+    $self->disbursement(Net::Braintree::Disbursement->new($wrapper_node->{disbursement}));
+  }
+
   if (ref($wrapper_node->{transaction}) eq 'HASH') {
     $meta->add_attribute('transaction', is => 'rw');
     $self->transaction(Net::Braintree::Transaction->new($wrapper_node->{transaction}));

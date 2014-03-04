@@ -18,6 +18,7 @@ use Net::Braintree::Subscription;
 use Net::Braintree::SubscriptionSearch;
 use Net::Braintree::Transaction;
 use Net::Braintree::TransactionSearch;
+use Net::Braintree::Disbursement;
 use Net::Braintree::TransparentRedirect;
 use Net::Braintree::WebhookNotification;
 use Net::Braintree::WebhookTesting;
@@ -29,11 +30,11 @@ Net::Braintree - A Client Library for wrapping the Braintree Payment Services Ga
 
 =head1 VERSION
 
-Version 0.18.0
+Version 0.19.0
 
 =cut
 
-our $VERSION = '0.18.0';
+our $VERSION = '0.19.0';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 
