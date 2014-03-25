@@ -26,7 +26,22 @@ subtest "allow access to relevant objects on response" => sub {
 
   my $result = Net::Braintree::Result->new(response => $response);
   is($result->transaction->amount, "44.00");
-  should_throw("Can't locate object method", sub { $result->customer->id });
+  is($result->customer, undef);
+};
+
+subtest "allow access to relevant objects on error response" => sub {
+  my $response = {
+    'api_error_response' => {
+      subscription => {
+        id => "42",
+        random_subscription_info => "foo"
+      }
+    }
+  };
+
+  my $result = Net::Braintree::Result->new(response => $response);
+  is($result->subscription->random_subscription_info, "foo");
+  is($result->transaction, undef);
 };
 
 done_testing();

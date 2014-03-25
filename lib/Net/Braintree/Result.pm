@@ -5,7 +5,7 @@ use Net::Braintree::Util;
 use Net::Braintree::ValidationErrorCollection;
 use Net::Braintree::CreditCardVerification;
 
-my $meta = __PACKAGE__->meta();
+my $meta = __PACKAGE__->meta;
 
 my $response_objects = {
   address => "Net::Braintree::Address",
@@ -17,16 +17,18 @@ my $response_objects = {
   transaction => "Net::Braintree::Transaction",
 };
 
-has response => ( is => 'ro', trigger => sub {
-  my ($self, $new_value, $old_value) = @_;
-  while(my($type, $class) = each(%$response_objects)) {
-    $meta->add_method($type, sub {
-      my $self = shift;
-      my $response = $self->response->{'api_error_response'} || $self->response;
-      return $class->new($response->{$type});
-    }) if $self->response->{$type};
-  }
-});
+has response => ( is => 'ro' );
+
+while(my($type, $class) = each(%$response_objects)) {
+  $meta->add_method($type, sub {
+    my $self = shift;
+    my $response = $self->response->{'api_error_response'} || $self->response;
+    if (!$response->{$type}) {
+      return undef;
+    }
+    return $class->new($response->{$type});
+  })
+}
 
 sub is_success {
   my $self = shift;

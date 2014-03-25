@@ -30,11 +30,11 @@ Net::Braintree - A Client Library for wrapping the Braintree Payment Services Ga
 
 =head1 VERSION
 
-Version 0.19.0
+Version 0.19.1
 
 =cut
 
-our $VERSION = '0.19.0';
+our $VERSION = '0.19.1';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 

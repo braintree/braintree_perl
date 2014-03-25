@@ -42,6 +42,20 @@ subtest "Fraud rejections" => sub {
   is($result->transaction->gateway_rejection_reason, "fraud");
 };
 
+subtest "Processor declined rejection" => sub {
+  my $result = Net::Braintree::Transaction->sale({
+      amount => "2001.00",
+      credit_card => {
+        number => "4111111111111111",
+        expiration_date => "05/16"
+      }
+  });
+  not_ok $result->is_success;
+  is($result->message, "Insufficient Funds");
+  is($result->transaction->processor_response_code, "2001");
+  is($result->transaction->processor_response_text, "Insufficient Funds");
+};
+
 subtest "Custom Fields" => sub {
   my $result = Net::Braintree::Transaction->sale({
     amount => "50.00",
