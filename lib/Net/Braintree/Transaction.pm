@@ -11,12 +11,15 @@ my $meta = __PACKAGE__->meta;
 
 sub BUILD {
   my ($self, $attributes) = @_;
+  my $sub_objects = { 'disputes' => 'Net::Braintree::Dispute'};
   $meta->add_attribute('subscription', is => 'rw');
   $self->subscription(Net::Braintree::Subscription->new($attributes->{subscription})) if ref($attributes->{subscription}) eq 'HASH';
   delete($attributes->{subscription});
   $meta->add_attribute('disbursement_details', is => 'rw');
   $self->disbursement_details(Net::Braintree::DisbursementDetails->new($attributes->{disbursement_details})) if ref($attributes->{disbursement_details}) eq 'HASH';
   delete($attributes->{disbursement_details});
+
+  $self->setup_sub_objects($self, $attributes, $sub_objects);
   $self->set_attributes_from_hash($self, $attributes);
 }
 

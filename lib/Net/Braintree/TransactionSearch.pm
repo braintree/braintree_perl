@@ -57,6 +57,7 @@ $field->key_value("refund");
 $field->range("amount");
 $field->range("created_at");
 $field->range("disbursement_date");
+$field->range("dispute_date");
 $field->range("authorization_expired_at");
 $field->range("authorized_at");
 $field->range("failed_at");

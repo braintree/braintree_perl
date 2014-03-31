@@ -307,6 +307,24 @@ subtest "Disbursement Details" => sub {
   };
 };
 
+subtest "Disputes" => sub {
+  subtest "exposes disputes for disputed transactions" => sub {
+    my $result = Net::Braintree::Transaction->find("disputedtransaction");
+
+    ok $result->is_success;
+
+    my $disputes = $result->transaction->disputes;
+    my $dispute = shift(@$disputes);
+
+    is $dispute->amount, '250.00';
+    is $dispute->received_date, "2014-03-01T00:00:00Z";
+    is $dispute->reply_by_date, "2014-03-21T00:00:00Z";
+    is $dispute->reason, Net::Braintree::Dispute::Reason::Fraud;
+    is $dispute->status, Net::Braintree::Dispute::Status::Won;
+    is $dispute->currency_iso_code, "USD";
+  };
+};
+
 subtest "Submit for Settlement" => sub {
 
   my $sale = Net::Braintree::Transaction->sale($transaction_params);

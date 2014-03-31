@@ -277,6 +277,29 @@ subtest "disbursement_date - range - is" => sub {
   is scalar @{$search_result->ids}, 1;
 };
 
+subtest "dispute_date - range - max and min" => sub {
+  my $search_result = Net::Braintree::Transaction->search(sub {
+    my $search = shift;
+    $search->id->is("disputedtransaction");
+    $search->dispute_date->max(Net::Braintree::TestHelper::parse_datetime("2014-03-31 00:00:00"));
+    $search->dispute_date->min(Net::Braintree::TestHelper::parse_datetime("2014-03-01 00:00:00"));
+  });
+
+  ok contains("disputedtransaction", $search_result->ids);
+  is scalar @{$search_result->ids}, 2;
+};
+
+subtest "dispute_date - range - is" => sub {
+  my $search_result = Net::Braintree::Transaction->search(sub {
+    my $search = shift;
+    $search->id->is("disputedtransaction");
+    $search->dispute_date->is(Net::Braintree::TestHelper::parse_datetime("2014-03-01 00:00:00"));
+  });
+
+  ok contains("disputedtransaction", $search_result->ids);
+  is scalar @{$search_result->ids}, 2;
+};
+
 subtest "merchant_account_id" => sub {
   subtest "bogus id" => sub {
     my $unique = generate_unique_integer() . "range";

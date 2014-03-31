@@ -10,6 +10,7 @@ use Net::Braintree::CreditCard;
 use Net::Braintree::Customer;
 use Net::Braintree::CustomerSearch;
 use Net::Braintree::DisbursementDetails;
+use Net::Braintree::Dispute;
 use Net::Braintree::MerchantAccount;
 use Net::Braintree::PartnerMerchant;
 use Net::Braintree::ResourceCollection;
@@ -30,11 +31,11 @@ Net::Braintree - A Client Library for wrapping the Braintree Payment Services Ga
 
 =head1 VERSION
 
-Version 0.19.1
+Version 0.20.0
 
 =cut
 
-our $VERSION = '0.19.1';
+our $VERSION = '0.20.0';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 

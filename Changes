@@ -1,4 +1,7 @@
 Revision history for Net-Braintree
+0.20.0  03/31/2014
+        Include Dispute information on Transaction
+        Search for Transactions dispute on certain date
 0.19.1  03/25/2014
         Fix error result objects
 0.19.0  03/04/2014
