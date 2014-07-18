@@ -20,6 +20,7 @@ $field->text("first_name");
 $field->text("id");
 $field->text("last_name");
 $field->text("payment_method_token");
+$field->text("paypal_account_email");
 $field->text("phone");
 $field->text("website");
 

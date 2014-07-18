@@ -32,6 +32,18 @@ foreach(@examples) {
   is $config->base_merchant_url, $url, "$environment base merchant url";
 }
 
+my @examples = (
+  ['development', "http://auth.venmo.dev:9292"],
+  ['sandbox', "https://auth.sandbox.venmo.com"],
+  ['production', "https://auth.venmo.com"],
+  ['qa', "https://auth.qa.venmo.com"]
+);
+
+foreach(@examples) {
+  my($environment, $url) = @$_;
+  $config->environment($environment);
+  is $config->auth_url, $url, "$environment auth_url";
+}
 subtest "setting configuration attributes with hash constructor" => sub {
   my $configuration = Net::Braintree::Configuration->new(
       merchant_id => "integration_merchant_id",

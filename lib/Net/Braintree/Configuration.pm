@@ -31,7 +31,12 @@ sub base_merchant_path {
 
 sub base_merchant_url {
   my $self = shift;
-  return $self->protocol . "://" . $self->server . ':' . $self->port . $self->base_merchant_path;
+  return $self->base_url() . $self->base_merchant_path;
+}
+
+sub base_url {
+  my $self = shift;
+  return $self->protocol . "://" . $self->server . ':' . $self->port;
 }
 
 sub port {
@@ -52,6 +57,15 @@ sub server {
   return "qa-master.braintreegateway.com" if $self->environment eq 'qa';
 }
 
+sub auth_url {
+  my $self = shift;
+  return "http://auth.venmo.dev:9292" if $self->environment eq 'integration';
+  return "http://auth.venmo.dev:9292" if $self->environment eq 'development';
+  return "https://auth.sandbox.venmo.com" if $self->environment eq 'sandbox';
+  return "https://auth.venmo.com" if $self->environment eq 'production';
+  return "https://auth.qa.venmo.com" if $self->environment eq 'qa';
+}
+
 sub ssl_enabled {
   my $self = shift;
   return ($self->environment !~ /integration|development/);
@@ -63,7 +77,7 @@ sub protocol {
 }
 
 sub api_version {
-  return "3";
+  return "4";
 }
 
 1;

@@ -98,6 +98,45 @@ subtest 'sample_notification builds a sample notification for disbursed transact
   isnt $webhook_notification->transaction->disbursement_details->disbursement_date, undef;
 };
 
+subtest 'sample_notification builds a sample notification for dispute opened', sub {
+  my ($signature, $payload) = Net::Braintree::WebhookTesting->sample_notification(
+    Net::Braintree::WebhookNotification::Kind::DisputeOpened,
+    "my_id"
+  );
+
+  my $webhook_notification = Net::Braintree::WebhookNotification->parse($signature, $payload);
+
+  is $webhook_notification->kind, Net::Braintree::WebhookNotification::Kind::DisputeOpened;
+  is $webhook_notification->dispute->status, Net::Braintree::Dispute::Status::Open;
+  is $webhook_notification->dispute->id, "my_id";
+};
+
+subtest 'sample_notification builds a sample notification for dispute lost', sub {
+  my ($signature, $payload) = Net::Braintree::WebhookTesting->sample_notification(
+    Net::Braintree::WebhookNotification::Kind::DisputeLost,
+    "my_id"
+  );
+
+  my $webhook_notification = Net::Braintree::WebhookNotification->parse($signature, $payload);
+
+  is $webhook_notification->kind, Net::Braintree::WebhookNotification::Kind::DisputeLost;
+  is $webhook_notification->dispute->status, Net::Braintree::Dispute::Status::Lost;
+  is $webhook_notification->dispute->id, "my_id";
+};
+
+subtest 'sample_notification builds a sample notification for dispute won', sub {
+  my ($signature, $payload) = Net::Braintree::WebhookTesting->sample_notification(
+    Net::Braintree::WebhookNotification::Kind::DisputeWon,
+    "my_id"
+  );
+
+  my $webhook_notification = Net::Braintree::WebhookNotification->parse($signature, $payload);
+
+  is $webhook_notification->kind, Net::Braintree::WebhookNotification::Kind::DisputeWon;
+  is $webhook_notification->dispute->status, Net::Braintree::Dispute::Status::Won;
+  is $webhook_notification->dispute->id, "my_id";
+};
+
 subtest 'sample_notification builds a sample notification for disbursement', sub {
   my ($signature, $payload) = Net::Braintree::WebhookTesting->sample_notification(
     Net::Braintree::WebhookNotification::Kind::DisbursementException,

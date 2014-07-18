@@ -1,4 +1,6 @@
 Revision history for Net-Braintree
+0.21.0  07/18/2014
+        Add support for v.zero SDKs.
 0.20.0  03/31/2014
         Include Dispute information on Transaction
         Search for Transactions dispute on certain date

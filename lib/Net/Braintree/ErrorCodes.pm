@@ -9,6 +9,7 @@ use Net::Braintree::ErrorCodes::Descriptor;
 use Net::Braintree::ErrorCodes::MerchantAccount;
 use Net::Braintree::ErrorCodes::MerchantAccount::ApplicantDetails;
 use Net::Braintree::ErrorCodes::MerchantAccount::ApplicantDetails::Address;
+use Net::Braintree::ErrorCodes::AltPay;
 use Net::Braintree::ErrorCodes::SettlementBatchSummary;
 use Net::Braintree::ErrorCodes::Subscription;
 use Net::Braintree::ErrorCodes::Subscription::Modification;

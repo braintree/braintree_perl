@@ -43,7 +43,10 @@ sub _subject_sample_xml {
     Net::Braintree::WebhookNotification::Kind::SubMerchantAccountDeclined => sub { _merchant_account_declined_sample_xml(@_) },
     Net::Braintree::WebhookNotification::Kind::PartnerMerchantConnected => sub { _partner_merchant_connected_sample_xml(@_) },
     Net::Braintree::WebhookNotification::Kind::PartnerMerchantDisconnected => sub { _partner_merchant_disconnected_sample_xml(@_) },
-    Net::Braintree::WebhookNotification::Kind::PartnerMerchantDeclined => sub { _partner_merchant_declined_sample_xml(@_) }
+    Net::Braintree::WebhookNotification::Kind::PartnerMerchantDeclined => sub { _partner_merchant_declined_sample_xml(@_) },
+    Net::Braintree::WebhookNotification::Kind::DisputeOpened => sub { _dispute_opened_sample_xml(@_) },
+    Net::Braintree::WebhookNotification::Kind::DisputeLost => sub { _dispute_lost_sample_xml(@_) },
+    Net::Braintree::WebhookNotification::Kind::DisputeWon => sub { _dispute_won_sample_xml(@_) }
   };
 
   my $templater = $dispatch->{$kind} || sub { _subscription_sample_xml(@_) };
@@ -62,6 +65,66 @@ sub _transaction_disbursed_sample_xml {
         <disbursement-date type="date">2013-07-09</disbursement-date>
       </disbursement-details>
     </transaction>
+XML
+};
+
+sub _dispute_opened_sample_xml {
+  my $id = shift;
+
+  return <<XML
+    <dispute>
+      <amount>250.00</amount>
+      <currency-iso-code>USD</currency-iso-code>
+      <received-date type="date">2014-03-01</received-date>
+      <reply-by-date type="date">2014-03-21</reply-by-date>
+      <status>open</status>
+      <reason>fraud</reason>
+      <id>$id</id>
+      <transaction>
+        <id>$id</id>
+        <amount>250.00</amount>
+      </transaction>
+    </dispute>
+XML
+};
+
+sub _dispute_lost_sample_xml {
+  my $id = shift;
+
+  return <<XML
+    <dispute>
+      <amount>250.00</amount>
+      <currency-iso-code>USD</currency-iso-code>
+      <received-date type="date">2014-03-01</received-date>
+      <reply-by-date type="date">2014-03-21</reply-by-date>
+      <status>lost</status>
+      <reason>fraud</reason>
+      <id>$id</id>
+      <transaction>
+        <id>$id</id>
+        <amount>250.00</amount>
+      </transaction>
+    </dispute>
+XML
+};
+
+sub _dispute_won_sample_xml {
+  my $id = shift;
+
+  return <<XML
+    <dispute>
+      <amount>250.00</amount>
+      <currency-iso-code>USD</currency-iso-code>
+      <received-date type="date">2014-03-01</received-date>
+      <reply-by-date type="date">2014-03-21</reply-by-date>
+      <status>won</status>
+      <reason>fraud</reason>
+      <id>$id</id>
+      <transaction>
+        <id>$id</id>
+        <amount>250.00</amount>
+      </transaction>
+    </dispute>
 XML
 };
 
@@ -180,29 +243,29 @@ XML
 
 sub _partner_merchant_connected_sample_xml {
   return <<XML
-        <partner_merchant>
-          <merchant_public_id>public_id</merchant_public_id>
-          <public_key>public_key</public_key>
-          <private_key>private_key</private_key>
-          <partner_merchant_id>abc123</partner_merchant_id>
-          <client_side_encryption_key>cse_key</client_side_encryption_key>
-        </partner_merchant>
+        <partner-merchant>
+          <merchant-public-id>public_id</merchant-public-id>
+          <public-key>public_key</public-key>
+          <private-key>private_key</private-key>
+          <partner-merchant-id>abc123</partner-merchant-id>
+          <client-side-encryption-key>cse_key</client-side-encryption-key>
+        </partner-merchant>
 XML
 }
 
 sub _partner_merchant_disconnected_sample_xml {
   return <<XML
-        <partner_merchant>
-          <partner_merchant_id>abc123</partner_merchant_id>
-        </partner_merchant>
+        <partner-merchant>
+          <partner-merchant-id>abc123</partner-merchant-id>
+        </partner-merchant>
 XML
 }
 
 sub _partner_merchant_declined_sample_xml {
   return <<XML
-        <partner_merchant>
-          <partner_merchant_id>abc123</partner_merchant_id>
-        </partner_merchant>
+        <partner-merchant>
+          <partner-merchant-id>abc123</partner-merchant-id>
+        </partner-merchant>
 XML
 }
 

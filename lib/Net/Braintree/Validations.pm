@@ -5,7 +5,7 @@ use Net::Braintree::Util;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(verify_params address_signature credit_card_signature customer_signature transaction_signature clone_transaction_signature merchant_account_signature transaction_search_results_signature);
+our @EXPORT_OK = qw(verify_params address_signature client_token_signature_with_customer_id client_token_signature_without_customer_id credit_card_signature customer_signature transaction_signature clone_transaction_signature merchant_account_signature transaction_search_results_signature);
 
 sub verify_params {
   my ($params, $white_list) = @_;
@@ -44,12 +44,35 @@ sub address_signature {
   };
 }
 
+sub client_token_signature_with_customer_id {
+  return {
+    customer_id => ".",
+    proxy_merchant_id => ".",
+    version => ".",
+    options => {
+      make_default => ".",
+      fail_on_duplicate_payment_method => ".",
+      verify_card => "."
+    },
+    merchant_account_id => "."
+  };
+}
+
+sub client_token_signature_without_customer_id {
+  return {
+    proxy_merchant_id => ".",
+    version => ".",
+    merchant_account_id => "."
+  };
+}
+
 sub credit_card_signature {
   return {
     customer_id => ".",
     billing_address_id => ".", cardholder_name => ".", cvv => ".", expiration_date => ".",
     expiration_month => ".", expiration_year => ".", number => ".", token => ".",
     venmo_sdk_payment_method_code => ".",
+    payment_method_nonce => ".",
     device_session_id => ".",
     device_data => ".",
     fraud_merchant_id => ".",
@@ -70,6 +93,7 @@ sub customer_signature {
     company => ".", email => ".", fax => ".", first_name => ".", id => ".", last_name => ".", phone => ".", website => ".", device_data => ".",
     device_session_id => ".", fraud_merchant_id => ".",
     credit_card => credit_card_signature,
+    payment_method_nonce => ".",
     custom_fields => "_any_key_"
   };
 }
@@ -81,7 +105,7 @@ sub clone_transaction_signature {
 sub transaction_signature{
   return {
     amount => ".", customer_id => ".", merchant_account_id => ".", order_id => ".", channel => ".", payment_method_token => ".",
-    "device_session_id" => ".", "device_data" => ".", fraud_merchant_id => ".", billing_address_id => ".",
+    "payment_method_nonce" => ".", "device_session_id" => ".", "device_data" => ".", fraud_merchant_id => ".", billing_address_id => ".",
     purchase_order_number => ".", recurring => ".", shipping_address_id => ".", type => ".", tax_amount => ".", tax_exempt => ".",
     credit_card => {token => ".", cardholder_name => ".", cvv => ".", expiration_date => ".", expiration_month => ".", expiration_year => ".", number => "."},
     customer => {id => ".", company => ".", email => ".", fax => ".", first_name => ".", last_name => ".", phone => ".", website => "."} ,
@@ -100,7 +124,8 @@ sub transaction_signature{
     descriptor => {name => ".", phone => "."},
     subscription_id => ".",
     venmo_sdk_payment_method_code => ".",
-    service_fee_amount => "."
+    service_fee_amount => ".",
+    three_d_secure_token => "."
   };
 }
 

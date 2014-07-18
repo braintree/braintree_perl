@@ -1,4 +1,5 @@
 use lib qw(lib t/lib);
+use JSON;
 use Test::More;
 use Net::Braintree;
 use Net::Braintree::CreditCardNumbers::CardTypeIndicators;
@@ -22,6 +23,18 @@ subtest "Create with S2S" => sub {
   ok $result->credit_card->unique_number_identifier =~ /\A\w{32}\z/;
   not_ok $result->credit_card->is_venmo_sdk;
   ok $result->credit_card->image_url
+};
+
+subtest "create with credit card nonce" => sub {
+  my $nonce = Net::Braintree::TestHelper::get_nonce_for_new_card("4111111111111111", "");
+
+  my $result = Net::Braintree::CreditCard->create({
+    customer_id => $customer_create->customer->id,
+    payment_method_nonce => $nonce
+  });
+
+  ok $result->is_success;
+  is($result->credit_card->last_4, "1111");
 };
 
 subtest "Create with security params" => sub {
@@ -110,6 +123,65 @@ subtest "find" => sub {
   };
 
   subtest "card does not exist" => sub { should_throw("NotFoundError", sub { Net::Braintree::CreditCard->find("notAToken") }); };
+};
+
+subtest "from_nonce" => sub {
+  subtest "returns the payment method for the provided nonce" => sub {
+    my $customer = $customer_create->customer;
+    my $nonce = Net::Braintree::TestHelper::get_nonce_for_new_card("4111111111111111", $customer->id);
+    my $credit_card = Net::Braintree::CreditCard->from_nonce($nonce);
+
+    is($credit_card->last_4, "1111");
+  };
+
+  subtest "fails if nonce is empty" => sub {
+    should_throw("NotFoundError", sub { Net::Braintree::CreditCard->from_nonce("") });
+  };
+
+  subtest "fails if nonce points to a shared card" => sub {
+    my $nonce = Net::Braintree::TestHelper::get_nonce_for_new_card("4111111111111111", "");
+
+    should_throw_containing("not found", sub { Net::Braintree::CreditCard->from_nonce($nonce) });
+  };
+
+  subtest "fails if nonce is locked" => sub {
+    my $config = Net::Braintree::Configuration->new();
+    $config->environment("integration");
+
+    my $raw_client_token = Net::Braintree::TestHelper::generate_decoded_client_token();
+    my $client_token = decode_json($raw_client_token);
+    my $authorization_fingerprint = $client_token->{'authorizationFingerprint'};
+
+    my $http = Net::Braintree::ClientApiHTTP->new(
+      config => $config,
+      fingerprint => $authorization_fingerprint,
+      shared_customer_identifier => "fake_identifier",
+      shared_customer_identifier_type => "testing"
+    );
+
+    my $response = $http->add_card({
+      share => "true",
+      credit_card => {
+        number => "4111111111111111",
+        expiration_date => "11/2099"
+      }
+    });
+    ok $response->is_success;
+
+    $response = $http->get_cards();
+    ok $response->is_success;
+    my $nonce = decode_json($response->content)->{"nonce"};
+
+    should_throw_containing("locked", sub { Net::Braintree::CreditCard->from_nonce($nonce) });
+  };
+
+  subtest "fails if nonce is already consumed" => sub {
+    my $customer = $customer_create->customer;
+    my $nonce = Net::Braintree::TestHelper::get_nonce_for_new_card("4111111111111111", $customer->id);
+
+    Net::Braintree::CreditCard->from_nonce($nonce);
+    should_throw_containing("consumed", sub { Net::Braintree::CreditCard->from_nonce($nonce) });
+  };
 };
 
 subtest "update" => sub {

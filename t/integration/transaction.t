@@ -5,7 +5,10 @@ use Net::Braintree::TestHelper;
 use Net::Braintree::CreditCardNumbers::CardTypeIndicators;
 use Net::Braintree::ErrorCodes::Transaction;
 use Net::Braintree::CreditCardDefaults;
+use Net::Braintree::SandboxValues::CreditCardNumber;
+use Net::Braintree::SandboxValues::TransactionAmount;
 use Net::Braintree::Test;
+use Net::Braintree::Transaction::PaymentInstrumentType;
 
 my $transaction_params = {
   amount => "50.00",
@@ -88,6 +91,83 @@ subtest "billing_address_id" => sub {
   });
   ok $result->is_success;
   is $result->transaction->billing_details->first_name, "Jenna";
+};
+
+subtest "with payment method nonce" => sub {
+  subtest "it can create a transaction" => sub {
+    my $nonce = Net::Braintree::TestHelper::get_nonce_for_new_card("4111111111111111", '');
+
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "50.00",
+      payment_method_nonce => $nonce
+    });
+
+    ok $result->is_success;
+    is($result->transaction->credit_card_details->bin, "411111");
+  };
+};
+
+subtest "three_d_secure" => sub {
+  subtest "can create a transaction with a three_d_secure_token" => sub {
+    my $merchant_account_id = Net::Braintree::TestHelper::three_d_secure_merchant_account_id;
+    my $three_d_secure_token = Net::Braintree::TestHelper::create_3ds_verification(
+      $merchant_account_id, {
+        number => "4111111111111111",
+        expiration_month => "05",
+        expiration_year => "2009",
+    });
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "100.00",
+      credit_card => {
+        number => "4111111111111111",
+        expiration_date => "05/09",
+      },
+      merchant_account_id => $merchant_account_id,
+      three_d_secure_token => $three_d_secure_token
+    });
+
+    ok $result->is_success;
+  };
+
+  subtest "returns an error if three_d_secure_token is undef" => sub {
+    my $merchant_account_id = Net::Braintree::TestHelper::three_d_secure_merchant_account_id;
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "100.00",
+      credit_card => {
+        number => "4111111111111111",
+        expiration_date => "05/09",
+      },
+      merchant_account_id => $merchant_account_id,
+      three_d_secure_token => $nonexistant_three_d_secure_token
+    });
+
+    not_ok $result->is_success;
+    my $expected_error_code = Net::Braintree::ErrorCodes::Transaction::ThreeDSecureTokenIsInvalid;
+    is($result->errors->for("transaction")->on("three_d_secure_token")->[0]->code, $expected_error_code);
+  };
+
+  subtest "returns an error if 3ds lookup data does not match transaction" => sub {
+    my $merchant_account_id = Net::Braintree::TestHelper::three_d_secure_merchant_account_id;
+    my $three_d_secure_token = Net::Braintree::TestHelper::create_3ds_verification(
+      $merchant_account_id, {
+        number => "4111111111111111",
+        expiration_month => "05",
+        expiration_year => "2009",
+    });
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "100.00",
+      credit_card => {
+        number => "4111111111111111",
+        expiration_date => "05/20",
+      },
+      merchant_account_id => $merchant_account_id,
+      three_d_secure_token => $three_d_secure_token
+    });
+
+    not_ok $result->is_success;
+    my $expected_error_code = Net::Braintree::ErrorCodes::Transaction::ThreeDSecureTransactionDataDoesntMatchVerify;
+    is($result->errors->for("transaction")->on("three_d_secure_token")->[0]->code, $expected_error_code);
+  };
 };
 
 subtest "Service Fee" => sub {
@@ -279,6 +359,34 @@ subtest "Security parameters" => sub {
   ok $result->is_success;
 };
 
+subtest "Sale" => sub {
+  subtest "returns payment instrument type" => sub {
+    my $result = Net::Braintree::Transaction->sale({
+      amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE, 
+      credit_card => {
+        number => Net::Braintree::SandboxValues::CreditCardNumber::VISA,
+        expiration_date => "05/2009"
+      }
+    });
+
+    ok $result->is_success;
+    my $transaction = $result->transaction;
+    ok($transaction->payment_instrument_type eq Net::Braintree::Transaction::PaymentInstrumentType::CREDIT_CARD);
+  };
+
+  subtest "returns payment instrument type for paypal" => sub {
+    my $nonce = Net::Braintree::TestHelper::generate_one_time_paypal_nonce();
+    my $result = Net::Braintree::Transaction->sale({
+      amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE,
+      payment_method_nonce => $nonce
+    });  
+
+    ok $result->is_success;
+    my $transaction = $result->transaction;
+    ok($transaction->payment_instrument_type eq Net::Braintree::Transaction::PaymentInstrumentType::PAYPAL_ACCOUNT);
+  };
+};
+
 subtest "Disbursement Details" => sub {
   subtest "disbursement_details for disbursed transactions" => sub {
     my $result = Net::Braintree::Transaction->find("deposittransaction");
@@ -322,6 +430,8 @@ subtest "Disputes" => sub {
     is $dispute->reason, Net::Braintree::Dispute::Reason::Fraud;
     is $dispute->status, Net::Braintree::Dispute::Status::Won;
     is $dispute->currency_iso_code, "USD";
+    is $dispute->transaction_details->id, "disputedtransaction";
+    is $dispute->transaction_details->amount, "1000.00";
   };
 };
 
@@ -563,6 +673,115 @@ subtest "Venmo Sdk Session" => sub {
 
   ok $result->is_success;
   ok $result->transaction->credit_card->venmo_sdk;
+};
+
+subtest "paypal" => sub {
+  subtest "create a transaction with a one-time paypal nonce" => sub {
+    my $nonce = Net::Braintree::TestHelper::generate_one_time_paypal_nonce('');
+    isnt($nonce, undef);
+
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "10.00",
+      payment_method_nonce => $nonce
+    });
+
+    ok $result->is_success;
+    isnt($result->transaction->paypal_details, undef);
+    isnt($result->transaction->paypal_details->payer_email, undef);
+    isnt($result->transaction->paypal_details->payment_id, undef);
+    isnt($result->transaction->paypal_details->authorization_id, undef);
+    isnt($result->transaction->paypal_details->image_url, undef);
+  };
+
+  subtest "create a transaction with a one-time paypal nonce and vault" => sub {
+    my $nonce = Net::Braintree::TestHelper::generate_one_time_paypal_nonce('');
+    isnt($nonce, undef);
+
+    my $result = Net::Braintree::Transaction->sale({
+      amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE,
+      payment_method_nonce => $nonce,
+      options => {
+        store_in_vault => true
+      }
+    });
+
+    ok $result->is_success;
+    my $transaction = $result->transaction;
+    isnt($transaction->paypal_details, undef);
+    isnt($transaction->paypal_details->payer_email, undef);
+    isnt($transaction->paypal_details->payment_id, undef);
+    isnt($transaction->paypal_details->authorization_id, undef);
+    is($transaction->paypal_details->token, undef);
+  };
+
+  subtest "create a transaction with a future payment paypal nonce and vault" => sub {
+    my $nonce = Net::Braintree::TestHelper::generate_future_payment_paypal_nonce('');
+    isnt($nonce, undef);
+
+    my $result = Net::Braintree::Transaction->sale({
+      amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE,
+      payment_method_nonce => $nonce,
+      options => {
+        store_in_vault => true
+      }
+    });
+
+    ok $result->is_success;
+    my $transaction = $result->transaction;
+    isnt($transaction->paypal_details, undef);
+    isnt($transaction->paypal_details->payer_email, undef);
+    isnt($transaction->paypal_details->payment_id, undef);
+    isnt($transaction->paypal_details->authorization_id, undef);
+    isnt($transaction->paypal_details->token, undef);
+  };
+
+  subtest "void paypal transaction" => sub {
+    my $nonce = Net::Braintree::TestHelper::generate_future_payment_paypal_nonce('');
+    isnt($nonce, undef);
+
+    my $result = Net::Braintree::Transaction->sale({
+      amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE,
+      payment_method_nonce => $nonce,
+    });
+
+    ok $result->is_success;
+    my $void_result = Net::Braintree::Transaction->void($result->transaction->id);
+    ok $void_result->is_success;
+  };
+
+  subtest "submit paypal transaction for settlement" => sub {
+    my $nonce = Net::Braintree::TestHelper::generate_future_payment_paypal_nonce('');
+    isnt($nonce, undef);
+
+    my $result = Net::Braintree::Transaction->sale({
+      amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE,
+      payment_method_nonce => $nonce,
+    });
+
+    ok $result->is_success;
+    my $settlement_result = Net::Braintree::Transaction->submit_for_settlement($result->transaction->id);
+    ok $settlement_result->is_success;
+  };
+
+  subtest "refund a paypal transaction" => sub {
+    my $nonce = Net::Braintree::TestHelper::generate_future_payment_paypal_nonce('');
+    isnt($nonce, undef);
+
+    my $result = Net::Braintree::Transaction->sale({
+      amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE,
+      payment_method_nonce => $nonce,
+      options => {
+        submit_for_settlement => true
+      }
+    });
+
+    ok $result->is_success;
+    my $id = $result->transaction->id;
+    Net::Braintree::TestHelper::settle($id);
+
+    my $refund_result = Net::Braintree::Transaction->refund($id);
+    ok $refund_result->is_success;
+  };
 };
 
 

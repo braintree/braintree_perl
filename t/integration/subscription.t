@@ -1,5 +1,6 @@
 use lib qw(lib t/lib);
 use Test::More;
+use Net::Braintree::Nonce;
 use Net::Braintree::TestHelper;
 use Net::Braintree;
 
@@ -65,6 +66,37 @@ subtest "create with trial, add-ons, discounts" => sub {
   is $result->subscription->discounts->[0]->current_billing_cycle, 0;
 };
 
+subtest "create with payment method nonce" => sub {
+  my $nonce = Net::Braintree::TestHelper::get_nonce_for_new_card("4111111111111111", $customer->customer->id);
+  my $subscription_params = {
+    payment_method_nonce => $nonce,
+    plan_id => "integration_trialless_plan"
+  };
+  my $result = Net::Braintree::Subscription->create($subscription_params);
+
+  ok $result->is_success;
+
+  my $credit_card = Net::Braintree::CreditCard->find($result->subscription->payment_method_token);
+  is $credit_card->masked_number, "411111******1111";
+};
+
+subtest "create with a paypal account" => sub {
+  my $nonce = Net::Braintree::Nonce->paypal_future_payment;
+  my $customer_result = Net::Braintree::Customer->create({
+    payment_method_nonce => $nonce
+  });
+
+  my $customer = $customer_result->customer;
+  my $subscription_result = Net::Braintree::Subscription->create({
+    payment_method_token => $customer->paypal_accounts->[0]->token,
+    plan_id => "integration_trialless_plan"
+  });
+
+  ok $subscription_result->is_success;
+  my $subscription = $subscription_result->subscription;
+  ok($subscription->payment_method_token eq $customer->paypal_accounts->[0]->token);
+};
+
 subtest "retry charge" => sub {
   my $subscription = Net::Braintree::Subscription->create({
     plan_id => "integration_trialless_plan",
@@ -111,6 +143,18 @@ subtest "with a subscription" => sub {
     is $result->subscription->price, "50.00";
 
     should_throw("NotFoundError", sub { Net::Braintree::Subscription->update("asdlkfj", {price => "50.00"}) });
+  };
+
+  subtest "update payment method with payment method nonce" => sub {
+    my $nonce = Net::Braintree::TestHelper::get_nonce_for_new_card("4242424242424242", $customer->customer->id);
+    my $subscription_params = {payment_method_nonce => $nonce};
+
+    my $result = Net::Braintree::Subscription->update($create->subscription->id, $subscription_params);
+
+    ok $result->is_success;
+
+    my $credit_card = Net::Braintree::CreditCard->find($result->subscription->payment_method_token);
+    is $credit_card->masked_number, "424242******4242";
   };
 
   subtest "cancel" => sub {

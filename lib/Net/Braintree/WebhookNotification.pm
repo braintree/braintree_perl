@@ -41,6 +41,11 @@ sub BUILD {
     $self->partner_merchant(Net::Braintree::PartnerMerchant->new($wrapper_node->{partner_merchant}));
   }
 
+  if (ref($wrapper_node->{dispute}) eq 'HASH') {
+    $meta->add_attribute('dispute', is => 'rw');
+    $self->dispute(Net::Braintree::Dispute->new($wrapper_node->{dispute}));
+  }
+
   if (ref($wrapper_node->{errors}) eq 'HASH') {
     $meta->add_attribute('errors', is => 'rw');
     $meta->add_attribute('message', is => 'rw');

@@ -1,12 +1,16 @@
 package Net::Braintree::TestHelper;
 use lib qw(lib t/lib);
+use Net::Braintree::ClientToken;
+use Net::Braintree::ClientApiHTTP;
 use Try::Tiny;
 use Test::More;
 use HTTP::Request;
 use LWP::UserAgent;
+use MIME::Base64;
 use Net::Braintree::Util;
 use DateTime::Format::Strptime;
 use CGI;
+use JSON;
 
 use Net::Braintree;
 Net::Braintree->configuration->environment("integration");
@@ -14,8 +18,12 @@ Net::Braintree->configuration->environment("integration");
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT = qw(create_escrowed_transaction create_settled_transaction not_ok should_throw simulate_form_post_for_tr make_subscription_past_due);
+our @EXPORT = qw(create_escrowed_transaction create_settled_transaction not_ok should_throw should_throw_containing simulate_form_post_for_tr make_subscription_past_due);
 our @EXPORT_OK = qw();
+
+sub three_d_secure_merchant_account_id {
+  "three_d_secure_merchant_account";
+}
 
 sub not_ok {
   my($predicate, $message) = @_;
@@ -32,14 +40,31 @@ sub should_throw {
   }
 }
 
+sub should_throw_containing {
+  my($exception, $block, $message) = @_;
+  try {
+    $block->();
+    fail($message . " [Should have thrown $exception]");
+  } catch {
+    like($_ , qr/.*$exception.*/, $message);
+  }
+}
+
+sub settle {
+  my $transaction_id = shift;
+  my $http = Net::Braintree::HTTP->new(config => Net::Braintree->configuration);
+  my $response = $http->put("/transactions/" . $transaction_id . "/settle");
+
+  return Net::Braintree::Result->new(response => $response);
+}
+
 sub create_settled_transaction {
   my ($params) = shift;
   my $sale       = Net::Braintree::Transaction->sale($params);
   my $submit     = Net::Braintree::Transaction->submit_for_settlement($sale->transaction->id);
   my $http       = Net::Braintree::HTTP->new(config => Net::Braintree->configuration);
-  my $settlement = $http->put("/transactions/" . $sale->transaction->id . "/settle");
 
-  return Net::Braintree::Result->new(response => $settlement);
+  return settle($sale->transaction->id);
 }
 
 sub create_escrowed_transaction {
@@ -58,8 +83,17 @@ sub create_escrowed_transaction {
   my $http       = Net::Braintree::HTTP->new(config => Net::Braintree->configuration);
   my $settlement = $http->put("/transactions/" . $sale->transaction->id . "/settle");
   my $escrow     = $http->put("/transactions/" . $sale->transaction->id . "/escrow");
-  
+
   return Net::Braintree::Result->new(response => $escrow);
+}
+
+sub create_3ds_verification {
+  my ($merchant_account_id, $params) = @_;
+  my $http = Net::Braintree::HTTP->new(config => Net::Braintree->configuration);
+  my $response = $http->post("/three_d_secure/create_verification/$merchant_account_id", {
+    three_d_secure_verification => $params
+  });
+  return $response->{three_d_secure_verification}->{three_d_secure_token};
 }
 
 sub simulate_form_post_for_tr {
@@ -96,6 +130,108 @@ sub parse_datetime {
       pattern => "%F %T %z"
   );
   my $dt = $parser->parse_datetime($date_string);
+}
+
+sub get_nonce_for_new_card {
+  my ($credit_card_number, $customer_id) = @_;
+
+  my $raw_client_token = "";
+  if ($customer_id eq '') {
+    $raw_client_token = generate_decoded_client_token();
+  } else {
+    $raw_client_token = generate_decoded_client_token({customer_id => $customer_id});
+  }
+  my $client_token = decode_json($raw_client_token);
+  my $authorization_fingerprint = $client_token->{'authorizationFingerprint'};
+
+  my $config = Net::Braintree::Configuration->new();
+  $config->environment("integration");
+
+  my $http = Net::Braintree::ClientApiHTTP->new(
+    config => $config,
+    fingerprint => $authorization_fingerprint,
+    shared_customer_identifier => "fake_identifier",
+    shared_customer_identifier_type => "testing"
+  );
+
+  return $http->get_nonce_for_new_card($credit_card_number, $customer_id);
+}
+
+sub generate_unlocked_nonce {
+  my ($credit_card_number, $customer_id) = @_;
+  my $raw_client_token = "";
+  if ($customer_id eq '') {
+    $raw_client_token = generate_decoded_client_token();
+  } else {
+    $raw_client_token = generate_decoded_client_token({customer_id => $customer_id});
+  }
+
+  my $client_token = decode_json($raw_client_token);
+
+  my $authorization_fingerprint = $client_token->{'authorizationFingerprint'};
+  my $config = Net::Braintree::Configuration->new(environment => "integration");
+  my $http = Net::Braintree::ClientApiHTTP->new(
+    config => $config,
+    fingerprint => $authorization_fingerprint,
+    shared_customer_identifier => "test-identifier",
+    shared_customer_identifier_type => "testing"
+  );
+
+  return $http->get_nonce_for_new_card('4111111111111111');
+}
+
+sub generate_one_time_paypal_nonce {
+  my $customer_id = shift;
+  my $raw_client_token = "";
+  if ($customer_id eq '') {
+    $raw_client_token = generate_decoded_client_token();
+  } else {
+    $raw_client_token = generate_decoded_client_token({customer_id => $customer_id});
+  }
+
+  my $client_token = decode_json($raw_client_token);
+
+  my $authorization_fingerprint = $client_token->{'authorizationFingerprint'};
+  my $config = Net::Braintree::Configuration->new(environment => "integration");
+  my $http = Net::Braintree::ClientApiHTTP->new(
+    config => $config,
+    fingerprint => $authorization_fingerprint,
+    shared_customer_identifier => "test-identifier",
+    shared_customer_identifier_type => "testing"
+  );
+
+  return $http->get_one_time_nonce_for_paypal();
+}
+
+sub generate_future_payment_paypal_nonce {
+  my $customer_id = shift;
+  my $raw_client_token = "";
+  if ($customer_id eq '') {
+    $raw_client_token = generate_decoded_client_token();
+  } else {
+    $raw_client_token = generate_decoded_client_token({customer_id => $customer_id});
+  }
+
+  my $client_token = decode_json($raw_client_token);
+
+  my $authorization_fingerprint = $client_token->{'authorizationFingerprint'};
+  my $config = Net::Braintree::Configuration->new(environment => "integration");
+  my $http = Net::Braintree::ClientApiHTTP->new(
+    config => $config,
+    fingerprint => $authorization_fingerprint,
+    shared_customer_identifier => "test-identifier",
+    shared_customer_identifier_type => "testing"
+  );
+
+  return $http->get_future_payment_nonce_for_paypal();
+}
+
+sub generate_decoded_client_token {
+  my $params = shift;
+  my $encoded_client_token = Net::Braintree::ClientToken->generate($params);
+  my $decoded_client_token = decode_base64($encoded_client_token);
+
+  $decoded_client_token;
 }
 
 1;

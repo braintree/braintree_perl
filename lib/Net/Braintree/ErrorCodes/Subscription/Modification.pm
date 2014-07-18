@@ -10,6 +10,7 @@ use constant ExistingIdIsIncorrectKind                    => "92020";
 use constant ExistingIdIsInvalid                          => "92011";
 use constant ExistingIdIsRequired                         => "92012";
 use constant IdToRemoveIsIncorrectKind                    => "92021";
+use constant IdToRemoveIsInvalid                          => "92025";
 use constant IdToRemoveIsNotPresent                       => "92016";
 use constant InconsistentNumberOfBillingCycles            => "92018";
 use constant InheritedFromIdIsInvalid                     => "92013";

@@ -2,6 +2,8 @@ use lib qw(lib t/lib);
 use Test::More;
 use Time::HiRes qw(gettimeofday);
 use Net::Braintree;
+use Net::Braintree::Nonce;
+use Net::Braintree::SandboxValues::TransactionAmount;
 use Net::Braintree::Util;
 use Net::Braintree::TestHelper;
 
@@ -286,7 +288,7 @@ subtest "dispute_date - range - max and min" => sub {
   });
 
   ok contains("disputedtransaction", $search_result->ids);
-  is scalar @{$search_result->ids}, 2;
+  is scalar @{$search_result->ids}, 1;
 };
 
 subtest "dispute_date - range - is" => sub {
@@ -297,7 +299,7 @@ subtest "dispute_date - range - is" => sub {
   });
 
   ok contains("disputedtransaction", $search_result->ids);
-  is scalar @{$search_result->ids}, 2;
+  is scalar @{$search_result->ids}, 1;
 };
 
 subtest "merchant_account_id" => sub {
@@ -338,6 +340,25 @@ subtest "merchant_account_id" => sub {
     });
 
     is scalar @{$search_result->ids}, 1;
+  };
+};
+
+subtest "paypal" => sub {
+  subtest "search on paypal fields" => sub {
+    my $result = Net::Braintree::Transaction->sale({
+      amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE,
+      payment_method_nonce => Net::Braintree::Nonce::paypal_one_time_payment()
+    });
+
+    ok $result->is_success;
+    my $transaction = $result->transaction;
+    my $search_result = Net::Braintree::Transaction->search(sub {
+      my $search = shift;
+      $search->id->is($transaction->id);
+      $search->paypal_payment_id->starts_with("PAY");
+      $search->paypal_authorization_id->starts_with("SALE");
+      $search->paypal_payer_email->is("payer\@example.com");
+    });
   };
 };
 

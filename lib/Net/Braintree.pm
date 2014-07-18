@@ -13,6 +13,9 @@ use Net::Braintree::DisbursementDetails;
 use Net::Braintree::Dispute;
 use Net::Braintree::MerchantAccount;
 use Net::Braintree::PartnerMerchant;
+use Net::Braintree::PaymentMethod;
+use Net::Braintree::PayPalAccount;
+use Net::Braintree::PayPalDetails;
 use Net::Braintree::ResourceCollection;
 use Net::Braintree::SettlementBatchSummary;
 use Net::Braintree::Subscription;
@@ -31,11 +34,11 @@ Net::Braintree - A Client Library for wrapping the Braintree Payment Services Ga
 
 =head1 VERSION
 
-Version 0.20.0
+Version 0.21.0
 
 =cut
 
-our $VERSION = '0.20.0';
+our $VERSION = '0.21.0';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 
@@ -76,7 +79,7 @@ L<http://search.cpan.org/dist/Net-Braintree/>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2011 Braintree Payment Solutions.
+Copyright 2011-2014 Braintree, a division of PayPal, Inc.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published

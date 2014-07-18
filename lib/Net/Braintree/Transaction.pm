@@ -19,6 +19,10 @@ sub BUILD {
   $self->disbursement_details(Net::Braintree::DisbursementDetails->new($attributes->{disbursement_details})) if ref($attributes->{disbursement_details}) eq 'HASH';
   delete($attributes->{disbursement_details});
 
+  $meta->add_attribute('paypal_details', is => 'rw');
+  $self->paypal_details(Net::Braintree::PayPalDetails->new($attributes->{paypal})) if ref($attributes->{paypal}) eq 'HASH';
+  delete($attributes->{paypal});
+
   $self->setup_sub_objects($self, $attributes, $sub_objects);
   $self->set_attributes_from_hash($self, $attributes);
 }

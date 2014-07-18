@@ -16,6 +16,9 @@ use constant SubMerchantAccountDeclined => "sub_merchant_account_declined";
 use constant TransactionDisbursed => "transaction_disbursed";
 use constant DisbursementException => "disbursement_exception";
 use constant Disbursement => "disbursement";
+use constant DisputeOpened => "dispute_opened";
+use constant DisputeLost => "dispute_lost";
+use constant DisputeWon => "dispute_won";
 
 use constant All => (
   PartnerMerchantConnected,
@@ -33,6 +36,9 @@ use constant All => (
   TransactionDisbursed,
   DisbursementException,
   Disbursement,
+  DisputeOpened,
+  DisputeLost,
+  DisputeWon,
 );
 
 1;

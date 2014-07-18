@@ -11,7 +11,8 @@ use Net::Braintree::CreditCard::CountryOfIssuance;
 use Net::Braintree::CreditCard::IssuingBank;
 
 use Moose;
-extends 'Net::Braintree::ResultObject';
+extends 'Net::Braintree::PaymentMethod';
+
 my $meta = __PACKAGE__->meta;
 
 sub BUILD {
@@ -40,6 +41,11 @@ sub update {
 sub find {
   my ($class, $token) = @_;
   $class->gateway->credit_card->find($token);
+}
+
+sub from_nonce {
+  my ($class, $nonce) = @_;
+  $class->gateway->credit_card->from_nonce($nonce);
 }
 
 sub gateway {

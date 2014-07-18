@@ -24,6 +24,9 @@ namespace :test do
   task :integration do
     sh "make integration"
   end
+
+  # to run a single integration test file:
+  # $ TEST_FILE_NAME=transaction make single
 end
 
 task :clean do

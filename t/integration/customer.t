@@ -1,6 +1,7 @@
 use lib qw(lib t/lib);
 use Test::More;
 use Net::Braintree;
+use Net::Braintree::Nonce;
 use Net::Braintree::TestHelper;
 use Net::Braintree::Test;
 
@@ -59,6 +60,33 @@ subtest "Create:S2S" => sub {
 
     ok $result->is_success;
     is($result->customer->credit_cards->[0]->last_4, "1111");
+  };
+
+  subtest "with credit card nonce" => sub {
+    my $nonce = Net::Braintree::TestHelper::get_nonce_for_new_card("4111111111111111", "");
+
+    my $result = Net::Braintree::Customer->create({
+      first_name => "Johnny",
+      last_name => "Doe",
+      credit_card => {
+        payment_method_nonce => $nonce
+      }
+    });
+
+    ok $result->is_success;
+    is($result->customer->credit_cards->[0]->last_4, "1111");
+  };
+
+  subtest "with paypal payment method nonce" => sub {
+    my $nonce = Net::Braintree::TestHelper::generate_future_payment_paypal_nonce();
+    my $customer_result = Net::Braintree::Customer->create({
+      payment_method_nonce => $nonce
+    });
+
+    ok $customer_result->is_success;
+    my $customer = $customer_result->customer;
+    isnt($customer->paypal_accounts, undef);
+    is(scalar @{$customer->paypal_accounts}, 1);
   };
 
   subtest "with venmo sdk session" => sub {
@@ -187,6 +215,43 @@ subtest "update" => sub {
 
   subtest "invalid params" => sub {
     should_throw("ArgumentError", sub { Net::Braintree::Customer->update('foo', {"invalid_param" => "1"})}, "throws arg error");
+  };
+
+  subtest "update accepts payment method nonce" => sub {
+    my $customer_result = Net::Braintree::Customer->create({
+      credit_card => {
+        number => "4111111111111111",
+        expiration_date => "10/18"
+      }
+    });
+
+    my $update_result = Net::Braintree::Customer->update(
+      $customer_result->customer->id,
+      {
+        payment_method_nonce => Net::Braintree::Nonce::paypal_future_payment
+      });
+
+    my $updated_customer = $update_result->customer;
+    is(@{$updated_customer->paypal_accounts}, 1);
+    is(@{$updated_customer->credit_cards}, 1);
+    is(@{$updated_customer->payment_methods}, 2);
+  };
+};
+
+subtest "Search" => sub {
+  subtest "search on paypal account email" => sub {
+    my $customer_result = Net::Braintree::Customer->create({
+      payment_method_nonce => Net::Braintree::Nonce::paypal_future_payment
+    });
+
+    my $customer = $customer_result->customer;
+    my $search_result = Net::Braintree::Customer->search(sub {
+      my $search = shift;
+      $search->id->is($customer->id);
+      $search->paypal_account_email->is($customer->paypal_accounts->[0]->email);
+    });
+
+    is($search_result->maximum_size, 1);
   };
 };
 

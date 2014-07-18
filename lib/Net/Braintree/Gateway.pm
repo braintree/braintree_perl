@@ -1,10 +1,13 @@
 package Net::Braintree::Gateway;
 
 use Net::Braintree::AddressGateway;
+use Net::Braintree::ClientTokenGateway;
 use Net::Braintree::CreditCardGateway;
 use Net::Braintree::CreditCardVerificationGateway;
 use Net::Braintree::CustomerGateway;
 use Net::Braintree::MerchantAccountGateway;
+use Net::Braintree::PaymentMethodGateway;
+use Net::Braintree::PayPalAccountGateway;
 use Net::Braintree::SettlementBatchSummaryGateway;
 use Net::Braintree::SubscriptionGateway;
 use Net::Braintree::TransactionGateway;
@@ -19,6 +22,11 @@ has 'config' => (is => 'ro');
 has 'address' => (is => 'ro', lazy => 1, default => sub {
   my $self = shift;
   Net::Braintree::AddressGateway->new(gateway => $self);
+});
+
+has 'client_token' => (is => 'ro', lazy => 1, default => sub {
+  my $self = shift;
+  Net::Braintree::ClientTokenGateway->new(gateway => $self);
 });
 
 has 'credit_card' => (is => 'ro', lazy => 1, default => sub {
@@ -39,6 +47,16 @@ has 'customer' => (is => 'ro', lazy => 1, default => sub {
 has 'merchant_account' => (is => 'ro', lazy => 1, default => sub {
   my $self = shift;
   Net::Braintree::MerchantAccountGateway->new(gateway => $self);
+});
+
+has 'payment_method' => (is => 'ro', lazy => 1, default => sub {
+  my $self = shift;
+  Net::Braintree::PaymentMethodGateway->new(gateway => $self);
+});
+
+has 'paypal_account' => (is => 'ro', lazy => 1, default => sub {
+  my $self = shift;
+  Net::Braintree::PayPalAccountGateway->new(gateway => $self);
 });
 
 has 'settlement_batch_summary' => (is => 'ro', lazy => 1, default => sub {
