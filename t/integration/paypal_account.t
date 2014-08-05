@@ -121,4 +121,36 @@ subtest "Update" => sub {
   };
 };
 
+subtest "it returns subscriptions associated with a paypal account" => sub {
+  my $customer = Net::Braintree::Customer->create()->customer;
+  my $payment_method_token = "paypal-account-" . int(rand(10000));
+  my $nonce = Net::Braintree::TestHelper::nonce_for_paypal_account({
+    consent_code => "consent-code",
+    token => $payment_method_token
+  });
+
+  my $result = Net::Braintree::PaymentMethod->create({
+    payment_method_nonce => $nonce,
+    customer_id => $customer->id
+  });
+
+  ok $result->is_success;
+
+  my $token = $result->payment_method->token;
+  my $subscription1 = Net::Braintree::Subscription->create({
+    payment_method_token => $token,
+    plan_id => Net::Braintree::TestHelper::TRIALLESS_PLAN_ID
+  })->subscription;
+
+  my $subscription2 = Net::Braintree::Subscription->create({
+    payment_method_token => $token,
+    plan_id => Net::Braintree::TestHelper::TRIALLESS_PLAN_ID
+  })->subscription;
+
+  my $paypal_account = Net::Braintree::PayPalAccount->find($token);
+  my @subscription_ids = map { $_->id; } @{$paypal_account->subscriptions};
+  ok ($subscription1->id ~~ @subscription_ids);
+  ok ($subscription2->id ~~ @subscription_ids);
+};
+
 done_testing();

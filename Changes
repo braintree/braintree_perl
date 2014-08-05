@@ -1,4 +1,10 @@
 Revision history for Net-Braintree
+0.22.0  08/05/2014
+        Allow credit card verification options to be passed outside of the nonce for PaymentMethod.create
+        Allow billing_address parameters and billing_address_id to be passed outside of the nonce for PaymentMethod.create
+        Add Subscriptions to paypal accounts
+        Add PaymentMethod.update
+        Add fail_on_duplicate_payment_method option to PaymentMethod.create
 0.21.0  07/18/2014
         Add support for v.zero SDKs.
 0.20.0  03/31/2014

@@ -57,6 +57,11 @@ sub masked_number {
   return $self->bin . "******" . $self->last_4;
 }
 
+sub expiration_date {
+  my $self = shift;
+  return $self->expiration_month . "/" . $self->expiration_year;
+}
+
 sub is_default {
   return shift->default;
 }

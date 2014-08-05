@@ -16,7 +16,7 @@ has 'shared_customer_identifier_type' => (is => 'rw');
 sub get_cards {
   my $self = shift;
   return _do_http($self, "GET", $self->config->base_merchant_url .
-    '/client_api/nonces'.
+    '/client_api/v1/payment_methods'.
     '?authorizationFingerprint=' . uri_escape($self->fingerprint) .
     '&sharedCustomerIdentifier=' . $self->shared_customer_identifier .
     '&sharedCustomerIdentifierType=' . $self->shared_customer_identifier_type
@@ -25,8 +25,28 @@ sub get_cards {
 
 sub add_card {
   my ($self, $params) = @_;
-  return _do_http($self, "POST", $self->config->base_merchant_url . '/client_api/nonces', $params)
+  return _do_http($self, "POST", $self->config->base_merchant_url . '/client_api/v1/payment_methods/credit_cards', $params)
 };
+
+sub add_payment_method {
+  my ($self, $params) = @_;
+  $params->{'authorizationFingerprint'} = $self->fingerprint;
+  $params->{'sharedCustomerIdentifier'} = $self->shared_customer_identifier;
+  $params->{'sharedCustomerIdentifierType'} = $self->shared_customer_identifier_type;
+
+  my $payment_method_type;
+  if (defined($params->{'paypal_account'})) {
+    $payment_method_type = "paypal_accounts";
+  } else {
+    $payment_method_type = "credit_cards";
+  }
+
+  return _do_http(
+    $self,
+    "POST",
+    $self->config->base_merchant_url . '/client_api/v1/payment_methods/' . $payment_method_type,
+    $params);
+}
 
 sub get_one_time_nonce_for_paypal {
   my $self = shift;
@@ -75,7 +95,26 @@ sub get_nonce_for_new_card {
     }
   });
 
-  return decode_json($response->content)->{"nonce"};
+  return decode_json($response->content)->{"creditCards"}[0]{"nonce"};
+}
+
+sub get_nonce_for_new_card_with_params{
+  my ($self, $params) = @_;
+  my $response = $self->add_card({
+    credit_card => $params
+  });
+
+  return decode_json($response->content)->{"creditCards"}[0]{"nonce"};
+}
+
+sub create_paypal_account {
+  my ($self, $params) = @_;
+  my $updated_params = {
+    authorization_fingerprint => $self->fingerprint,
+    paypal_account => $params
+  };
+
+  _do_http($self, "POST", $self->config->base_merchant_url . '/client_api/v1/payment_methods/paypal_accounts', $updated_params);
 }
 
 sub _do_http {

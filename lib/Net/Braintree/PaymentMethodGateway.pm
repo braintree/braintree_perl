@@ -9,6 +9,11 @@ sub create {
   $self->_make_request("/payment_methods", 'post', {payment_method => $params});
 }
 
+sub update {
+  my ($self, $token, $params) = @_;
+  $self->_make_request("/payment_methods/any/" . $token, "put", {payment_method => $params});
+}
+
 sub delete {
   my ($self, $token) = @_;
   $self->_make_request("/payment_methods/any/" . $token, 'delete');

@@ -110,7 +110,7 @@ subtest "it defaults to version 2" => sub {
   my $encoded_client_token = Net::Braintree::ClientToken->generate();
   my $decoded_client_token = decode_json(decode_base64($encoded_client_token));
   my $version = $decoded_client_token->{"version"};
-  is($version, "2");
+  is($version, 2);
 };
 
 subtest "it can pass fail_on_duplicate_payment_method card" => sub {

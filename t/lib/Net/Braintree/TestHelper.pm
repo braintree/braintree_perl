@@ -18,8 +18,12 @@ Net::Braintree->configuration->environment("integration");
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT = qw(create_escrowed_transaction create_settled_transaction not_ok should_throw should_throw_containing simulate_form_post_for_tr make_subscription_past_due);
+our @EXPORT = qw(create_escrowed_transaction create_settled_transaction not_ok should_throw should_throw_containing simulate_form_post_for_tr make_subscription_past_due NON_DEFAULT_MERCHANT_ACCOUNT_ID);
 our @EXPORT_OK = qw();
+
+use constant NON_DEFAULT_MERCHANT_ACCOUNT_ID => "sandbox_credit_card_non_default";
+
+use constant TRIALLESS_PLAN_ID => "integration_trialless_plan";
 
 sub three_d_secure_merchant_account_id {
   "three_d_secure_merchant_account";
@@ -132,6 +136,21 @@ sub parse_datetime {
   my $dt = $parser->parse_datetime($date_string);
 }
 
+sub get_new_http_client {
+  my $config = Net::Braintree::Configuration->new(environment => "integration");
+  my $customer = Net::Braintree::Customer->create()->customer;
+  my $raw_client_token = Net::Braintree::TestHelper::generate_decoded_client_token();
+  my $client_token = decode_json($raw_client_token);
+
+  my $authorization_fingerprint = $client_token->{'authorizationFingerprint'};
+  return Net::Braintree::ClientApiHTTP->new(
+    config => $config,
+    fingerprint => $authorization_fingerprint,
+    shared_customer_identifier => "fake_identifier",
+    shared_customer_identifier_type => "testing"
+  );
+}
+
 sub get_nonce_for_new_card {
   my ($credit_card_number, $customer_id) = @_;
 
@@ -224,6 +243,54 @@ sub generate_future_payment_paypal_nonce {
   );
 
   return $http->get_future_payment_nonce_for_paypal();
+}
+
+sub _nonce_from_response {
+  my $response = shift;
+  my $body = decode_json($response->content);
+
+  if (defined($body->{'paypalAccounts'})) {
+    return $body->{'paypalAccounts'}->[0]->{'nonce'};
+  } else {
+    return $body->{'creditCards'}->[0]->{'nonce'};
+  }
+}
+
+sub nonce_for_new_payment_method {
+  my $params = shift;
+  my $raw_client_token = generate_decoded_client_token();
+  my $client_token = decode_json($raw_client_token);
+  my $config = Net::Braintree::Configuration->new(environment => "integration");
+  my $http = Net::Braintree::ClientApiHTTP->new(
+    config => $config,
+    fingerprint => $client_token->{'authorizationFingerprint'},
+    shared_customer_identifier => "fake_identifier",
+    shared_customer_identifier_type => "testing"
+  );
+
+  my $response = $http->add_payment_method($params);
+  return _nonce_from_response($response);
+}
+
+sub nonce_for_new_credit_card {
+  my $params = shift;
+  my $http = get_new_http_client();
+  return $http->get_nonce_for_new_card_with_params($params);
+}
+
+sub nonce_for_paypal_account {
+  my $paypal_account_details = shift;
+  my $raw_client_token = generate_decoded_client_token();
+  my $client_token = decode_json($raw_client_token);
+  my $config = Net::Braintree::Configuration->new(environment => "integration");
+  my $http = Net::Braintree::ClientApiHTTP->new(
+    config => $config,
+    fingerprint => $client_token->{'authorizationFingerprint'}
+  );
+
+  my $response = $http->create_paypal_account($paypal_account_details);
+  my $body = decode_json($response->content);
+  return $body->{'paypalAccounts'}->[0]->{'nonce'};
 }
 
 sub generate_decoded_client_token {

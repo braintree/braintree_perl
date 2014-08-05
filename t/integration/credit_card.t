@@ -170,7 +170,7 @@ subtest "from_nonce" => sub {
 
     $response = $http->get_cards();
     ok $response->is_success;
-    my $nonce = decode_json($response->content)->{"nonce"};
+    my $nonce = decode_json($response->content)->{"paymentMethods"}[0]{"nonce"};
 
     should_throw_containing("locked", sub { Net::Braintree::CreditCard->from_nonce($nonce) });
   };
