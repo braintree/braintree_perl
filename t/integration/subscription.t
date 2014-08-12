@@ -3,6 +3,7 @@ use Test::More;
 use Net::Braintree::Nonce;
 use Net::Braintree::TestHelper;
 use Net::Braintree;
+use Net::Braintree::ErrorCodes::Descriptor;
 
 my $customer = Net::Braintree::Customer->create({first_name => "Fred", last_name => "Fredson"});
 my $card     = Net::Braintree::CreditCard->create({number => "5431111111111111", expiration_date => "05/12", customer_id => $customer->customer->id});
@@ -32,6 +33,39 @@ subtest "create without trial" => sub {
   is $result->subscription->trial_period, 0;
   is $result->subscription->trial_duration, undef;
   is $result->subscription->trial_duration_unit, undef;
+};
+
+subtest "create with descriptors" => sub {
+  my $result = Net::Braintree::Subscription->create({
+      payment_method_token => $card->credit_card->token,
+      plan_id => "integration_trialless_plan",
+      descriptor => {
+        name => "abc*def",
+        phone => "1234567890",
+        url => "ebay.com"
+      }
+    });
+  ok $result->is_success;
+  my $transaction = $result->subscription->transactions->[0];
+  is $transaction->descriptor->name, "abc*def";
+  is $transaction->descriptor->phone, "1234567890";
+  is $transaction->descriptor->url, "ebay.com";
+};
+
+subtest "create with descriptor validations" => sub {
+  my $result = Net::Braintree::Subscription->create({
+      payment_method_token => $card->credit_card->token,
+      plan_id => "integration_trialless_plan",
+      descriptor => {
+        name => "abc",
+        phone => "12345678",
+        url => "12345678901234"
+      }
+    });
+  not_ok $result->is_success;
+  is($result->errors->for("subscription")->for("descriptor")->on("name")->[0]->code, Net::Braintree::ErrorCodes::Descriptor::NameFormatIsInvalid);
+  is($result->errors->for("subscription")->for("descriptor")->on("phone")->[0]->code, Net::Braintree::ErrorCodes::Descriptor::PhoneFormatIsInvalid);
+  is($result->errors->for("subscription")->for("descriptor")->on("url")->[0]->code, Net::Braintree::ErrorCodes::Descriptor::UrlFormatIsInvalid);
 };
 
 subtest "create with trial, add-ons, discounts" => sub {

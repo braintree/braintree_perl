@@ -4,6 +4,7 @@ use Net::Braintree;
 use Net::Braintree::TestHelper;
 use Net::Braintree::CreditCardNumbers::CardTypeIndicators;
 use Net::Braintree::ErrorCodes::Transaction;
+use Net::Braintree::ErrorCodes::Descriptor;
 use Net::Braintree::CreditCardDefaults;
 use Net::Braintree::SandboxValues::CreditCardNumber;
 use Net::Braintree::SandboxValues::TransactionAmount;
@@ -15,6 +16,11 @@ my $transaction_params = {
   credit_card => {
     number => "5431111111111111",
     expiration_date => "05/12"
+  },
+  descriptor => {
+    name => "abc*def",
+    phone => "1234567890",
+    url => "ebay.com"
   }
 };
 
@@ -29,7 +35,29 @@ subtest "Successful Transactions" => sub {
     is($result->message, "", "$method result has errors: " . $result->message);
     is($result->transaction->credit_card->last_4, "1111");
     is($result->transaction->voice_referral_number, undef);
+    is($result->transaction->descriptor->name, "abc*def");
+    is($result->transaction->descriptor->phone, "1234567890");
+    is($result->transaction->descriptor->url, "ebay.com");
   }
+};
+
+subtest "descriptor validations" => sub {
+  my $result = Net::Braintree::Transaction->sale({
+      amount => "5.00",
+      credit_card => {
+        number => "4000111111111511",
+        expiration_date => "05/16"
+      },
+      descriptor => {
+        name => "abcdef",
+        phone => "12345678",
+        url => "12345678901234"
+  }
+  });
+  not_ok $result->is_success;
+  is($result->errors->for("transaction")->for("descriptor")->on("name")->[0]->code, Net::Braintree::ErrorCodes::Descriptor::NameFormatIsInvalid);
+  is($result->errors->for("transaction")->for("descriptor")->on("phone")->[0]->code, Net::Braintree::ErrorCodes::Descriptor::PhoneFormatIsInvalid);
+  is($result->errors->for("transaction")->for("descriptor")->on("url")->[0]->code, Net::Braintree::ErrorCodes::Descriptor::UrlFormatIsInvalid);
 };
 
 subtest "Fraud rejections" => sub {

@@ -121,7 +121,7 @@ sub transaction_signature{
       hold_in_escrow => "."
     },
     custom_fields => "_any_key_",
-    descriptor => {name => ".", phone => "."},
+    descriptor => {name => ".", phone => ".", url => "."},
     subscription_id => ".",
     venmo_sdk_payment_method_code => ".",
     service_fee_amount => ".",
