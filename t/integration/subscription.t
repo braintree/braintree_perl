@@ -21,6 +21,10 @@ subtest "create without trial" => sub {
   is $result->subscription->next_bill_amount,  "12.34";
   is $result->subscription->next_billing_period_amount,  "12.34";
   is $result->subscription->payment_method_token,  $card->credit_card->token;
+
+  cmp_ok($result->subscription->created_at, ">=", DateTime->now - DateTime::Duration->new(minutes => 60));
+  cmp_ok($result->subscription->updated_at, ">=", DateTime->now - DateTime::Duration->new(minutes => 60));
+
   my $transaction = $result->subscription->transactions->[0];
 
   is_deeply $transaction->subscription->billing_period_start_date, $result->subscription->billing_period_start_date;

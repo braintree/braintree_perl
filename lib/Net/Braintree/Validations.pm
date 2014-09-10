@@ -120,6 +120,9 @@ sub transaction_signature{
       venmo_sdk_session => ".",
       hold_in_escrow => "."
     },
+    paypal_account => {
+      payee_email => "."
+    },
     custom_fields => "_any_key_",
     descriptor => {name => ".", phone => ".", url => "."},
     subscription_id => ".",

@@ -6,9 +6,11 @@ use Net::Braintree::CreditCardNumbers::CardTypeIndicators;
 use Net::Braintree::ErrorCodes::Transaction;
 use Net::Braintree::ErrorCodes::Descriptor;
 use Net::Braintree::CreditCardDefaults;
+use Net::Braintree::Nonce;
 use Net::Braintree::SandboxValues::CreditCardNumber;
 use Net::Braintree::SandboxValues::TransactionAmount;
 use Net::Braintree::Test;
+use Net::Braintree::Transaction::Status;
 use Net::Braintree::Transaction::PaymentInstrumentType;
 
 my $transaction_params = {
@@ -390,7 +392,7 @@ subtest "Security parameters" => sub {
 subtest "Sale" => sub {
   subtest "returns payment instrument type" => sub {
     my $result = Net::Braintree::Transaction->sale({
-      amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE, 
+      amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE,
       credit_card => {
         number => Net::Braintree::SandboxValues::CreditCardNumber::VISA,
         expiration_date => "05/2009"
@@ -407,11 +409,23 @@ subtest "Sale" => sub {
     my $result = Net::Braintree::Transaction->sale({
       amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE,
       payment_method_nonce => $nonce
-    });  
+    });
 
     ok $result->is_success;
     my $transaction = $result->transaction;
     ok($transaction->payment_instrument_type eq Net::Braintree::Transaction::PaymentInstrumentType::PAYPAL_ACCOUNT);
+  };
+
+  subtest "returns debug ID for paypal" => sub {
+    my $nonce = Net::Braintree::TestHelper::generate_one_time_paypal_nonce();
+    my $result = Net::Braintree::Transaction->sale({
+      amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE,
+      payment_method_nonce => $nonce
+    });
+
+    ok $result->is_success;
+    my $transaction = $result->transaction;
+    isnt($transaction->paypal_details->debug_id, undef);
   };
 };
 
@@ -719,6 +733,29 @@ subtest "paypal" => sub {
     isnt($result->transaction->paypal_details->payment_id, undef);
     isnt($result->transaction->paypal_details->authorization_id, undef);
     isnt($result->transaction->paypal_details->image_url, undef);
+    isnt($result->transaction->paypal_details->debug_id, undef);
+  };
+
+  subtest "create a transaction with a payee email" => sub {
+    my $nonce = Net::Braintree::TestHelper::generate_one_time_paypal_nonce('');
+    isnt($nonce, undef);
+
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "10.00",
+      payment_method_nonce => $nonce,
+      paypal_account => {
+        payee_email => "payee\@example.com"
+      }
+    });
+
+    ok $result->is_success;
+    isnt($result->transaction->paypal_details, undef);
+    isnt($result->transaction->paypal_details->payer_email, undef);
+    isnt($result->transaction->paypal_details->payment_id, undef);
+    isnt($result->transaction->paypal_details->authorization_id, undef);
+    isnt($result->transaction->paypal_details->image_url, undef);
+    isnt($result->transaction->paypal_details->debug_id, undef);
+    is($result->transaction->paypal_details->payee_email, "payee\@example.com");
   };
 
   subtest "create a transaction with a one-time paypal nonce and vault" => sub {
@@ -740,6 +777,7 @@ subtest "paypal" => sub {
     isnt($transaction->paypal_details->payment_id, undef);
     isnt($transaction->paypal_details->authorization_id, undef);
     is($transaction->paypal_details->token, undef);
+    isnt($transaction->paypal_details->debug_id, undef);
   };
 
   subtest "create a transaction with a future payment paypal nonce and vault" => sub {
@@ -761,6 +799,7 @@ subtest "paypal" => sub {
     isnt($transaction->paypal_details->payment_id, undef);
     isnt($transaction->paypal_details->authorization_id, undef);
     isnt($transaction->paypal_details->token, undef);
+    isnt($transaction->paypal_details->debug_id, undef);
   };
 
   subtest "void paypal transaction" => sub {
@@ -809,6 +848,25 @@ subtest "paypal" => sub {
 
     my $refund_result = Net::Braintree::Transaction->refund($id);
     ok $refund_result->is_success;
+  };
+
+  subtest "paypal transaction returns settlement response code" => sub {
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "10.00",
+      payment_method_nonce => Net::Braintree::Nonce::paypal_future_payment,
+      options => {
+        submit_for_settlement => true
+      }
+    });
+    ok $result->is_success;
+
+    Net::Braintree::TestHelper::settlement_decline($result->transaction->id);
+
+    my $result = Net::Braintree::Transaction->find($result->transaction->id);
+    my $transaction = $result->transaction;
+    is($transaction->status, Net::Braintree::Transaction::Status::SettlementDeclined);
+    is($transaction->processor_settlement_response_code, "4001");
+    is($transaction->processor_settlement_response_text, "Settlement Declined");
   };
 };
 

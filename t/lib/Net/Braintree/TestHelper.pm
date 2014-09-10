@@ -62,6 +62,22 @@ sub settle {
   return Net::Braintree::Result->new(response => $response);
 }
 
+sub settlement_decline {
+  my $transaction_id = shift;
+  my $http = Net::Braintree::HTTP->new(config => Net::Braintree->configuration);
+  my $response = $http->put("/transactions/" . $transaction_id . "/settlement_decline");
+
+  return Net::Braintree::Result->new(response => $response);
+}
+
+sub settlement_pending {
+  my $transaction_id = shift;
+  my $http = Net::Braintree::HTTP->new(config => Net::Braintree->configuration);
+  my $response = $http->put("/transactions/" . $transaction_id . "/settlement_pending");
+
+  return Net::Braintree::Result->new(response => $response);
+}
+
 sub create_settled_transaction {
   my ($params) = shift;
   my $sale       = Net::Braintree::Transaction->sale($params);

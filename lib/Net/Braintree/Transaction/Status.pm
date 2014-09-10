@@ -10,6 +10,8 @@ use constant ProcessorDeclined => 'processor_declined';
 use constant Settled => 'settled';
 use constant Settling => 'settling';
 use constant SubmittedForSettlement => 'submitted_for_settlement';
+use constant SettlementDeclined => 'settlement_declined';
+use constant SettlementPending => 'settlement_pending';
 use constant Voided => 'voided';
 
 use constant All => (
@@ -20,6 +22,8 @@ use constant All => (
   Failed,
   ProcessorDeclined,
   Settled,
+  SettlementDeclined,
+  SettlementPending,
   Settling,
   SubmittedForSettlement,
   Voided,

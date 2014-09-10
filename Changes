@@ -1,4 +1,7 @@
 Revision history for Net-Braintree
+0.24.0  09/10/2014
+        Added paypal specific fields to transaction calls
+        Added SettlementPending, SettlementDeclined transaction statuses
 0.23.0  08/12/2014
         Add descriptor url support
 0.22.0  08/05/2014
