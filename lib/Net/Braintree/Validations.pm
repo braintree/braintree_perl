@@ -118,7 +118,8 @@ sub transaction_signature{
       add_billing_address_to_payment_method => ".",
       store_shipping_address_in_vault => ".",
       venmo_sdk_session => ".",
-      hold_in_escrow => "."
+      hold_in_escrow => ".",
+      payee_email => "."
     },
     paypal_account => {
       payee_email => "."

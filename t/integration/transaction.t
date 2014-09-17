@@ -758,6 +758,30 @@ subtest "paypal" => sub {
     is($result->transaction->paypal_details->payee_email, "payee\@example.com");
   };
 
+  subtest "create a transaction with a payee email in the options params" => sub {
+    my $nonce = Net::Braintree::TestHelper::generate_one_time_paypal_nonce('');
+    isnt($nonce, undef);
+
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "10.00",
+      payment_method_nonce => $nonce,
+      paypal_account => {
+      },
+      options => {
+        payee_email => "payee\@example.com",
+      }
+    });
+
+    ok $result->is_success;
+    isnt($result->transaction->paypal_details, undef);
+    isnt($result->transaction->paypal_details->payer_email, undef);
+    isnt($result->transaction->paypal_details->payment_id, undef);
+    isnt($result->transaction->paypal_details->authorization_id, undef);
+    isnt($result->transaction->paypal_details->image_url, undef);
+    isnt($result->transaction->paypal_details->debug_id, undef);
+    is($result->transaction->paypal_details->payee_email, "payee\@example.com");
+  };
+
   subtest "create a transaction with a one-time paypal nonce and vault" => sub {
     my $nonce = Net::Braintree::TestHelper::generate_one_time_paypal_nonce('');
     isnt($nonce, undef);
