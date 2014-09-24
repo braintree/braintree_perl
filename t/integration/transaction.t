@@ -87,6 +87,7 @@ subtest "Processor declined rejection" => sub {
   is($result->message, "Insufficient Funds");
   is($result->transaction->processor_response_code, "2001");
   is($result->transaction->processor_response_text, "Insufficient Funds");
+  is($result->transaction->additional_processor_response, "2001 : Insufficient Funds");
 };
 
 subtest "Custom Fields" => sub {

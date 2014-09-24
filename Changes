@@ -1,4 +1,6 @@
 Revision history for Net-Braintree
+0.25.0  09/24/14
+        Add additional_processor_response to transaction
 0.24.1  09/17/2014
         Allow payee_email to be passed in options params for Transaction create
 0.24.0  09/10/2014
