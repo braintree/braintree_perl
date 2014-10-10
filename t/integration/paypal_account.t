@@ -112,7 +112,7 @@ subtest "Update" => sub {
       $payment_method_result->payment_method->token,
       {
         options => {
-          make_default => true
+          make_default => "true"
         }
       });
 

@@ -19,8 +19,8 @@ my $disbursement_params = {
   disbursement_date => Net::Braintree::TestHelper::parse_datetime("2014-04-10 00:00:00"),
   exception_message => "invalid_account_number",
   follow_up_action => "update",
-  retry => false,
-  success => false
+  retry => "false",
+  success => "false"
 };
 
 subtest "Transactions" => sub {

@@ -64,7 +64,8 @@ my $valid_application_params = {
     email => 'job@leoggs.com',
     mobile_phone => "3125551212",
     routing_number => "122100024",
-    account_number => "43759348799"
+    account_number => "43759348799",
+    descriptor => "Joes Leoggs IN",
   },
   tos_accepted => "true",
   master_merchant_account_id => "sandbox_master_merchant_account"
@@ -169,7 +170,8 @@ subtest "Update updates all fields" => sub {
       email => 'job@leoggs.com',
       mobile_phone => "3125551212",
       routing_number => "122100024",
-      account_number => "43759348799"
+      account_number => "43759348799",
+      descriptor => "Job Leoggs IN",
     },
   };
   $result = Net::Braintree::MerchantAccount->update($result->merchant_account->id, $update_params);
@@ -196,6 +198,7 @@ subtest "Update updates all fields" => sub {
   is($result->merchant_account->funding_details->mobile_phone, "3125551212");
   is($result->merchant_account->funding_details->routing_number, "122100024");
   is($result->merchant_account->funding_details->account_number_last_4, "8799");
+  is($result->merchant_account->funding_details->descriptor, "Job Leoggs IN");
 };
 
 subtest "Create handles required validation errors" => sub {
@@ -285,7 +288,7 @@ subtest "Handles tax id and legal name mutual requirement errors" => sub {
   is($result->errors->for("merchant_account")->for("business")->on("legal_name")->[0]->code, Net::Braintree::ErrorCodes::MerchantAccount::Business::LegalNameIsRequiredWithTaxId);
   is($result->errors->for("merchant_account")->for("business")->on("tax_id")->[0]->code, Net::Braintree::ErrorCodes::MerchantAccount::Business::TaxIdMustBeBlank);
 
-  my $result = Net::Braintree::MerchantAccount->create({
+  $result = Net::Braintree::MerchantAccount->create({
     "business" => {"legal_name" => "foogurt"},
     tos_accepted => "true",
     master_merchant_account_id => "sandbox_master_merchant_account"
@@ -304,7 +307,7 @@ subtest "Handles funding destination requirement errors" => sub {
   is($result->errors->for("merchant_account")->for("funding")->on("account_number")->[0]->code, Net::Braintree::ErrorCodes::MerchantAccount::Funding::AccountNumberIsRequired);
   is($result->errors->for("merchant_account")->for("funding")->on("routing_number")->[0]->code, Net::Braintree::ErrorCodes::MerchantAccount::Funding::RoutingNumberIsRequired);
 
-  my $result = Net::Braintree::MerchantAccount->create({
+  $result = Net::Braintree::MerchantAccount->create({
     funding => {destination => Net::Braintree::MerchantAccount::FundingDestination::MobilePhone},
     tos_accepted => "true",
     master_merchant_account_id => "sandbox_master_merchant_account"
@@ -312,7 +315,7 @@ subtest "Handles funding destination requirement errors" => sub {
   not_ok $result->is_success;
   is($result->errors->for("merchant_account")->for("funding")->on("mobile_phone")->[0]->code, Net::Braintree::ErrorCodes::MerchantAccount::Funding::MobilePhoneIsRequired);
 
-  my $result = Net::Braintree::MerchantAccount->create({
+  $result = Net::Braintree::MerchantAccount->create({
     funding => {destination => Net::Braintree::MerchantAccount::FundingDestination::Email},
     tos_accepted => "true",
     master_merchant_account_id => "sandbox_master_merchant_account"

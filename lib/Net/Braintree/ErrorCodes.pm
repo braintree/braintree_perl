@@ -2,6 +2,7 @@ package Net::Braintree::ErrorCodes;
 use strict;
 
 use Net::Braintree::ErrorCodes::Address;
+use Net::Braintree::ErrorCodes::ApplePay;
 use Net::Braintree::ErrorCodes::CreditCard;
 use Net::Braintree::ErrorCodes::CreditCard::Options;
 use Net::Braintree::ErrorCodes::Customer;

@@ -6,6 +6,7 @@ use warnings;
 use Net::Braintree::Address;
 use Net::Braintree::AdvancedSearchFields;
 use Net::Braintree::AdvancedSearchNodes;
+use Net::Braintree::ApplePayCard;
 use Net::Braintree::CreditCard;
 use Net::Braintree::Customer;
 use Net::Braintree::CustomerSearch;
@@ -34,11 +35,11 @@ Net::Braintree - A Client Library for wrapping the Braintree Payment Services Ga
 
 =head1 VERSION
 
-Version 0.23.0
+Version 0.26.0
 
 =cut
 
-our $VERSION = '0.25.0';
+our $VERSION = '0.26.0';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 

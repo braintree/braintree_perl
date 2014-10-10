@@ -9,6 +9,8 @@ my $meta = __PACKAGE__->meta;
 
 my $response_objects = {
   address => "Net::Braintree::Address",
+  apple_pay => "Net::Braintree::ApplePayCard",
+  apple_pay_card => "Net::Braintree::ApplePayCard",
   credit_card => "Net::Braintree::CreditCard",
   customer => "Net::Braintree::Customer",
   merchant_account => "Net::Braintree::MerchantAccount",

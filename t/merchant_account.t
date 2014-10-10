@@ -34,6 +34,7 @@ subtest 'create new merchant account with all params', sub {
 		funding => {
 			account_number_last_4 => "8798",
 			routing_number => "071000013",
+			descriptor => "James Bloggs MI",
 		}
 	};
 
@@ -56,6 +57,7 @@ subtest 'create new merchant account with all params', sub {
 	is $merchant_account->business_details->tax_id, "123456789";
 	is $merchant_account->funding_details->account_number_last_4, "8798";
 	is $merchant_account->funding_details->routing_number, "071000013";
+	is $merchant_account->funding_details->descriptor, "James Bloggs MI";
 };
 
 done_testing();

@@ -42,6 +42,26 @@ subtest "Create" => sub {
     is($payment_method_result->credit_card->meta->name, "Net::Braintree::CreditCard");
   };
 
+  subtest "it creates a payment method with a fake apple pay nonce" => sub {
+    my $customer_result = Net::Braintree::Customer->create();
+
+    ok $customer_result->is_success;
+    my $payment_method_result = Net::Braintree::PaymentMethod->create({
+      customer_id => $customer_result->customer->id,
+      payment_method_nonce => Net::Braintree::Nonce::apple_pay_mastercard
+    });
+
+    ok $payment_method_result->is_success;
+    my $apple_pay_card = $payment_method_result->apple_pay_card;
+    isnt($apple_pay_card->token, undef);
+    is($apple_pay_card->meta->name, "Net::Braintree::ApplePayCard");
+    is($apple_pay_card->card_type, Net::Braintree::ApplePayCard::CardType::MasterCard);
+    ok $apple_pay_card->default;
+    ok $apple_pay_card->image_url =~ /apple_pay/;
+    ok $apple_pay_card->expiration_month + 0 > 0;
+    ok $apple_pay_card->expiration_year + 0 > 0;
+  };
+
   subtest "create paypal account with one-time nonce fails" => sub {
     my $customer_result = Net::Braintree::Customer->create();
     ok $customer_result->is_success;
@@ -74,7 +94,7 @@ subtest "Create" => sub {
       payment_method_nonce => $nonce,
       token => $token,
       options => {
-        make_default => true
+        make_default => "true"
       }
     });
 
@@ -95,8 +115,8 @@ subtest "Create" => sub {
       payment_method_nonce => $nonce,
       customer_id => $customer->id,
       options => {
-        verify_card => true,
-        fail_on_duplicate_payment_method => true,
+        verify_card => "true",
+        fail_on_duplicate_payment_method => "true",
         verification_merchant_account_id => "not_a_real_merchant_account_id"
       }
     });
@@ -119,7 +139,7 @@ subtest "Create" => sub {
       payment_method_nonce => $nonce,
       customer_id => $customer->id,
       options => {
-        verify_card => true,
+        verify_card => "true",
         verification_merchant_account_id => Net::Braintree::TestHelper::NON_DEFAULT_MERCHANT_ACCOUNT_ID
       }
     });
@@ -147,11 +167,11 @@ subtest "Create" => sub {
       }
     });
 
-    my $result = Net::Braintree::PaymentMethod->create({
+    $result = Net::Braintree::PaymentMethod->create({
       payment_method_nonce => $nonce,
       customer_id => $customer->id,
       options => {
-        fail_on_duplicate_payment_method => true
+        fail_on_duplicate_payment_method => "true"
       }
     });
 
@@ -166,7 +186,7 @@ subtest "Create" => sub {
       expirationMonth => "12",
       expirationYear => "2020",
       options => {
-        validate => false
+        validate => "false"
       }
     });
 
@@ -196,7 +216,7 @@ subtest "Create" => sub {
       expirationMonth => "12",
       expirationYear => "2020",
       options => {
-        validate => false
+        validate => "false"
       },
       billing_address => {
         street_address => "456 Xyz Way"
@@ -221,7 +241,6 @@ subtest "Create" => sub {
   };
 
   subtest "it does not override the billing address for a vaulted credit card" => sub {
-    my $customer = Net::Braintree::Customer->create()->customer;
     my $config = Net::Braintree::Configuration->new(environment => "integration");
     my $customer = Net::Braintree::Customer->create()->customer;
     my $raw_client_token = Net::Braintree::TestHelper::generate_decoded_client_token({ customer_id => $customer->id });
@@ -284,7 +303,6 @@ subtest "Create" => sub {
   };
 
   subtest "it allows passing a billing address id outside of the nonce" => sub {
-    my $customer = Net::Braintree::Customer->create()->customer;
     my $config = Net::Braintree::Configuration->new(environment => "integration");
     my $customer = Net::Braintree::Customer->create()->customer;
     my $raw_client_token = Net::Braintree::TestHelper::generate_decoded_client_token({ customer_id => $customer->id });
@@ -303,7 +321,7 @@ subtest "Create" => sub {
       expirationMonth => "12",
       expirationYear => "2020",
       options => {
-        validate => false
+        validate => "false"
       }
     });
 
@@ -436,7 +454,7 @@ subtest "Update" => sub {
             billing_address => {
               region => "IL",
               options => {
-                update_existing => true
+                update_existing => "true"
               }
             }
           });
@@ -471,7 +489,7 @@ subtest "Update" => sub {
               country_code_alpha3 => "ASM",
               country_code_numeric => "016",
               options => {
-                update_existing => true
+                update_existing => "true"
               }
             }
           });
@@ -533,7 +551,7 @@ subtest "Update" => sub {
           number => Net::Braintree::SandboxValues::CreditCardNumber::FAILS_VERIFICATION_MASTER_CARD,
           expiration_date => "06/2013",
           options => {
-            verify_card => true
+            verify_card => "true"
           }
         });
 
@@ -570,7 +588,7 @@ subtest "Update" => sub {
         $credit_card->token,
         {
           options => {
-            verify_card => false
+            verify_card => "false"
           },
           billing_address => {
             first_name => "New First Name",
@@ -645,7 +663,7 @@ subtest "Update" => sub {
         $card2->token,
         {
           options => {
-            make_default => true
+            make_default => "true"
           }
         });
 
@@ -691,7 +709,7 @@ subtest "Update" => sub {
         number => Net::Braintree::SandboxValues::CreditCardNumber::VISA,
         expiration_date => "05/2009",
         options => {
-          make_default => true
+          make_default => "true"
         }
       });
 
@@ -706,7 +724,7 @@ subtest "Update" => sub {
         $original_token,
         {
           options => {
-            make_default => true
+            make_default => "true"
           }
         });
 

@@ -161,7 +161,7 @@ subtest "it can pass fail_on_duplicate_payment_method card" => sub {
 subtest "client token accepts merchant account id" => sub {
   my $client_token = decode_json(Net::Braintree::TestHelper::generate_decoded_client_token({merchant_account_id => "merchant_account_id"}));
 
-  ok $client_token->{merchant_account_id} == "merchant_account_id";
+  ok $client_token->{merchantAccountId} eq "merchant_account_id";
 };
 
 done_testing();

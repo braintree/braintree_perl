@@ -101,6 +101,7 @@ sub _create_signature{
       mobile_phone => ".",
       routing_number => ".",
       account_number => ".",
+      descriptor => ".",
     },
     tos_accepted => ".",
     master_merchant_account_id => ".",
@@ -141,6 +142,7 @@ sub _update_signature{
       mobile_phone => ".",
       routing_number => ".",
       account_number => ".",
+      descriptor => ".",
     },
     master_merchant_account_id => ".",
     id => "."

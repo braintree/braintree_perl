@@ -195,7 +195,7 @@ sub get_nonce_for_new_card {
 sub generate_unlocked_nonce {
   my ($credit_card_number, $customer_id) = @_;
   my $raw_client_token = "";
-  if ($customer_id eq '') {
+  if (!defined($customer_id) || $customer_id eq '') {
     $raw_client_token = generate_decoded_client_token();
   } else {
     $raw_client_token = generate_decoded_client_token({customer_id => $customer_id});
@@ -218,7 +218,7 @@ sub generate_unlocked_nonce {
 sub generate_one_time_paypal_nonce {
   my $customer_id = shift;
   my $raw_client_token = "";
-  if ($customer_id eq '') {
+  if (!defined($customer_id) || $customer_id eq '') {
     $raw_client_token = generate_decoded_client_token();
   } else {
     $raw_client_token = generate_decoded_client_token({customer_id => $customer_id});
@@ -241,7 +241,7 @@ sub generate_one_time_paypal_nonce {
 sub generate_future_payment_paypal_nonce {
   my $customer_id = shift;
   my $raw_client_token = "";
-  if ($customer_id eq '') {
+  if (!defined($customer_id) || $customer_id eq '') {
     $raw_client_token = generate_decoded_client_token();
   } else {
     $raw_client_token = generate_decoded_client_token({customer_id => $customer_id});

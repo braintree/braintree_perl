@@ -138,6 +138,22 @@ subtest "with payment method nonce" => sub {
   };
 };
 
+subtest "apple pay" => sub {
+  subtest "it can create a transaction with a fake apple pay nonce" => sub {
+    my $result = Net::Braintree::Transaction->sale({
+      amount => "50.00",
+      payment_method_nonce => Net::Braintree::Nonce::apple_pay_visa
+    });
+
+    ok $result->is_success;
+    my $apple_pay_detail = $result->transaction->apple_pay;
+    is($apple_pay_detail->card_type, Net::Braintree::ApplePayCard::CardType::Visa);
+    ok $apple_pay_detail->expiration_month + 0 > 0;
+    ok $apple_pay_detail->expiration_year + 0 > 0;
+    isnt($apple_pay_detail->cardholder_name, undef);
+  };
+};
+
 subtest "three_d_secure" => sub {
   subtest "can create a transaction with a three_d_secure_token" => sub {
     my $merchant_account_id = Net::Braintree::TestHelper::three_d_secure_merchant_account_id;
@@ -160,7 +176,7 @@ subtest "three_d_secure" => sub {
     ok $result->is_success;
   };
 
-  subtest "returns an error if three_d_secure_token is undef" => sub {
+  subtest "returns an error if three_d_secure_token is not a real one" => sub {
     my $merchant_account_id = Net::Braintree::TestHelper::three_d_secure_merchant_account_id;
     my $result = Net::Braintree::Transaction->sale({
       amount => "100.00",
@@ -169,7 +185,7 @@ subtest "three_d_secure" => sub {
         expiration_date => "05/09",
       },
       merchant_account_id => $merchant_account_id,
-      three_d_secure_token => $nonexistant_three_d_secure_token
+      three_d_secure_token => "nonexistent_three_d_secure_token"
     });
 
     not_ok $result->is_success;
@@ -791,7 +807,7 @@ subtest "paypal" => sub {
       amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE,
       payment_method_nonce => $nonce,
       options => {
-        store_in_vault => true
+        store_in_vault => "true"
       }
     });
 
@@ -813,7 +829,7 @@ subtest "paypal" => sub {
       amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE,
       payment_method_nonce => $nonce,
       options => {
-        store_in_vault => true
+        store_in_vault => "true"
       }
     });
 
@@ -853,6 +869,7 @@ subtest "paypal" => sub {
     ok $result->is_success;
     my $settlement_result = Net::Braintree::Transaction->submit_for_settlement($result->transaction->id);
     ok $settlement_result->is_success;
+    ok $settlement_result->transaction->status eq Net::Braintree::Transaction::Status::Settling
   };
 
   subtest "refund a paypal transaction" => sub {
@@ -863,13 +880,12 @@ subtest "paypal" => sub {
       amount => Net::Braintree::SandboxValues::TransactionAmount::AUTHORIZE,
       payment_method_nonce => $nonce,
       options => {
-        submit_for_settlement => true
+        submit_for_settlement => "true"
       }
     });
 
     ok $result->is_success;
     my $id = $result->transaction->id;
-    Net::Braintree::TestHelper::settle($id);
 
     my $refund_result = Net::Braintree::Transaction->refund($id);
     ok $refund_result->is_success;
@@ -880,14 +896,14 @@ subtest "paypal" => sub {
       amount => "10.00",
       payment_method_nonce => Net::Braintree::Nonce::paypal_future_payment,
       options => {
-        submit_for_settlement => true
+        submit_for_settlement => "true"
       }
     });
     ok $result->is_success;
 
     Net::Braintree::TestHelper::settlement_decline($result->transaction->id);
 
-    my $result = Net::Braintree::Transaction->find($result->transaction->id);
+    $result = Net::Braintree::Transaction->find($result->transaction->id);
     my $transaction = $result->transaction;
     is($transaction->status, Net::Braintree::Transaction::Status::SettlementDeclined);
     is($transaction->processor_settlement_response_code, "4001");
