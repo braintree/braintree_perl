@@ -38,8 +38,10 @@ sub credit {
 }
 
 sub submit_for_settlement {
-  my ($class, $id) = @_;
-  $class->gateway->transaction->submit_for_settlement($id);
+  my ($class, $id, $amount) = @_;
+  my $params = {};
+  $params->{'amount'} = $amount if $amount;
+  $class->gateway->transaction->submit_for_settlement($id, $params);
 }
 
 sub void {
