@@ -31,8 +31,8 @@ sub retry_subscription_charge {
 }
 
 sub submit_for_settlement {
-  my ($self, $id) = @_;
-  $self->_make_request("/transactions/$id/submit_for_settlement", "put", undef);
+  my ($self, $id, $params) = @_;
+  $self->_make_request("/transactions/$id/submit_for_settlement", "put", {transaction => $params});
 }
 
 sub void {

@@ -495,14 +495,31 @@ subtest "Disputes" => sub {
 };
 
 subtest "Submit for Settlement" => sub {
+  subtest "submit the full amount for settlement" => sub {
+    my $sale = Net::Braintree::Transaction->sale($transaction_params);
+    my $result = Net::Braintree::Transaction->submit_for_settlement($sale->transaction->id);
 
-  my $sale = Net::Braintree::Transaction->sale($transaction_params);
-  my $result = Net::Braintree::Transaction->submit_for_settlement($sale->transaction->id);
+    ok $result->is_success;
+    is($result->transaction->amount, "50.00", "settlement amount");
+    is($result->transaction->status, "submitted_for_settlement", "transaction submitted for settlement");
+  };
 
-  ok $result->is_success;
-  is($result->transaction->amount, "50.00", "settlement amount");
-  is($result->transaction->status, "submitted_for_settlement", "transaction submitted for settlement");
+  subtest "submit a lesser amount for settlement" => sub {
+    my $sale = Net::Braintree::Transaction->sale($transaction_params);
+    my $result = Net::Braintree::Transaction->submit_for_settlement($sale->transaction->id, "10.00");
 
+    ok $result->is_success;
+    is($result->transaction->amount, "10.00", "settlement amount");
+    is($result->transaction->status, "submitted_for_settlement", "transaction submitted for settlement");
+  };
+
+  subtest "can't submit a greater amount for settlement" => sub {
+    my $sale = Net::Braintree::Transaction->sale($transaction_params);
+    my $result = Net::Braintree::Transaction->submit_for_settlement($sale->transaction->id, "100.00");
+
+    not_ok $result->is_success;
+    is($result->message, "Settlement amount is too large.");
+  };
 };
 
 subtest "Refund" => sub {
