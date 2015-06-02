@@ -37,6 +37,9 @@ sub _validate_signature {
 
 sub verify {
   my ($self, $challenge) = @_;
+  if ($challenge !~ /^[a-f0-9]{20,32}$/) {
+    confess "InvalidChallenge";
+  }
   return $self->gateway->config->public_key . "|" . hexdigest($self->gateway->config->private_key, $challenge);
 }
 

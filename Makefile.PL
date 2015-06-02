@@ -32,6 +32,7 @@ test_requires  'Try::Tiny';
 test_requires  'Test::Warn';
 test_requires  'Test::Pod';
 build_requires 'Test::More';
+build_requires 'Test::Moose';
 
 auto_install;
 tests 't/*t';

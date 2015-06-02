@@ -7,8 +7,14 @@ use Net::Braintree::MerchantAccount;
 use Net::Braintree::ErrorCodes::MerchantAccount;
 
 subtest 'verify' => sub {
-  my $verification_string = Net::Braintree::WebhookNotification->verify("verification_token");
-  is $verification_string, "integration_public_key|c9f15b74b0d98635cd182c51e2703cffa83388c3";
+  my $verification_string = Net::Braintree::WebhookNotification->verify("20f9f8ed05f77439fe955c977e4c8a53");
+  is $verification_string, "integration_public_key|d9b899556c966b3f06945ec21311865d35df3ce4";
+};
+
+subtest 'verify throws InvalidChallenge error if the challenge is not hexidecimal', sub {
+  should_throw("InvalidChallenge", sub {
+    Net::Braintree::WebhookNotification->verify("bad challenge");
+  }, "challenge contains non-hex characters");
 };
 
 subtest 'sample_notification creates a parsable signature and payload', sub {

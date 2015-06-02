@@ -1,4 +1,6 @@
 Revision history for Net-Braintree
+0.28.0  06/02/15
+        Validate webhook challenge payload
 0.27.0  03/04/15
         Allow settlement amount to be specified in submit_for_settlement (thanks @evanernest!)
 0.26.0  10/06/14
