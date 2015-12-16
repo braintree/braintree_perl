@@ -1,4 +1,4 @@
-package Net::Braintree::ErrorCodes::MerchantAccount::AppliantDetails::Address;
+package Net::Braintree::ErrorCodes::MerchantAccount::ApplicantDetails::Address;
 use strict;
 
 use constant LocalityIsRequired      => "82618";
