@@ -272,7 +272,7 @@ subtest "disbursement_date - range - is" => sub {
   my $search_result = Net::Braintree::Transaction->search(sub {
     my $search = shift;
     $search->id->is("deposittransaction");
-    $search->disbursement_date->is(Net::Braintree::TestHelper::parse_datetime("2013-04-09 00:00:00"));
+    $search->disbursement_date->is(Net::Braintree::TestHelper::parse_datetime("2013-04-10 00:00:00"));
   });
 
   ok contains("deposittransaction", $search_result->ids);

@@ -147,7 +147,7 @@ sub now_in_eastern {
 sub parse_datetime {
   my $date_string = shift;
   my $parser = DateTime::Format::Strptime->new(
-      pattern => "%F %T %z"
+      pattern => "%F %T"
   );
   my $dt = $parser->parse_datetime($date_string);
 }

@@ -1,5 +1,11 @@
 Net-Braintree
 
+This library is deprecated; current integrations are supported,
+but no new feature development is planned at this time. For more
+details visit the following URL:
+
+https://support.braintreepayments.com/customer/portal/articles/1763061-status-of-the-perl-client-library
+
 The README is used to introduce the module and provide instructions on
 how to install the module, any machine dependencies it may have (for
 example C compilers and installed libraries) and any other information

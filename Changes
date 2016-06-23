@@ -1,4 +1,7 @@
 Revision history for Net-Braintree
+0.29.0  06/23/16
+        Add additional deprecation warnings in documentation
+        Fix typo in Net::Braintree::ErrorCodes::MerchantAccount::ApplicantDetails::Address
 0.28.0  06/02/15
         Validate webhook challenge payload
 0.27.0  03/04/15

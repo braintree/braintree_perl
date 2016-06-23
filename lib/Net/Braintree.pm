@@ -35,11 +35,16 @@ Net::Braintree - A Client Library for wrapping the Braintree Payment Services Ga
 
 =head1 VERSION
 
-Version 0.26.0
+Version 0.29.0
+
+=head1 DEPRECATED
+
+This library is deprecated; current integrations are supported, but no new feature development is planned at this time.
+For more details see: https://support.braintreepayments.com/customer/portal/articles/1763061-status-of-the-perl-client-library
 
 =cut
 
-our $VERSION = '0.28.0';
+our $VERSION = '0.29.0';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 
