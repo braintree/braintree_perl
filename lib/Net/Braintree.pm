@@ -21,6 +21,7 @@ use Net::Braintree::ResourceCollection;
 use Net::Braintree::SettlementBatchSummary;
 use Net::Braintree::Subscription;
 use Net::Braintree::SubscriptionSearch;
+use Net::Braintree::TestTransaction;
 use Net::Braintree::Transaction;
 use Net::Braintree::TransactionSearch;
 use Net::Braintree::Disbursement;
