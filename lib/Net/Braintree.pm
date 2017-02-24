@@ -7,6 +7,7 @@ use Net::Braintree::Address;
 use Net::Braintree::AdvancedSearchFields;
 use Net::Braintree::AdvancedSearchNodes;
 use Net::Braintree::ApplePayCard;
+use Net::Braintree::ClientToken;
 use Net::Braintree::CreditCard;
 use Net::Braintree::Customer;
 use Net::Braintree::CustomerSearch;
