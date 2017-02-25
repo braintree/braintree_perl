@@ -7,6 +7,15 @@ subtest "params tests" => sub {
   should_throw("ArgumentError", sub { Net::Braintree::Transaction->sale({"foo" => "Bar"}); });
 };
 
+subtest "refund params test" => sub {
+  should_throw(
+    'ArgumentError',
+    sub {
+      Net::Braintree::Transaction->refund('foo', { me => 'no bueno', });
+    },
+  );
+};
+
 subtest "validates clone_transaction params"  => sub {
   should_throw("ArgumentError", sub {
     Net::Braintree::Transaction->clone_transaction("foo", { invalid_param => "something"});

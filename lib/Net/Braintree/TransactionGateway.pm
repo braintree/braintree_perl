@@ -2,7 +2,7 @@ package Net::Braintree::TransactionGateway;
 use Moose;
 use Carp qw(confess);
 use Net::Braintree::Util qw(validate_id);
-use Net::Braintree::Validations qw(verify_params transaction_signature clone_transaction_signature transaction_search_results_signature);
+use Net::Braintree::Validations qw(verify_params transaction_signature clone_transaction_signature transaction_search_results_signature refund_signature);
 use Net::Braintree::Util;
 
 has 'gateway' => (is => 'ro');
@@ -42,6 +42,7 @@ sub void {
 
 sub refund {
   my ($self, $id, $params) = @_;
+  confess 'ArgumentError' unless verify_params($params, refund_signature);
   $self->_make_request("/transactions/$id/refund", "post", {transaction => $params});
 }
 
