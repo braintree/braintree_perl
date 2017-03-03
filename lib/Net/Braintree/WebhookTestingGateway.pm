@@ -4,7 +4,7 @@ use MIME::Base64;
 use POSIX qw(strftime);
 use Net::Braintree::Digest qw(hexdigest);
 use Net::Braintree::WebhookNotification::Kind;
-use Moose;
+use Moo;
 
 has 'gateway' => (is => 'ro');
 

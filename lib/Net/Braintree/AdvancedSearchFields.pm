@@ -1,7 +1,7 @@
 {
   package Net::Braintree::AdvancedSearchFields;
   use Carp;
-  use Moose;
+  use Moo;
 
   has "metaclass" => (is => 'rw');
 

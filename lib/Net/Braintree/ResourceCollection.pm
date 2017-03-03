@@ -1,5 +1,5 @@
 package Net::Braintree::ResourceCollection;
-use Moose;
+use Moo;
 extends "Net::Braintree::ResultObject";
 
 has 'response' => (is => 'rw');

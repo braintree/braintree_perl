@@ -1,5 +1,5 @@
 package Net::Braintree::PaymentMethod;
-use Moose;
+use Moo;
 extends 'Net::Braintree::ResultObject';
 
 has token => ( is => 'rw' );

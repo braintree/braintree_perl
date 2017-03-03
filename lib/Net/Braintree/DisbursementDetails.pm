@@ -1,6 +1,6 @@
 package Net::Braintree::DisbursementDetails;
 
-use Moose;
+use Moo;
 extends 'Net::Braintree::ResultObject';
 
 my $meta = __PACKAGE__->meta;

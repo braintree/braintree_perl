@@ -2,7 +2,7 @@ package Net::Braintree::Subscription;
 use Net::Braintree::SubscriptionGateway;
 use Net::Braintree::Subscription::Status;
 
-use Moose;
+use Moo;
 extends 'Net::Braintree::ResultObject';
 
 

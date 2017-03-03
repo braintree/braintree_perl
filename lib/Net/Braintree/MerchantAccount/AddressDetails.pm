@@ -1,6 +1,6 @@
 package Net::Braintree::MerchantAccount::AddressDetails;
 
-use Moose;
+use Moo;
 extends "Net::Braintree::ResultObject";
 
 sub BUILD {

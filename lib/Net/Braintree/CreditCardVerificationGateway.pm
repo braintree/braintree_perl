@@ -1,5 +1,5 @@
 package Net::Braintree::CreditCardVerificationGateway;
-use Moose;
+use Moo;
 use Net::Braintree::CreditCardVerificationSearch;
 use Net::Braintree::Util;
 use Carp qw(confess);

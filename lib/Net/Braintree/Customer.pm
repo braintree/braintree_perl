@@ -1,5 +1,5 @@
 package Net::Braintree::Customer;
-use Moose;
+use Moo;
 extends 'Net::Braintree::ResultObject';
 
 

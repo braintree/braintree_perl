@@ -1,5 +1,5 @@
 package Net::Braintree::MerchantAccountGateway;
-use Moose;
+use Moo;
 use Carp qw(confess);
 use Net::Braintree::Validations qw(verify_params);
 use Net::Braintree::Util qw(validate_id);

@@ -1,5 +1,5 @@
 package Net::Braintree::PaymentMethodGateway;
-use Moose;
+use Moo;
 use Carp qw(confess);
 
 has 'gateway' => (is => 'ro');

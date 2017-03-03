@@ -1,5 +1,5 @@
 package Net::Braintree::ValidationError;
-use Moose;
+use Moo;
 
 has 'attribute' => (is => 'ro');
 has 'code' => (is => 'ro');

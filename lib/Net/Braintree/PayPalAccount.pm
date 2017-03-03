@@ -1,5 +1,5 @@
 package Net::Braintree::PayPalAccount;
-use Moose;
+use Moo;
 extends 'Net::Braintree::PaymentMethod';
 
 sub BUILD {

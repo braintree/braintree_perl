@@ -1,11 +1,11 @@
 {
   package Net::Braintree::AdvancedSearchNodes;
-  use Moose;
+  use Moo;
 }
 
 {
   package Net::Braintree::SearchNode;
-  use Moose;
+  use Moo;
 
   has 'searcher' => (is => 'rw');
   has 'name' => (is => 'rw');
@@ -33,7 +33,7 @@ __PACKAGE__->meta->make_immutable;
 
 {
   package Net::Braintree::IsNode;
-  use Moose;
+  use Moo;
   extends ("Net::Braintree::SearchNode");
 
   sub is {
@@ -46,7 +46,7 @@ __PACKAGE__->meta->make_immutable;
 
 {
   package Net::Braintree::EqualityNode;
-  use Moose;
+  use Moo;
   extends ("Net::Braintree::IsNode");
 
   sub is_not {
@@ -59,7 +59,7 @@ __PACKAGE__->meta->make_immutable;
 
 {
   package Net::Braintree::KeyValueNode;
-  use Moose;
+  use Moo;
   extends ("Net::Braintree::SearchNode");
 
   sub default_criteria {
@@ -82,7 +82,7 @@ __PACKAGE__->meta->make_immutable;
 
 {
   package Net::Braintree::PartialMatchNode;
-  use Moose;
+  use Moo;
   extends ("Net::Braintree::EqualityNode");
 
   sub starts_with {
@@ -100,7 +100,7 @@ __PACKAGE__->meta->make_immutable;
 
 {
   package Net::Braintree::TextNode;
-  use Moose;
+  use Moo;
   extends ("Net::Braintree::PartialMatchNode");
 
   sub contains {
@@ -113,7 +113,7 @@ __PACKAGE__->meta->make_immutable;
 
 {
   package Net::Braintree::RangeNode;
-  use Moose;
+  use Moo;
   extends ("Net::Braintree::EqualityNode");
 
   use overload ( '>=' => 'min', '<=' => 'max');
@@ -141,7 +141,7 @@ __PACKAGE__->meta->make_immutable;
 {
   package Net::Braintree::MultipleValuesNode;
   use Carp;
-  use Moose;
+  use Moo;
   use Net::Braintree::Util;
   extends ("Net::Braintree::SearchNode");
 

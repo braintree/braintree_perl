@@ -1,7 +1,7 @@
 package Net::Braintree::ApplePayCard;
 use Net::Braintree::ApplePayCard::CardType;
 
-use Moose;
+use Moo;
 extends 'Net::Braintree::PaymentMethod';
 
 sub BUILD {

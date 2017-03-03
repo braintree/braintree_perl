@@ -1,7 +1,7 @@
 package Net::Braintree::TransparentRedirect::QueryString;
 use URI;
 use Net::Braintree::Digest qw(hexdigest);
-use Moose;
+use Moo;
 use Carp qw(confess);
 
 has 'config' => ( is => 'rw', default => sub { Net::Braintree->configuration});

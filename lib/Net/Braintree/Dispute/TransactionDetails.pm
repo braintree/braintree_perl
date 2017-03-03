@@ -1,6 +1,6 @@
 package Net::Braintree::Dispute::TransactionDetails;
 
-use Moose;
+use Moo;
 extends 'Net::Braintree::ResultObject';
 
 

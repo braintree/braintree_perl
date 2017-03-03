@@ -1,5 +1,5 @@
 package Net::Braintree::CustomerSearch;
-use Moose;
+use Moo;
 use Net::Braintree::AdvancedSearch qw(search_to_hash);
 
 my $field = Net::Braintree::AdvancedSearchFields->new(metaclass => __PACKAGE__->meta);

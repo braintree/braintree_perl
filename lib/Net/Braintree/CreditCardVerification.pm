@@ -2,7 +2,7 @@ package Net::Braintree::CreditCardVerification;
 use Net::Braintree::CreditCard;
 use Net::Braintree::CreditCard::CardType;
 
-use Moose;
+use Moo;
 
 has 'avs_error_response_code' => (is => 'ro');
 has 'avs_postal_code_response_code' => (is => 'ro');

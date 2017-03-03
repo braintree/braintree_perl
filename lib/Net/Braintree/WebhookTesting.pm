@@ -1,6 +1,6 @@
 package Net::Braintree::WebhookTesting;
 
-use Moose;
+use Moo;
 
 
 sub sample_notification {
