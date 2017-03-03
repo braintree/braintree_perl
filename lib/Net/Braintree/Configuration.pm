@@ -80,5 +80,4 @@ sub api_version {
   return "4";
 }
 
-__PACKAGE__->meta->make_immutable;
 1;

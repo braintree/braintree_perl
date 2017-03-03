@@ -49,5 +49,4 @@ sub _make_request {
   return $result;
 }
 
-__PACKAGE__->meta->make_immutable;
 1;

@@ -40,5 +40,4 @@ sub fetch_verifications {
   return to_instance_array($attrs, "Net::Braintree::CreditCardVerification");
 }
 
-__PACKAGE__->meta->make_immutable;
 1;

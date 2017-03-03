@@ -63,5 +63,4 @@ sub check_response_code {
   confess "DownForMaintenance"  if $code eq '503';
 }
 
-__PACKAGE__->meta->make_immutable;
 1;

@@ -34,5 +34,4 @@ sub on {
   return [ grep { $_->attribute eq $attribute } @{$self->{_errors}} ]
 }
 
-__PACKAGE__->meta->make_immutable;
 1;

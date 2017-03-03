@@ -19,5 +19,4 @@ sub to_hash {
   Net::Braintree::AdvancedSearch->search_to_hash(shift);
 }
 
-__PACKAGE__->meta->make_immutable;
 1;

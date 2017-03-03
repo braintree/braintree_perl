@@ -93,5 +93,4 @@ sub http {
   Net::Braintree::HTTP->new(config => shift->config);
 }
 
-__PACKAGE__->meta->make_immutable;
 1;

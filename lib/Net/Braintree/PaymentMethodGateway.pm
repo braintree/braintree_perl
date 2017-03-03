@@ -36,5 +36,4 @@ sub _make_request {
   return Net::Braintree::Result->new(response => $response);
 }
 
-__PACKAGE__->meta->make_immutable;
 1;

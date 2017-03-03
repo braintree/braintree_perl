@@ -36,5 +36,4 @@ sub full_name {
   return $self->first_name . " " . $self->last_name
 }
 
-__PACKAGE__->meta->make_immutable;
 1;

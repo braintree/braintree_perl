@@ -92,5 +92,4 @@ sub credit_card_verification {
   return Net::Braintree::CreditCardVerification->new($self->api_error_response->{verification});
 }
 
-__PACKAGE__->meta->make_immutable;
 1;

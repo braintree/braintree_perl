@@ -27,7 +27,6 @@
     return $self->searcher;
   }
 
-__PACKAGE__->meta->make_immutable;
   1;
 }
 
@@ -40,7 +39,6 @@ __PACKAGE__->meta->make_immutable;
     my ($self, $operand) = @_;
     return $self->add_node("is", $operand);
   }
-__PACKAGE__->meta->make_immutable;
   1;
 }
 
@@ -53,7 +51,6 @@ __PACKAGE__->meta->make_immutable;
     my ($self, $operand) = @_;
     return $self->add_node("is_not", $operand);
   }
-__PACKAGE__->meta->make_immutable;
   1;
 }
 
@@ -76,7 +73,6 @@ __PACKAGE__->meta->make_immutable;
     $self->criteria($operand);
     return $self->searcher;
   }
-__PACKAGE__->meta->make_immutable;
   1;
 }
 
@@ -94,7 +90,6 @@ __PACKAGE__->meta->make_immutable;
     my ($self, $operand) = @_;
     return $self->add_node("ends_with", $operand);
   }
-__PACKAGE__->meta->make_immutable;
   1;
 }
 
@@ -107,7 +102,6 @@ __PACKAGE__->meta->make_immutable;
     my ($self, $operand) = @_;
     return $self->add_node("contains", $operand);
   }
-__PACKAGE__->meta->make_immutable;
   1;
 }
 
@@ -134,7 +128,6 @@ __PACKAGE__->meta->make_immutable;
     $self->min($min);
   }
 
-__PACKAGE__->meta->make_immutable;
   1;
 }
 
@@ -185,6 +178,5 @@ __PACKAGE__->meta->make_immutable;
     return $self->searcher;
   }
 
-__PACKAGE__->meta->make_immutable;
   1;
 }

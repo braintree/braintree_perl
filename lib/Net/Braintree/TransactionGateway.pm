@@ -100,5 +100,4 @@ sub fetch_transactions {
   return to_instance_array($attrs, "Net::Braintree::Transaction");
 }
 
-__PACKAGE__->meta->make_immutable;
 1;
