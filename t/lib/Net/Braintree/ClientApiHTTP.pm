@@ -137,4 +137,5 @@ sub _do_http {
   return $agent->request($request);
 };
 
+__PACKAGE__->meta->make_immutable;
 1;

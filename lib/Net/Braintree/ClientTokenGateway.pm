@@ -33,4 +33,5 @@ sub _conditionally_verify_params {
   };
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

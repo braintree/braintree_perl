@@ -62,4 +62,5 @@ sub execute_block_for_page {
   }
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

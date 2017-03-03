@@ -40,4 +40,5 @@ sub check_http_status {
   confess "UnexpectedError"     if $params->{'http_status'} ne '200';
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

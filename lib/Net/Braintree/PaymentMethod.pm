@@ -28,4 +28,5 @@ sub gateway {
   return Net::Braintree->configuration->gateway;
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

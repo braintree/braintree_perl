@@ -43,4 +43,5 @@ sub verify {
   return $self->gateway->config->public_key . "|" . hexdigest($self->gateway->config->private_key, $challenge);
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

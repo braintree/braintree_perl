@@ -149,4 +149,5 @@ sub _update_signature{
   };
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

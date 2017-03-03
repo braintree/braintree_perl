@@ -9,4 +9,5 @@ sub BUILD {
   $self->set_attributes_from_hash($self, $attributes);
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

@@ -269,4 +269,5 @@ sub _partner_merchant_declined_sample_xml {
 XML
 }
 
+__PACKAGE__->meta->make_immutable;
 1;
