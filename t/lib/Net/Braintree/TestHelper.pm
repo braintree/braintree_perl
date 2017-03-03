@@ -9,7 +9,7 @@ use LWP::UserAgent;
 use MIME::Base64;
 use Net::Braintree::Util;
 use DateTime::Format::Strptime;
-use CGI;
+use URI::Escape;
 use JSON;
 
 use Net::Braintree;
@@ -118,7 +118,7 @@ sub create_3ds_verification {
 
 sub simulate_form_post_for_tr {
   my ($tr_string, $form_params) = @_;
-  my $escaped_tr_string = CGI::escape($tr_string);
+  my $escaped_tr_string = uri_escape($tr_string);
   my $tr_data = {tr_data => $escaped_tr_string, %$form_params};
 
   my $request = HTTP::Request->new(POST => Net::Braintree->configuration->base_merchant_url .
