@@ -3,7 +3,6 @@ package Net::Braintree::Dispute::TransactionDetails;
 use Moose;
 extends 'Net::Braintree::ResultObject';
 
-my $meta = __PACKAGE__->meta;
 
 sub BUILD {
   my ($self, $attributes) = @_;
