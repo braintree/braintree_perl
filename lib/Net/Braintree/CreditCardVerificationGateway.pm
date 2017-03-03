@@ -2,6 +2,7 @@ package Net::Braintree::CreditCardVerificationGateway;
 use Moose;
 use Net::Braintree::CreditCardVerificationSearch;
 use Net::Braintree::Util;
+use Carp qw(confess);
 
 has 'gateway' => (is => 'ro');
 
