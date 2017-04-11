@@ -36,16 +36,18 @@ Net::Braintree - A Client Library for wrapping the Braintree Payment Services Ga
 
 =head1 VERSION
 
-Version 0.29.0
+Version 0.30.0
 
 =head1 DEPRECATED
 
 This library is deprecated; current integrations are supported, but no new feature development is planned at this time.
-For more details see: https://support.braintreepayments.com/customer/portal/articles/1763061-status-of-the-perl-client-library
+For more details see: L<https://support.braintreepayments.com/customer/portal/articles/1763061-status-of-the-perl-client-library>
+
+You can find a community supported fork of this library at: L<https://metacpan.org/pod/WebService::Braintree>
 
 =cut
 
-our $VERSION = '0.29.0';
+our $VERSION = '0.30.0';
 
 my $configuration_instance = Net::Braintree::Configuration->new;
 
@@ -86,7 +88,7 @@ L<http://search.cpan.org/dist/Net-Braintree/>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2011-2014 Braintree, a division of PayPal, Inc.
+Copyright 2011-2017 Braintree, a division of PayPal, Inc.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published

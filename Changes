@@ -1,4 +1,7 @@
 Revision history for Net-Braintree
+0.30.0  04/10/17
+        Export Net::Braintree::ClientToken (thanks @msjohns1!)
+        Note community fork in documentation
 0.29.0  06/23/16
         Add additional deprecation warnings in documentation
         Fix typo in Net::Braintree::ErrorCodes::MerchantAccount::ApplicantDetails::Address
