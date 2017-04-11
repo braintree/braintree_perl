@@ -102,7 +102,7 @@ sub clone_transaction_signature {
   return { amount => ".", "channel" => ".", options => { submit_for_settlement => "." } };
 }
 
-sub transaction_signature{
+sub transaction_signature {
   return {
     amount => ".", customer_id => ".", merchant_account_id => ".", order_id => ".", channel => ".", payment_method_token => ".",
     "payment_method_nonce" => ".", "device_session_id" => ".", "device_data" => ".", fraud_merchant_id => ".", billing_address_id => ".",
@@ -119,7 +119,8 @@ sub transaction_signature{
       store_shipping_address_in_vault => ".",
       venmo_sdk_session => ".",
       hold_in_escrow => ".",
-      payee_email => "."
+      payee_email => ".",
+      skip_advanced_fraud_checking => "."
     },
     paypal_account => {
       payee_email => "."
