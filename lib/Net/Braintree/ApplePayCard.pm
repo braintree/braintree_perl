@@ -1,10 +1,8 @@
 package Net::Braintree::ApplePayCard;
 use Net::Braintree::ApplePayCard::CardType;
 
-use Moose;
+use Moo;
 extends 'Net::Braintree::PaymentMethod';
-
-my $meta = __PACKAGE__->meta;
 
 sub BUILD {
   my ($self, $attributes) = @_;

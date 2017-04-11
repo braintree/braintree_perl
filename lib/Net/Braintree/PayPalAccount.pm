@@ -1,8 +1,6 @@
 package Net::Braintree::PayPalAccount;
-use Moose;
+use Moo;
 extends 'Net::Braintree::PaymentMethod';
-
-my $meta = __PACKAGE__->meta;
 
 sub BUILD {
   my ($self, $attributes) = @_;

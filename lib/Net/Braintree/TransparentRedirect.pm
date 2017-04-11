@@ -1,5 +1,5 @@
 package Net::Braintree::TransparentRedirect;
-use Moose;
+use Moo;
 
 sub confirm {
   my($class, $query_string) = @_;

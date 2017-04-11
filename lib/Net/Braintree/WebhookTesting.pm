@@ -1,8 +1,7 @@
 package Net::Braintree::WebhookTesting;
 
-use Moose;
+use Moo;
 
-my $meta = __PACKAGE__->meta;
 
 sub sample_notification {
   my ($class, $kind, $id) = @_;

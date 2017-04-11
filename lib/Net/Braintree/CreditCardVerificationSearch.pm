@@ -1,5 +1,5 @@
 package Net::Braintree::CreditCardVerificationSearch;
-use Moose;
+use Moo;
 use Net::Braintree::CreditCard::CardType;
 use Net::Braintree::AdvancedSearch qw(search_to_hash);
 my $meta = __PACKAGE__->meta();

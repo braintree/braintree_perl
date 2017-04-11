@@ -3,7 +3,8 @@ package Net::Braintree::WebhookNotificationGateway;
 use MIME::Base64;
 use Net::Braintree::Digest qw(hexdigest);
 use Net::Braintree::Xml qw(xml_to_hash);
-use Moose;
+use Carp qw(confess);
+use Moo;
 
 has 'gateway' => (is => 'ro');
 

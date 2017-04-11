@@ -15,7 +15,7 @@ use Net::Braintree::TransparentRedirectGateway;
 use Net::Braintree::WebhookNotificationGateway;
 use Net::Braintree::WebhookTestingGateway;
 
-use Moose;
+use Moo;
 
 has 'config' => (is => 'ro');
 

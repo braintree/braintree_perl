@@ -1,7 +1,7 @@
 package Net::Braintree::Configuration;
 
 use Net::Braintree::Gateway;
-use Moose;
+use Moo;
 
 has merchant_id => (is => 'rw');
 has partner_id => (is => 'rw');

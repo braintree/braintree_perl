@@ -1,5 +1,5 @@
 package Net::Braintree::TransparentRedirectGateway;
-use Moose;
+use Moo;
 
 use Carp qw(confess);
 use DateTime;

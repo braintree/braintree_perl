@@ -1,6 +1,6 @@
 package Net::Braintree::ValidationErrorCollection;
 
-use Moose;
+use Moo;
 use Net::Braintree::Util;
 use Net::Braintree::ValidationError;
 

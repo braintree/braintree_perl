@@ -1,7 +1,7 @@
 package Net::Braintree::TransparentRedirect::QueryString;
-use CGI;
+use URI;
 use Net::Braintree::Digest qw(hexdigest);
-use Moose;
+use Moo;
 use Carp qw(confess);
 
 has 'config' => ( is => 'rw', default => sub { Net::Braintree->configuration});
@@ -14,9 +14,10 @@ sub validate {
 }
 
 sub parse {
-  my ($self, $query_string) = @_;
-  my $query = CGI->new($query_string);
-  return $query->Vars;
+    my ($self, $query_string) = @_;
+    my $uri = URI->new;
+    $uri->query($query_string);
+    return { $uri->query_form};
 }
 
 sub hash_is_forged {

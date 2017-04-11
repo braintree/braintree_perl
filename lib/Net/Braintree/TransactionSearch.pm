@@ -1,9 +1,8 @@
 package Net::Braintree::TransactionSearch;
-use Moose;
+use Moo;
 use Net::Braintree::AdvancedSearch qw(search_to_hash);
-my $meta = __PACKAGE__->meta();
 
-my $field = Net::Braintree::AdvancedSearchFields->new(metaclass => $meta);
+my $field = Net::Braintree::AdvancedSearchFields->new(metaclass => __PACKAGE__->meta);
 
 $field->text("billing_company");
 $field->text("billing_country_name");

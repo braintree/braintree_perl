@@ -13,10 +13,9 @@ use Net::Braintree::CreditCard::IssuingBank;
 use Moose;
 extends 'Net::Braintree::PaymentMethod';
 
-my $meta = __PACKAGE__->meta;
-
 sub BUILD {
   my ($self, $attributes) = @_;
+  my $meta = __PACKAGE__->meta;
   $meta->add_attribute('billing_address', is => 'rw');
   $self->billing_address(Net::Braintree::Address->new($attributes->{billing_address})) if ref($attributes->{billing_address}) eq 'HASH';
   delete($attributes->{billing_address});

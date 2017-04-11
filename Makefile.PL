@@ -23,6 +23,7 @@ requires       'LWP::Protocol::https';
 requires       'MIME::Base64';
 requires       'Module::Install::TestTarget';
 requires       'Moose';
+requires       'Moo';
 requires       'Mozilla::CA';
 requires       'URI::Query';
 requires       'XML::Simple';

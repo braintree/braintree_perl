@@ -1,5 +1,5 @@
 package Net::Braintree::TransactionGateway;
-use Moose;
+use Moo;
 use Carp qw(confess);
 use Net::Braintree::Util qw(validate_id);
 use Net::Braintree::Validations qw(verify_params transaction_signature clone_transaction_signature transaction_search_results_signature);

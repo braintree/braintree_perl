@@ -1,5 +1,5 @@
 package Net::Braintree::ClientTokenGateway;
-use Moose;
+use Moo;
 use Carp qw(confess);
 use Net::Braintree::Validations qw(verify_params client_token_signature_with_customer_id client_token_signature_without_customer_id);
 use Net::Braintree::Result;

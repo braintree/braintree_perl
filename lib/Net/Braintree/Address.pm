@@ -1,5 +1,5 @@
 package Net::Braintree::Address;
-use Moose;
+use Moo;
 extends 'Net::Braintree::ResultObject';
 
 sub BUILD {

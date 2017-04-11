@@ -1,7 +1,8 @@
 package Net::Braintree::SubscriptionGateway;
 use Net::Braintree::Util qw(to_instance_array validate_id);
+use Carp qw(confess);
 
-use Moose;
+use Moo;
 
 has 'gateway' => (is => 'ro');
 

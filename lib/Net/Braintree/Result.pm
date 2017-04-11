@@ -1,5 +1,5 @@
 package Net::Braintree::Result;
-use Moose;
+use Moo;
 use Hash::Inflator;
 use Net::Braintree::Util;
 use Net::Braintree::ValidationErrorCollection;

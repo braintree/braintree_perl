@@ -5,10 +5,9 @@ use Moose;
 
 extends 'Net::Braintree::ResultObject';
 
-my $meta = __PACKAGE__->meta;
-
 sub BUILD {
   my ($self, $attributes) = @_;
+  my $meta = __PACKAGE__->meta;
 
   my $wrapper_node = $attributes->{subject};
 

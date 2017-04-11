@@ -6,7 +6,6 @@ use Net::Braintree::MerchantAccount::FundingDetails;
 
 use Moose;
 extends "Net::Braintree::ResultObject";
-my $meta = __PACKAGE__->meta;
 
 {
   package Net::Braintree::MerchantAccount::Status;
@@ -26,6 +25,7 @@ my $meta = __PACKAGE__->meta;
 
 sub BUILD {
   my ($self, $attributes) = @_;
+  my $meta = __PACKAGE__->meta;
   $meta->add_attribute('master_merchant_account', is => 'rw');
   $self->master_merchant_account(Net::Braintree::MerchantAccount->new($attributes->{master_merchant_account})) if ref($attributes->{master_merchant_account}) eq 'HASH';
   delete($attributes->{master_merchant_account});

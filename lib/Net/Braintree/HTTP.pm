@@ -3,7 +3,7 @@ package Net::Braintree::HTTP;
 use HTTP::Request;
 use LWP::UserAgent;
 use Net::Braintree::Xml;
-use Moose;
+use Moo;
 use Carp qw(confess);
 
 has 'config' => (is => 'ro', default => sub { Net::Braintree->configuration });
