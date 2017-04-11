@@ -10,6 +10,7 @@ use Net::Braintree::PaymentMethodGateway;
 use Net::Braintree::PayPalAccountGateway;
 use Net::Braintree::SettlementBatchSummaryGateway;
 use Net::Braintree::SubscriptionGateway;
+use Net::Braintree::TestingGateway;
 use Net::Braintree::TransactionGateway;
 use Net::Braintree::TransparentRedirectGateway;
 use Net::Braintree::WebhookNotificationGateway;
@@ -87,6 +88,11 @@ has 'webhook_notification' => (is => 'ro', lazy => 1, default => sub {
 has 'webhook_testing' => (is => 'ro', lazy => 1, default => sub {
   my $self = shift;
   Net::Braintree::WebhookTestingGateway->new(gateway => $self);
+});
+
+has testing => (is => 'ro', lazy => 1, default => sub {
+  my $self = shift;
+  Net::Braintree::TestingGateway->new(gateway => $self);
 });
 
 sub http {
