@@ -33,6 +33,7 @@ sub sale {
 }
 
 sub credit {
+  # Stand-alone credit
   my ($class, $params) = @_;
   $class->create($params, 'credit');
 }
@@ -50,9 +51,12 @@ sub void {
 }
 
 sub refund {
+  # Follow-on credit
   my ($class, $id, $amount) = @_;
-  my $params = {};
-  $params->{'amount'} = $amount if $amount;
+  my $params = ref ($amount) eq 'HASH'
+    ? $amount
+    : { amount => $amount, }
+  ;
   $class->gateway->transaction->refund($id, $params);
 }
 

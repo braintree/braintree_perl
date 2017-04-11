@@ -5,7 +5,7 @@ use Net::Braintree::Util;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 use Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(verify_params address_signature client_token_signature_with_customer_id client_token_signature_without_customer_id credit_card_signature customer_signature transaction_signature clone_transaction_signature merchant_account_signature transaction_search_results_signature);
+our @EXPORT_OK = qw(verify_params address_signature client_token_signature_with_customer_id client_token_signature_without_customer_id credit_card_signature customer_signature transaction_signature clone_transaction_signature merchant_account_signature transaction_search_results_signature refund_signature);
 
 sub verify_params {
   my ($params, $white_list) = @_;
@@ -131,6 +131,10 @@ sub transaction_signature{
     service_fee_amount => ".",
     three_d_secure_token => "."
   };
+}
+
+sub refund_signature {
+  return { amount => '.', order_id => '.', };
 }
 
 1;
