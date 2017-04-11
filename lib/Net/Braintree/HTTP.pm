@@ -47,7 +47,7 @@ sub make_request {
 
   $self->check_response_code($response->code);
 
-  if($response->header('Content-Length') > 1) {
+  if (length($response->content) >= 1) {
     return xml_to_hash($response->content);
   } else {
     return {http_status => $response->code};
