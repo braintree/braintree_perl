@@ -15,7 +15,7 @@ use constant Switch => "Switch";
 use constant Visa => "Visa";
 use constant Unknown => "Unknown";
 
-use constant All => [
+use constant All => (
   AmericanExpress,
   CarteBlanche,
   ChinaUnionPay,
@@ -29,5 +29,6 @@ use constant All => [
   Switch,
   Visa,
   Unknown
-];
+);
+
 1;
