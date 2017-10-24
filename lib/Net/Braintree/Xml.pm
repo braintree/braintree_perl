@@ -31,7 +31,7 @@ sub add_node {
   } elsif(is_arrayref($value)){
     build_from_array($parent, $value);
   } else {
-    $parent->appendText($value) if $value;
+    $parent->appendText($value) if defined($value) and length($value);
   }
 }
 
